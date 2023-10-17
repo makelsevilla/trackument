@@ -1,13 +1,8 @@
 export const dashboardConfig = {
     mainNav: [
         {
-            title: "Documentation",
+            title: "Track Document",
             href: "/docs",
-        },
-        {
-            title: "Support",
-            href: "/support",
-            disabled: true,
         },
     ],
     // Give a nav-item an id if it expects a badge
@@ -22,12 +17,12 @@ export const dashboardConfig = {
             icon: "folder",
             subMenu: [
                 {
-                    title: "Pending for action",
+                    title: "Pending for Action",
                     href: "/",
                     icon: "pending",
                 },
                 {
-                    title: "Tagged as terminal",
+                    title: "Tagged as Terminal",
                     href: "/dashboard/settings",
                     icon: "terminal",
                 },
