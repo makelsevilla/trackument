@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils.js";
 import { Badge } from "@/Components/ui/badge.jsx";
 
 export default function DashboardNav({ items }) {
-    const { ziggy, navBadges } = usePage().props;
+    const { ziggy, navBadges = [] } = usePage().props;
     const location = ziggy.location;
     const { pathname } = new URL(location);
 
@@ -60,7 +60,7 @@ export default function DashboardNav({ items }) {
                                                         variant="secondary"
                                                         className="absolute right-1"
                                                     >
-                                                        {navBadges[subItem?.id]}
+                                                        {navBadges[subItem.id]}
                                                     </Badge>
                                                 )}
                                             </span>
@@ -94,7 +94,7 @@ export default function DashboardNav({ items }) {
                                         variant="secondary"
                                         className="absolute right-1"
                                     >
-                                        {navBadges[item?.id]}
+                                        {navBadges[item.id]}
                                     </Badge>
                                 )}
                             </span>
