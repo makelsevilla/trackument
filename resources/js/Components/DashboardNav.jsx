@@ -15,7 +15,53 @@ export default function DashboardNav({ items }) {
             {items.map((item, index) => {
                 const Icon = Icons[item.icon] || Icons["arrowRight"];
 
-                return (
+                return item.subMenu ? (
+                    <div>
+                        <div
+                            className={cn(
+                                "group flex items-center rounded-md px-3 py-2 text-lg font-medium",
+                            )}
+                        >
+                            <Icon className="mr-2 h-5 w-5" />
+                            <span>{item.title}</span>
+                        </div>
+                        <div className="ml-6">
+                            {item.subMenu.map((subItem, subIndex) => {
+                                const SubIcon =
+                                    Icons[subItem.icon] || Icons["arrowRight"];
+
+                                return (
+                                    subItem.href && (
+                                        <Link
+                                            key={subIndex}
+                                            href={
+                                                subItem.disabled
+                                                    ? "#"
+                                                    : subItem.href
+                                            }
+                                        >
+                                            <span
+                                                className={cn(
+                                                    "group flex items-center rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground",
+                                                    pathname === subItem.href ||
+                                                        location ===
+                                                            subItem.href
+                                                        ? "bg-accent"
+                                                        : "bg-transparent",
+                                                    subItem.disabled &&
+                                                        "cursor-not-allowed opacity-80",
+                                                )}
+                                            >
+                                                <SubIcon className="mr-2 h-5 w-5" />
+                                                <span>{subItem.title}</span>
+                                            </span>
+                                        </Link>
+                                    )
+                                );
+                            })}
+                        </div>
+                    </div>
+                ) : (
                     item.href && (
                         <Link
                             key={index}

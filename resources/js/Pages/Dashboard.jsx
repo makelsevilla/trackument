@@ -7,9 +7,10 @@ export default function Dashboard({ auth }) {
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Dashboard" />
-            <DashboardHeader heading="Posts" text="Create and manage posts.">
+            {/*<DashboardHeader heading="Posts" text="Create and manage posts.">
                 <Button>New post</Button>
-            </DashboardHeader>
+            </DashboardHeader>*/}
+            <DashboardHeader heading="Dashboard" />
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">

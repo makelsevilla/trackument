@@ -1,8 +1,11 @@
 import {
     ArrowRight,
     CheckCheck,
+    ChevronRight,
     Command,
     Files,
+    Folder,
+    LayoutDashboard,
     ListChecks,
     LogIn,
     LogOut,
@@ -28,6 +31,9 @@ const Icons = {
     pending: PauseCircle,
     terminal: StopCircle,
     listChecks: ListChecks,
+    chevronRight: ChevronRight,
+    folder: Folder,
+    dashboard: LayoutDashboard,
 };
 
 export default Icons;
