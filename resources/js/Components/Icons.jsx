@@ -1,5 +1,6 @@
 import {
     ArrowRight,
+    Bell,
     CheckCheck,
     ChevronRight,
     Command,
@@ -34,6 +35,7 @@ const Icons = {
     chevronRight: ChevronRight,
     folder: Folder,
     dashboard: LayoutDashboard,
+    notification: Bell,
 };
 
 export default Icons;

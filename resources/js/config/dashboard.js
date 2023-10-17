@@ -10,6 +10,7 @@ export const dashboardConfig = {
             disabled: true,
         },
     ],
+    // Give a nav-item an id if it expects a badge
     sidebarNav: [
         {
             title: "Dashboard",
@@ -32,11 +33,13 @@ export const dashboardConfig = {
                 },
 
                 {
+                    id: "incoming",
                     title: "Incoming",
                     href: "/dashboard/settings",
                     icon: "incoming",
                 },
                 {
+                    id: "outgoing",
                     title: "Outoing",
                     href: "/dashboard/settings",
                     icon: "outgoing",
@@ -52,6 +55,12 @@ export const dashboardConfig = {
                     icon: "listChecks",
                 },
             ],
+        },
+        {
+            id: "notifications",
+            title: "Notifications",
+            href: "/",
+            icon: "notification",
         },
     ],
 };

@@ -1,9 +1,10 @@
 import { Link, usePage } from "@inertiajs/react";
 import Icons from "@/Components/Icons.jsx";
 import { cn } from "@/lib/utils.js";
+import { Badge } from "@/Components/ui/badge.jsx";
 
 export default function DashboardNav({ items }) {
-    const { ziggy } = usePage().props;
+    const { ziggy, navBadges } = usePage().props;
     const location = ziggy.location;
     const { pathname } = new URL(location);
 
@@ -16,7 +17,7 @@ export default function DashboardNav({ items }) {
                 const Icon = Icons[item.icon] || Icons["arrowRight"];
 
                 return item.subMenu ? (
-                    <div>
+                    <div key={index}>
                         <div
                             className={cn(
                                 "group flex items-center rounded-md px-3 py-2 text-lg font-medium",
@@ -42,7 +43,7 @@ export default function DashboardNav({ items }) {
                                         >
                                             <span
                                                 className={cn(
-                                                    "group flex items-center rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground",
+                                                    "group relative flex items-center rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground",
                                                     pathname === subItem.href ||
                                                         location ===
                                                             subItem.href
@@ -54,6 +55,14 @@ export default function DashboardNav({ items }) {
                                             >
                                                 <SubIcon className="mr-2 h-5 w-5" />
                                                 <span>{subItem.title}</span>
+                                                {navBadges[subItem?.id] && (
+                                                    <Badge
+                                                        variant="secondary"
+                                                        className="absolute right-1"
+                                                    >
+                                                        {navBadges[subItem?.id]}
+                                                    </Badge>
+                                                )}
                                             </span>
                                         </Link>
                                     )
@@ -69,7 +78,7 @@ export default function DashboardNav({ items }) {
                         >
                             <span
                                 className={cn(
-                                    "group flex items-center rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground",
+                                    "group relative flex items-center rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground",
                                     pathname === item.href ||
                                         location === item.href
                                         ? "bg-accent"
@@ -80,6 +89,14 @@ export default function DashboardNav({ items }) {
                             >
                                 <Icon className="mr-2 h-5 w-5" />
                                 <span>{item.title}</span>
+                                {navBadges[item?.id] && (
+                                    <Badge
+                                        variant="secondary"
+                                        className="absolute right-1"
+                                    >
+                                        {navBadges[item?.id]}
+                                    </Badge>
+                                )}
                             </span>
                         </Link>
                     )

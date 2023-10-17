@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import DashboardHeader from "@/Components/DashboardHeader.jsx";
 import { Button } from "@/Components/ui/button.jsx";
 
