@@ -22,9 +22,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreignId('author_id')->constrained('users');
-            $table->foreignId('current_owner_id')->default(function () {
-                return auth()->user()->id;
-            })->constrained('users');
+            $table->foreignId('current_owner_id')->constrained('users');
             $table->foreignId('previous_owner_id')->nullable()->constrained('users');
             $table->foreignId('document_type_id')->constrained('document_types');
         });
