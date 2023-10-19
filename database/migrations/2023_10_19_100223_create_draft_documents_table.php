@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('document_type_id')->constrained('document_types')->cascadeOnDelete();
+            $table->foreignId('document_type_id')->nullable()->constrained('document_types')->cascadeOnDelete();
         });
     }
 

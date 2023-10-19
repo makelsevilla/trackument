@@ -39,4 +39,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::middleware(['auth'])->group(function () {
+    Route::resource('documents', \App\Http\Controllers\DraftDocumentController::class)->except(['show']);
+});
+
+
+require __DIR__ . '/auth.php';
