@@ -7,6 +7,7 @@ import {
     Command,
     Files,
     Folder,
+    HelpCircle,
     LayoutDashboard,
     ListChecks,
     LogIn,
@@ -38,6 +39,7 @@ const Icons = {
     dashboard: LayoutDashboard,
     notification: Bell,
     chevronLeft: ChevronLeft,
+    helpCircle: HelpCircle,
 };
 
 export default Icons;

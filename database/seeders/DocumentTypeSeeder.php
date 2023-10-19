@@ -38,7 +38,7 @@ class DocumentTypeSeeder extends Seeder
             [
                 'name' => 'Unclassified',
                 'abbreviation' => 'UNC',
-                'description' => 'Unclassified documents are documents that does not apply to the document type selections.',
+                'description' => 'Unclassified documents are documents that does not apply to any document type selections.',
                 'life_time' => 365,
             ]
         );

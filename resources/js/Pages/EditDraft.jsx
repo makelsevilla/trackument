@@ -13,8 +13,15 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select.jsx";
+import { useEffect, useState } from "react";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/Components/ui/popover.jsx";
 
 export default function EditDraft({ auth, draftDocument, documentTypes }) {
+    const [typeIdDescription, setTypeIdDescription] = useState({});
     const { data, setData, errors } = useForm({
         document_type_id: draftDocument["document_type_id"]?.toString(),
         title: draftDocument.title,
@@ -22,8 +29,13 @@ export default function EditDraft({ auth, draftDocument, documentTypes }) {
         purpose: draftDocument.purpose || [],
     });
 
-    console.log(documentTypes);
-
+    useEffect(() => {
+        const typeIdDescription = {};
+        documentTypes.forEach((type) => {
+            typeIdDescription[type.id.toString()] = type.description;
+        });
+        setTypeIdDescription(typeIdDescription);
+    }, [documentTypes]);
     return (
         <div className="container mx-auto grid items-start gap-10 py-8">
             <form>
@@ -45,9 +57,26 @@ export default function EditDraft({ auth, draftDocument, documentTypes }) {
                     <div>
                         <div className="mx-auto max-w-xl">
                             <div className="mt-4 grid w-full items-center gap-1.5">
-                                <Label htmlFor="document_type">
-                                    Document Type
-                                </Label>
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="document_type">
+                                        Document Type
+                                    </Label>
+                                    <Popover>
+                                        <PopoverTrigger>
+                                            <Icons.helpCircle className="h-4 w-4" />
+                                        </PopoverTrigger>
+                                        <PopoverContent>
+                                            <p className="text-sm text-muted-foreground">
+                                                {
+                                                    typeIdDescription[
+                                                        data.document_type_id
+                                                    ]
+                                                }
+                                            </p>
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
+
                                 <Select
                                     value={data.document_type_id}
                                     onValueChange={(value) =>
@@ -75,6 +104,7 @@ export default function EditDraft({ auth, draftDocument, documentTypes }) {
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
+
                                 <InputError
                                     message={errors.document_type_id}
                                     className="mt-2"
