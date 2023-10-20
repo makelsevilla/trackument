@@ -14,7 +14,8 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignId('draft_document_id')->constrained('draft_documents')->cascadeOnDelete();
-            $table->foreignId('related_document_id')->constrained('documents')->cascadeOnDelete();
+            $table->foreignId('related_document_code')->constrained('documents', 'tracking_code')->cascadeOnDelete();
+
         });
     }
 

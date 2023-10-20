@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->json('purpose');
             $table->text('description')->nullable();
             $table->string('status')->default('draft')->comment("available, archived"); // available means it is available for transfer, archived means that it is tagged as terminal
-            $table->string('tracking_code');
+            $table->string('tracking_code')->unique();
             $table->timestamps();
             $table->softDeletes();
 
