@@ -14,10 +14,9 @@ import { Button } from "@/Components/ui/button.jsx";
 
 function DocumentFilesForm({ ...props }) {
     const [draftDocumentFiles, setDraftDocumentFiles] = useState(null);
-    const [fileURL, setFileURL] = useState(null);
     const { data, setData, errors, post } = useForm({
-        file: null,
-        type: "file",
+        data: "",
+        type: "url",
     });
 
     const getDraftDocumentFiles = () => {
@@ -26,33 +25,18 @@ function DocumentFilesForm({ ...props }) {
             .then((response) => setDraftDocumentFiles(response.data))
             .catch((error) => console.log(error));
     };
-    const handleFileUpload = () => {
-        post(route("draft.files.store"), {
-            onSuccess: () => {
-                getDraftDocumentFiles();
-            },
-        });
-    };
 
-    const handleLinkUpload = () => {
-        router.post(
-            route(
-                "draft.files.store",
-                { url: fileURL, type: "link" },
-                {
-                    onSuccess: () => {
-                        getDraftDocumentFiles();
-                    },
-                },
-            ),
-        );
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        post(route("draft.files.store"), {
+            onSuccess: () => getDraftDocumentFiles(),
+        });
     };
 
     useEffect(() => {
         getDraftDocumentFiles();
     }, []);
 
-    console.log(data.file);
     return (
         <div {...props}>
             <div className="grid w-full gap-1.5">
@@ -66,29 +50,35 @@ function DocumentFilesForm({ ...props }) {
                         <div className="flex items-center gap-2">
                             <Input
                                 onChange={(e) =>
-                                    setData("file", e.target.files[0])
+                                    setData({
+                                        data: e.target.files[0],
+                                        type: "file",
+                                    })
                                 }
                                 id="backup_file"
                                 type="file"
                             />
-                            <Button onClick={() => handleFileUpload()}>
-                                Upload
-                            </Button>
+                            <Button onClick={handleSubmit}>Upload</Button>
                         </div>
                     </TabsContent>
                     <TabsContent value="url">
                         <div className="flex items-center gap-2">
                             <Input
-                                onChange={(e) => setFileURL(e.target.value)}
+                                onChange={(e) =>
+                                    setData({
+                                        data: e.target.value,
+                                        type: "url",
+                                    })
+                                }
                                 placeholder="e.g https://www.example-site.com/"
                                 type="text"
                             />
-                            <Button onClick={handleLinkUpload()}>Add</Button>
+                            <Button onClick={handleSubmit}>Add</Button>
                         </div>
                     </TabsContent>
                 </Tabs>
 
-                <InputError message={errors.file} className="mt-2" />
+                <InputError message={errors.data} className="mt-2" />
                 <InputHelper>
                     <p>- Max 10 MB file size.</p>
                     <p>
