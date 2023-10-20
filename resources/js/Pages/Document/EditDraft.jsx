@@ -1,5 +1,5 @@
 import { Button } from "@/Components/ui/button.jsx";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import Icons from "@/Components/Icons.jsx";
 import { Label } from "@/Components/ui/label.jsx";
 import { Input } from "@/Components/ui/input.jsx";
@@ -38,14 +38,15 @@ export default function EditDraft({
 }) {
     const [typeIdDescription, setTypeIdDescription] = useState({});
     const [relatedDocumentInput, setRelatedDocumentInput] = useState("");
-    const { data, setData, errors, patch } = useForm({
+    const { data, setData, errors, put, processing } = useForm({
         document_type_id: draftDocument["document_type_id"]?.toString(),
         title: draftDocument.title,
         description: draftDocument.description || "",
         purpose: draftDocument.purpose || [],
         related_documents: draftDocument?.related_documents || [],
     });
-
+    const props = usePage();
+    console.log(props);
     // console.log(draftDocument.related_documents);
 
     useEffect(() => {
@@ -60,7 +61,7 @@ export default function EditDraft({
         e.preventDefault();
         console.log(data);
 
-        patch(route("draft.documents.update"));
+        put(route("draft.documents.update", { document: draftDocument.id }));
     };
 
     const addRelatedDocumentToData = (e) => {
@@ -98,7 +99,17 @@ export default function EditDraft({
                                 Draft
                             </p>
                         </div>
-                        <Button type="submit">Save</Button>
+
+                        <Button disabled={processing} type="submit">
+                            {processing ? (
+                                <>
+                                    <Icons.loading className="mr-2 h-4 w-4 animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                <>Save</>
+                            )}
+                        </Button>
                     </div>
                     <div>
                         <div className="mx-auto max-w-xl">

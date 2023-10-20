@@ -80,7 +80,24 @@ class DraftDocumentController extends Controller
      */
     public function update(Request $request, DraftDocument $document)
     {
-        //
+//        dd($request->all());
+        $validated = $request->validate([
+            'document_type_id' => 'nullable|exists:document_types,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+//            'purpose' => 'nullable|array',
+            'purpose.*' => 'nullable|string',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            $document[$key] = $value;
+        }
+
+        if (!$document->save()) {
+            return back()->with(['message' => "An error occured while saving the document.", 'status' => 'error']);
+        }
+
+        return back()->with(['message' => "Document saved successfully.", 'status' => 'success']);
     }
 
     /**

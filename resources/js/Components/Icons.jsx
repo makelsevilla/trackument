@@ -11,6 +11,7 @@ import {
     HelpCircle,
     LayoutDashboard,
     ListChecks,
+    Loader2,
     LogIn,
     LogOut,
     Pause,
@@ -44,6 +45,7 @@ const Icons = {
     helpCircle: HelpCircle,
     activity: Activity,
     pencilLine: PencilLine,
+    loading: Loader2,
 };
 
 export default Icons;
