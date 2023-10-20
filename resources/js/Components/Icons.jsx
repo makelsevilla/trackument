@@ -1,4 +1,5 @@
 import {
+    Activity,
     ArrowRight,
     Bell,
     CheckCheck,
@@ -14,6 +15,7 @@ import {
     LogOut,
     Pause,
     PauseCircle,
+    PencilLine,
     Settings,
     StopCircle,
     User,
@@ -40,6 +42,8 @@ const Icons = {
     notification: Bell,
     chevronLeft: ChevronLeft,
     helpCircle: HelpCircle,
+    activity: Activity,
+    pencilLine: PencilLine,
 };
 
 export default Icons;

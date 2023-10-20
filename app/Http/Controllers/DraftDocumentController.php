@@ -15,7 +15,8 @@ class DraftDocumentController extends Controller
      */
     public function index()
     {
-        //
+
+        return Inertia::render('UserDraftDocuments');
     }
 
     /**
@@ -61,6 +62,8 @@ class DraftDocumentController extends Controller
 
         $document_types = DB::table('document_types')->select('id', 'name', 'description')->get();
         $document_purposes = DB::table('document_purposes')->get();
+        $related_documents = DB::table('draft_related_documents')->where('draft_document_id', $document->id)->select('related_document_code')->get();
+        dd($related_documents);
 
         return Inertia::render('EditDraft', [
             'draftDocument' => $document,

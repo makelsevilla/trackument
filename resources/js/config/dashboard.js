@@ -13,6 +13,11 @@ export const dashboardConfig = {
             icon: "dashboard",
         },
         {
+            title: "Quick Actions",
+            href: "/",
+            icon: "activity",
+        },
+        {
             title: "Documents",
             icon: "folder",
             subMenu: [
@@ -42,6 +47,11 @@ export const dashboardConfig = {
                 {
                     title: "My Documents",
                     href: "/dashboard/billing",
+                    icon: "documents",
+                },
+                {
+                    title: "Drafts",
+                    href: route("draft.documents.index"),
                     icon: "documents",
                 },
                 {

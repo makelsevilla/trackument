@@ -30,11 +30,13 @@ export default function EditDraft({
     documentPurposes,
 }) {
     const [typeIdDescription, setTypeIdDescription] = useState({});
+    const [relatedDocumentInput, setRelatedDocumentInput] = useState("");
     const { data, setData, errors, patch } = useForm({
         document_type_id: draftDocument["document_type_id"]?.toString(),
         title: draftDocument.title,
         description: draftDocument.description || "",
         purpose: draftDocument.purpose || [],
+        related_documents: draftDocument?.related_documents || [],
     });
 
     useEffect(() => {
@@ -50,6 +52,23 @@ export default function EditDraft({
         console.log(data);
 
         patch(route("draft.documents.update"));
+    };
+
+    const addRelatedDocumentToData = () => {
+        if (relatedDocumentInput) {
+            setData("related_documents", [
+                ...data.related_documents,
+                relatedDocumentInput,
+            ]);
+            setRelatedDocumentInput("");
+        }
+    };
+
+    const removeRelatedDocumentFromData = (trackCode) => {
+        setData(
+            "related_documents",
+            data.related_documents.filter((item) => item !== trackCode),
+        );
     };
 
     // console.log(data.purpose);
@@ -73,6 +92,7 @@ export default function EditDraft({
                     </div>
                     <div>
                         <div className="mx-auto max-w-xl">
+                            {/* Document Type */}
                             <div className="mt-4 grid w-full gap-1.5">
                                 <div className="flex items-center justify-between">
                                     <Label htmlFor="document_type">
@@ -126,6 +146,7 @@ export default function EditDraft({
                                 />
                             </div>
 
+                            {/* Title */}
                             <div className="mt-4 grid w-full gap-1.5">
                                 <Label htmlFor="title">Title</Label>
                                 <Input
@@ -148,6 +169,7 @@ export default function EditDraft({
                                 </InputHelper>
                             </div>
 
+                            {/* Description */}
                             <div className="mt-4 grid w-full gap-1.5">
                                 <Label htmlFor="description">Description</Label>
                                 <Textarea
@@ -163,6 +185,7 @@ export default function EditDraft({
                                 />
                             </div>
 
+                            {/* Purposes */}
                             <div className="mt-4 grid w-full gap-1.5">
                                 <div>
                                     <Label htmlFor="purpose">Purpose</Label>
@@ -181,21 +204,22 @@ export default function EditDraft({
                                                     onCheckedChange={(
                                                         checked,
                                                     ) => {
-                                                        if (checked) {
-                                                            setData("purpose", [
-                                                                ...data.purpose,
-                                                                purpose.purpose,
-                                                            ]);
-                                                        } else {
-                                                            setData(
-                                                                "purpose",
-                                                                data.purpose.filter(
-                                                                    (item) =>
-                                                                        item !==
-                                                                        purpose.purpose,
-                                                                ),
-                                                            );
-                                                        }
+                                                        checked
+                                                            ? setData(
+                                                                  "purpose",
+                                                                  [
+                                                                      ...data.purpose,
+                                                                      purpose.purpose,
+                                                                  ],
+                                                              )
+                                                            : setData(
+                                                                  "purpose",
+                                                                  data.purpose.filter(
+                                                                      (item) =>
+                                                                          item !==
+                                                                          purpose.purpose,
+                                                                  ),
+                                                              );
                                                     }}
                                                     checked={data.purpose.includes(
                                                         purpose.purpose,
@@ -218,6 +242,68 @@ export default function EditDraft({
                                     message={errors.purpose}
                                     className="mt-2"
                                 />
+                            </div>
+
+                            {/* Related Documents */}
+                            <div className="mt-4 grid w-full gap-1.5">
+                                <Label htmlFor="related_documents">
+                                    Related Documents
+                                </Label>
+                                <div>
+                                    <div className="flex items-center space-x-2">
+                                        <Input
+                                            placeholder="UNC-0000-0"
+                                            onChange={(e) =>
+                                                setRelatedDocumentInput(
+                                                    e.target.value.toUpperCase(),
+                                                )
+                                            }
+                                            value={relatedDocumentInput}
+                                            id="related_documents"
+                                        />
+                                        <Button
+                                            size="sm"
+                                            onClick={addRelatedDocumentToData}
+                                        >
+                                            Add
+                                        </Button>
+                                    </div>
+                                    <div className="mt-2 space-y-2">
+                                        {data.related_documents.map(
+                                            (trackCode, index) => {
+                                                return (
+                                                    <div
+                                                        className="flex items-center space-x-2"
+                                                        key={index}
+                                                    >
+                                                        <Button
+                                                            className="h-5 w-5 rounded-full p-2 hover:bg-destructive hover:text-destructive-foreground"
+                                                            variant="secondary"
+                                                            onClick={() =>
+                                                                removeRelatedDocumentFromData(
+                                                                    trackCode,
+                                                                )
+                                                            }
+                                                        >
+                                                            X
+                                                        </Button>
+                                                        <p className="text-sm">
+                                                            {trackCode}
+                                                        </p>
+                                                    </div>
+                                                );
+                                            },
+                                        )}
+                                    </div>
+                                </div>
+                                <InputError
+                                    message={errors.related_documents}
+                                    className="mt-2"
+                                />
+                                <InputHelper>
+                                    - You may add the tracking code of the
+                                    documents related to this document.
+                                </InputHelper>
                             </div>
                         </div>
                     </div>
