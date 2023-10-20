@@ -1,5 +1,5 @@
 import { Button } from "@/Components/ui/button.jsx";
-import { Link, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import Icons from "@/Components/Icons.jsx";
 import { Label } from "@/Components/ui/label.jsx";
 import { Input } from "@/Components/ui/input.jsx";
@@ -22,6 +22,13 @@ import {
 import { Textarea } from "@/Components/ui/textarea.jsx";
 import { ScrollArea } from "@/Components/ui/scroll-area.jsx";
 import { Checkbox } from "@/Components/ui/checkbox.jsx";
+import DocumentFilesForm from "@/Pages/Document/DocumentFilesForm.jsx";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/Components/ui/card.jsx";
 
 export default function EditDraft({
     auth,
@@ -39,6 +46,8 @@ export default function EditDraft({
         related_documents: draftDocument?.related_documents || [],
     });
 
+    // console.log(draftDocument.related_documents);
+
     useEffect(() => {
         const typeIdDescription = {};
         documentTypes.forEach((type) => {
@@ -54,7 +63,8 @@ export default function EditDraft({
         patch(route("draft.documents.update"));
     };
 
-    const addRelatedDocumentToData = () => {
+    const addRelatedDocumentToData = (e) => {
+        e.preventDefault();
         if (relatedDocumentInput) {
             setData("related_documents", [
                 ...data.related_documents,
@@ -71,9 +81,9 @@ export default function EditDraft({
         );
     };
 
-    // console.log(data.purpose);
     return (
         <div className="container mx-auto grid items-start gap-10 py-8">
+            <Head title="Edit Draft" />
             <form onSubmit={handleSubmit}>
                 <div className="grid w-full gap-10">
                     <div className="flex w-full items-center justify-between">
@@ -93,7 +103,7 @@ export default function EditDraft({
                     <div>
                         <div className="mx-auto max-w-xl">
                             {/* Document Type */}
-                            <div className="mt-4 grid w-full gap-1.5">
+                            <div className="grid w-full gap-1.5">
                                 <div className="flex items-center justify-between">
                                     <Label htmlFor="document_type">
                                         Document Type
@@ -111,7 +121,6 @@ export default function EditDraft({
                                         </PopoverContent>
                                     </Popover>
                                 </div>
-
                                 <Select
                                     value={data.document_type_id}
                                     onValueChange={(value) =>
@@ -305,6 +314,9 @@ export default function EditDraft({
                                     documents related to this document.
                                 </InputHelper>
                             </div>
+
+                            {/* File Backup */}
+                            <DocumentFilesForm className="mt-4" />
                         </div>
                     </div>
                 </div>

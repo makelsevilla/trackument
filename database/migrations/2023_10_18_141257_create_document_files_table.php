@@ -13,7 +13,8 @@ return new class extends Migration {
         Schema::create('document_files', function (Blueprint $table) {
             $table->id();
             $table->string('file_name');
-            $table->string('file_type')->comment('backup or attachment');
+            $table->string('role')->comment('backup or attachment');
+            $table->string('file_type')->comment('file or link');
             $table->string('file_path');
             $table->dateTime('uploaded_at')->useCurrent();
 

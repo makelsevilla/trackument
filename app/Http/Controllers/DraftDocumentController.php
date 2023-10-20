@@ -63,9 +63,12 @@ class DraftDocumentController extends Controller
         $document_types = DB::table('document_types')->select('id', 'name', 'description')->get();
         $document_purposes = DB::table('document_purposes')->get();
         $related_documents = DB::table('draft_related_documents')->where('draft_document_id', $document->id)->select('related_document_code')->get();
-        dd($related_documents);
+        $document_files = DB::table('draft_document_files')->where('draft_document_id', $document->id)->select('file_name', 'file_path')->get();
 
-        return Inertia::render('EditDraft', [
+        $document['document_files'] = $document_files;
+        $document['related_documents'] = $related_documents;
+
+        return Inertia::render('Document/EditDraft', [
             'draftDocument' => $document,
             'documentTypes' => $document_types,
             'documentPurposes' => $document_purposes,

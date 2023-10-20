@@ -12,7 +12,8 @@ return new class extends Migration {
     {
         Schema::create('draft_document_files', function (Blueprint $table) {
             $table->id();
-            $table->string('file_type');
+            $table->string('file_type')->comment("file or link");
+            $table->string("file_name");
             $table->string('file_path');
 
             $table->foreignId('uploader_id')->constrained('users')->cascadeOnDelete();
