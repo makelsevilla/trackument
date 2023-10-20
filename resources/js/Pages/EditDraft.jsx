@@ -19,13 +19,21 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/Components/ui/popover.jsx";
+import { Textarea } from "@/Components/ui/textarea.jsx";
+import { ScrollArea } from "@/Components/ui/scroll-area.jsx";
+import { Checkbox } from "@/Components/ui/checkbox.jsx";
 
-export default function EditDraft({ auth, draftDocument, documentTypes }) {
+export default function EditDraft({
+    auth,
+    draftDocument,
+    documentTypes,
+    documentPurposes,
+}) {
     const [typeIdDescription, setTypeIdDescription] = useState({});
     const { data, setData, errors } = useForm({
         document_type_id: draftDocument["document_type_id"]?.toString(),
         title: draftDocument.title,
-        description: draftDocument.description,
+        description: draftDocument.description || "",
         purpose: draftDocument.purpose || [],
     });
 
@@ -36,6 +44,8 @@ export default function EditDraft({ auth, draftDocument, documentTypes }) {
         });
         setTypeIdDescription(typeIdDescription);
     }, [documentTypes]);
+
+    // console.log(data.purpose);
     return (
         <div className="container mx-auto grid items-start gap-10 py-8">
             <form>
@@ -56,7 +66,7 @@ export default function EditDraft({ auth, draftDocument, documentTypes }) {
                     </div>
                     <div>
                         <div className="mx-auto max-w-xl">
-                            <div className="mt-4 grid w-full items-center gap-1.5">
+                            <div className="mt-4 grid w-full gap-1.5">
                                 <div className="flex items-center justify-between">
                                     <Label htmlFor="document_type">
                                         Document Type
@@ -67,11 +77,9 @@ export default function EditDraft({ auth, draftDocument, documentTypes }) {
                                         </PopoverTrigger>
                                         <PopoverContent>
                                             <p className="text-sm text-muted-foreground">
-                                                {
-                                                    typeIdDescription[
-                                                        data.document_type_id
-                                                    ]
-                                                }
+                                                {typeIdDescription[
+                                                    data.document_type_id
+                                                ] || "No description"}
                                             </p>
                                         </PopoverContent>
                                     </Popover>
@@ -110,7 +118,8 @@ export default function EditDraft({ auth, draftDocument, documentTypes }) {
                                     className="mt-2"
                                 />
                             </div>
-                            <div className="mt-4 grid w-full items-center gap-1.5">
+
+                            <div className="mt-4 grid w-full gap-1.5">
                                 <Label htmlFor="title">Title</Label>
                                 <Input
                                     onChange={(e) =>
@@ -130,6 +139,73 @@ export default function EditDraft({ auth, draftDocument, documentTypes }) {
                                     </p>
                                     <p>- Max Length: 250 characters</p>
                                 </InputHelper>
+                            </div>
+
+                            <div className="mt-4 grid w-full gap-1.5">
+                                <Label htmlFor="description">Description</Label>
+                                <Textarea
+                                    onChange={(e) =>
+                                        setData("description", e.target.value)
+                                    }
+                                    value={data.description}
+                                    id="description"
+                                />
+                                <InputError
+                                    message={errors.description}
+                                    className="mt-2"
+                                />
+                            </div>
+
+                            <div className="mt-4 grid w-full gap-1.5">
+                                <Label htmlFor="purpose">Purpose</Label>
+                                <ScrollArea className="max-h-[200px] rounded-md border p-4">
+                                    {documentPurposes.map((purpose, index) => {
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="mb-4 flex items-center space-x-2"
+                                            >
+                                                <Checkbox
+                                                    onCheckedChange={(
+                                                        checked,
+                                                    ) => {
+                                                        if (checked) {
+                                                            setData("purpose", [
+                                                                ...data.purpose,
+                                                                purpose.purpose,
+                                                            ]);
+                                                        } else {
+                                                            setData(
+                                                                "purpose",
+                                                                data.purpose.filter(
+                                                                    (item) =>
+                                                                        item !==
+                                                                        purpose.purpose,
+                                                                ),
+                                                            );
+                                                        }
+                                                    }}
+                                                    checked={data.purpose.includes(
+                                                        purpose.purpose,
+                                                    )}
+                                                    id={"purpose" + purpose.id}
+                                                />
+                                                <label
+                                                    htmlFor={
+                                                        "purpose" + purpose.id
+                                                    }
+                                                    className="text-sm capitalize"
+                                                >
+                                                    {purpose.purpose}
+                                                </label>
+                                            </div>
+                                        );
+                                    })}
+                                </ScrollArea>
+                                <InputError
+                                    message={errors.purpose}
+                                    className="mt-2"
+                                />
                             </div>
                         </div>
                     </div>

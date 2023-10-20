@@ -4,10 +4,7 @@ export default function InputHelper({ children, className, ...props }) {
     return (
         <div
             {...props}
-            className={cn(
-                "mt-2 text-sm text-gray-500 dark:text-gray-400",
-                className,
-            )}
+            className={cn("mt-2 text-sm text-muted-foreground", className)}
         >
             {children}
         </div>

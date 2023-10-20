@@ -60,9 +60,12 @@ class DraftDocumentController extends Controller
         }
 
         $document_types = DB::table('document_types')->select('id', 'name', 'description')->get();
+        $document_purposes = DB::table('document_purposes')->get();
 
         return Inertia::render('EditDraft', [
-            'draftDocument' => $document, 'documentTypes' => $document_types,
+            'draftDocument' => $document,
+            'documentTypes' => $document_types,
+            'documentPurposes' => $document_purposes,
         ]);
     }
 

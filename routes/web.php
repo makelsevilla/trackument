@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::resource('documents', \App\Http\Controllers\DraftDocumentController::class)->except(['show']);
+    Route::resource('draft/documents', \App\Http\Controllers\DraftDocumentController::class)->except(['show']);
 });
 
 
