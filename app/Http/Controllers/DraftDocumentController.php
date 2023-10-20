@@ -23,14 +23,7 @@ class DraftDocumentController extends Controller
      */
     public function create()
     {
-        $user = auth()->user();
-        $document = DraftDocument::make();
-        $document->owner_id = $user->id;
-        if (!$document->save()) {
-            return back()->with(['message' => "An error occured while creating a document."]);
-        }
 
-        return to_route('documents.edit', ['document' => $document->id]);
     }
 
     /**
@@ -38,7 +31,14 @@ class DraftDocumentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = auth()->user();
+        $draftDocument = DraftDocument::make();
+        $draftDocument->owner_id = $user->id;
+        if (!$draftDocument->save()) {
+            return back()->with(['message' => "An error occured while creating a document."]);
+        }
+
+        return to_route('draft.documents.edit', ['document' => $draftDocument->id]);
     }
 
     /**

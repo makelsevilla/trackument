@@ -30,7 +30,7 @@ export default function EditDraft({
     documentPurposes,
 }) {
     const [typeIdDescription, setTypeIdDescription] = useState({});
-    const { data, setData, errors } = useForm({
+    const { data, setData, errors, patch } = useForm({
         document_type_id: draftDocument["document_type_id"]?.toString(),
         title: draftDocument.title,
         description: draftDocument.description || "",
@@ -45,10 +45,17 @@ export default function EditDraft({
         setTypeIdDescription(typeIdDescription);
     }, [documentTypes]);
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(data);
+
+        patch(route("draft.documents.update"));
+    };
+
     // console.log(data.purpose);
     return (
         <div className="container mx-auto grid items-start gap-10 py-8">
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className="grid w-full gap-10">
                     <div className="flex w-full items-center justify-between">
                         <div className="flex items-center space-x-10">
@@ -62,7 +69,7 @@ export default function EditDraft({
                                 Draft
                             </p>
                         </div>
-                        <Button type="">Save</Button>
+                        <Button type="submit">Save</Button>
                     </div>
                     <div>
                         <div className="mx-auto max-w-xl">
@@ -157,7 +164,12 @@ export default function EditDraft({
                             </div>
 
                             <div className="mt-4 grid w-full gap-1.5">
-                                <Label htmlFor="purpose">Purpose</Label>
+                                <div>
+                                    <Label htmlFor="purpose">Purpose</Label>
+                                    <p className="text-xs text-muted-foreground">
+                                        Check all that apply.
+                                    </p>
+                                </div>
                                 <ScrollArea className="max-h-[200px] rounded-md border p-4">
                                     {documentPurposes.map((purpose, index) => {
                                         return (
