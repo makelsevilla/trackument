@@ -12,8 +12,10 @@ return new class extends Migration {
     {
         Schema::create('related_documents', function (Blueprint $table) {
             $table->id();
+            $table->string('related_document_code');
+
             $table->foreignId('document_id')->constrained('documents');
-            $table->foreignId('related_document_code')->constrained('documents', 'tracking_code');
+            $table->foreign('related_document_code')->references('tracking_code')->on('documents');
         });
     }
 

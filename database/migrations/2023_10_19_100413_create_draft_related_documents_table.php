@@ -12,10 +12,11 @@ return new class extends Migration {
     {
         Schema::create('draft_related_documents', function (Blueprint $table) {
             $table->id();
+            $table->string('related_document_code');
 
             $table->foreignId('draft_document_id')->constrained('draft_documents')->cascadeOnDelete();
-            $table->foreignId('related_document_code')->constrained('documents', 'tracking_code')->cascadeOnDelete();
-
+//            $table->foreignId('related_document_code')->constrained('documents', 'tracking_code')->cascadeOnDelete();
+            $table->foreign('related_document_code')->references('tracking_code')->on('documents')->cascadeOnDelete();
         });
     }
 
