@@ -75,7 +75,7 @@ export default function EditDraft({
         setTypeIdDescription(typeIdDescription);
     }, [documentTypes]);
 
-    console.log(errors);
+    console.log(data.related_documents);
     return (
         <div className="container mx-auto grid items-start gap-10 py-8">
             <Head title="Edit Draft" />
@@ -307,30 +307,36 @@ export default function EditDraft({
                                         </Button>
                                     </div>
                                     <div className="mt-2 space-y-2">
-                                        {data.related_documents.map(
-                                            (trackCode, index) => {
-                                                return (
-                                                    <div
-                                                        className="flex items-center space-x-2"
-                                                        key={index}
-                                                    >
-                                                        <Button
-                                                            className="h-5 w-5 rounded-full p-2 hover:bg-destructive hover:text-destructive-foreground"
-                                                            variant="secondary"
-                                                            onClick={() =>
-                                                                removeRelatedDocumentFromData(
-                                                                    trackCode,
-                                                                )
-                                                            }
+                                        {data.related_documents.length ? (
+                                            data.related_documents.map(
+                                                (trackCode, index) => {
+                                                    return (
+                                                        <div
+                                                            className="flex items-center space-x-2"
+                                                            key={index}
                                                         >
-                                                            X
-                                                        </Button>
-                                                        <p className="text-sm">
-                                                            {trackCode}
-                                                        </p>
-                                                    </div>
-                                                );
-                                            },
+                                                            <Button
+                                                                className="h-5 w-5 rounded-full p-2 hover:bg-destructive hover:text-destructive-foreground"
+                                                                variant="secondary"
+                                                                onClick={() =>
+                                                                    removeRelatedDocumentFromData(
+                                                                        trackCode,
+                                                                    )
+                                                                }
+                                                            >
+                                                                X
+                                                            </Button>
+                                                            <p className="text-sm">
+                                                                {trackCode}
+                                                            </p>
+                                                        </div>
+                                                    );
+                                                },
+                                            )
+                                        ) : (
+                                            <div className="text-sm text-muted-foreground">
+                                                No related documents included.
+                                            </div>
                                         )}
                                     </div>
                                 </div>
