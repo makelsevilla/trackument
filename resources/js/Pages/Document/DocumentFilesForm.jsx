@@ -58,7 +58,13 @@ function DocumentFilesForm({ ...props }) {
                                 id="backup_file"
                                 type="file"
                             />
-                            <Button onClick={handleSubmit}>Upload</Button>
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={handleSubmit}
+                            >
+                                Upload
+                            </Button>
                         </div>
                     </TabsContent>
                     <TabsContent value="url">
@@ -73,7 +79,13 @@ function DocumentFilesForm({ ...props }) {
                                 placeholder="e.g https://www.example-site.com/"
                                 type="text"
                             />
-                            <Button onClick={handleSubmit}>Add</Button>
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={handleSubmit}
+                            >
+                                Add
+                            </Button>
                         </div>
                     </TabsContent>
                 </Tabs>

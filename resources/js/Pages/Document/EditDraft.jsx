@@ -45,9 +45,6 @@ export default function EditDraft({
         purpose: draftDocument.purpose || [],
         related_documents: draftDocument?.related_documents || [],
     });
-    const props = usePage();
-    console.log(props);
-    // console.log(draftDocument.related_documents);
 
     useEffect(() => {
         const typeIdDescription = {};
@@ -85,9 +82,9 @@ export default function EditDraft({
     return (
         <div className="container mx-auto grid items-start gap-10 py-8">
             <Head title="Edit Draft" />
-            <form onSubmit={handleSubmit}>
+            <div>
                 <div className="grid w-full gap-10">
-                    <div className="flex w-full items-center justify-between">
+                    <div className="flex w-full flex-wrap items-center justify-between">
                         <div className="flex items-center space-x-10">
                             <Button variant="ghost" asChild>
                                 <Link href={route("dashboard")}>
@@ -99,17 +96,37 @@ export default function EditDraft({
                                 Draft
                             </p>
                         </div>
-
-                        <Button disabled={processing} type="submit">
-                            {processing ? (
-                                <>
-                                    <Icons.loading className="mr-2 h-4 w-4 animate-spin" />
-                                    Saving...
-                                </>
-                            ) : (
-                                <>Save</>
-                            )}
-                        </Button>
+                        <div className="flex space-x-4">
+                            <Button
+                                size="sm"
+                                onClick={handleSubmit}
+                                disabled={processing}
+                                variant="secondary"
+                            >
+                                {processing ? (
+                                    <>
+                                        <Icons.loading className="mr-2 h-4 w-4 animate-spin" />
+                                        Saving...
+                                    </>
+                                ) : (
+                                    <span>Save</span>
+                                )}
+                            </Button>
+                            <Button
+                                size="sm"
+                                onClick={handleSubmit}
+                                disabled={processing}
+                            >
+                                {processing ? (
+                                    <>
+                                        <Icons.loading className="mr-2 h-4 w-4 animate-spin" />
+                                        Finalizing...
+                                    </>
+                                ) : (
+                                    <span>Finalize</span>
+                                )}
+                            </Button>
+                        </div>
                     </div>
                     <div>
                         <div className="mx-auto max-w-xl">
@@ -282,6 +299,7 @@ export default function EditDraft({
                                             id="related_documents"
                                         />
                                         <Button
+                                            variant="secondary"
                                             size="sm"
                                             onClick={addRelatedDocumentToData}
                                         >
@@ -331,7 +349,7 @@ export default function EditDraft({
                         </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     );
 }
