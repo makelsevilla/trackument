@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::name('draft.')->group(function () {
         Route::resource('draft/documents', \App\Http\Controllers\DraftDocumentController::class)->except(['show', 'create']);
-        Route::resource('draft/document/files', \App\Http\Controllers\DraftDocumentFileController::class)->except(['show', 'create']);
+        Route::resource('draft/document_files', \App\Http\Controllers\DraftDocumentFileController::class)->except(['show', 'create']);
     });
 });
 

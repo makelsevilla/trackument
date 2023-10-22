@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateDraftDocumentRequest;
 use App\Models\Document;
 use App\Models\DraftDocument;
 use Illuminate\Http\Request;
@@ -78,16 +79,9 @@ class DraftDocumentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, DraftDocument $document)
+    public function update(UpdateDraftDocumentRequest $request, DraftDocument $document)
     {
-//        dd($request->all());
-        $validated = $request->validate([
-            'document_type_id' => 'nullable|exists:document_types,id',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-//            'purpose' => 'nullable|array',
-            'purpose.*' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         foreach ($validated as $key => $value) {
             $document[$key] = $value;
@@ -96,6 +90,23 @@ class DraftDocumentController extends Controller
         if (!$document->save()) {
             return back()->with(['message' => "An error occured while saving the document.", 'status' => 'error']);
         }
+
+        // handling related documents
+        try {
+
+            DB::table('draft_related_documents')->where('draft_document_id', $document->id)->delete();
+            if (isset($validated['related_documents'])) {
+                foreach ($validated['related_documents'] as $related_document) {
+                    DB::table('draft_related_documents')->insert([
+                        'draft_document_id' => $document->id,
+                        'related_document_code' => $related_document
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            return back()->with(['message' => "An error occured while saving the related document/s.", 'status' => 'error']);
+        }
+
 
         return back()->with(['message' => "Document saved successfully.", 'status' => 'success']);
     }

@@ -21,7 +21,7 @@ function DocumentFilesForm({ ...props }) {
 
     const getDraftDocumentFiles = () => {
         axios
-            .get(route("draft.files.index"))
+            .get(route("draft.document_files.index"))
             .then((response) => setDraftDocumentFiles(response.data))
             .catch((error) => console.log(error));
     };

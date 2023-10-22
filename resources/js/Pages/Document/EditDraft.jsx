@@ -1,5 +1,5 @@
 import { Button } from "@/Components/ui/button.jsx";
-import { Head, Link, useForm, usePage } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import Icons from "@/Components/Icons.jsx";
 import { Label } from "@/Components/ui/label.jsx";
 import { Input } from "@/Components/ui/input.jsx";
@@ -23,12 +23,6 @@ import { Textarea } from "@/Components/ui/textarea.jsx";
 import { ScrollArea } from "@/Components/ui/scroll-area.jsx";
 import { Checkbox } from "@/Components/ui/checkbox.jsx";
 import DocumentFilesForm from "@/Pages/Document/DocumentFilesForm.jsx";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/Components/ui/card.jsx";
 
 export default function EditDraft({
     auth,
@@ -46,17 +40,9 @@ export default function EditDraft({
         related_documents: draftDocument?.related_documents || [],
     });
 
-    useEffect(() => {
-        const typeIdDescription = {};
-        documentTypes.forEach((type) => {
-            typeIdDescription[type.id.toString()] = type.description;
-        });
-        setTypeIdDescription(typeIdDescription);
-    }, [documentTypes]);
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(data);
+        // console.log(data);
 
         put(route("draft.documents.update", { document: draftDocument.id }));
     };
@@ -64,10 +50,12 @@ export default function EditDraft({
     const addRelatedDocumentToData = (e) => {
         e.preventDefault();
         if (relatedDocumentInput) {
-            setData("related_documents", [
-                ...data.related_documents,
-                relatedDocumentInput,
-            ]);
+            if (!data.related_documents.includes(relatedDocumentInput)) {
+                setData("related_documents", [
+                    ...data.related_documents,
+                    relatedDocumentInput,
+                ]);
+            }
             setRelatedDocumentInput("");
         }
     };
@@ -79,6 +67,15 @@ export default function EditDraft({
         );
     };
 
+    useEffect(() => {
+        const typeIdDescription = {};
+        documentTypes.forEach((type) => {
+            typeIdDescription[type.id.toString()] = type.description;
+        });
+        setTypeIdDescription(typeIdDescription);
+    }, [documentTypes]);
+
+    console.log(errors);
     return (
         <div className="container mx-auto grid items-start gap-10 py-8">
             <Head title="Edit Draft" />
@@ -188,7 +185,10 @@ export default function EditDraft({
                                 <Label htmlFor="title">Title</Label>
                                 <Input
                                     onChange={(e) =>
-                                        setData("title", e.target.value)
+                                        setData(
+                                            "title",
+                                            e.target.value.toUpperCase(),
+                                        )
                                     }
                                     value={data.title}
                                     type="text"
@@ -334,10 +334,21 @@ export default function EditDraft({
                                         )}
                                     </div>
                                 </div>
-                                <InputError
-                                    message={errors.related_documents}
-                                    className="mt-2"
-                                />
+                                <div>
+                                    {Object.keys(errors).map((key, index) => {
+                                        if (
+                                            key.startsWith("related_documents")
+                                        ) {
+                                            return (
+                                                <InputError
+                                                    key={index}
+                                                    message={errors[key]}
+                                                />
+                                            );
+                                        }
+                                    })}
+                                </div>
+
                                 <InputHelper>
                                     - You may add the tracking code of the
                                     documents related to this document.

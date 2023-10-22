@@ -11,9 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('related_documents', function (Blueprint $table) {
-            $table->id();
             $table->string('related_document_code');
-
             $table->foreignId('document_id')->constrained('documents');
             $table->foreign('related_document_code')->references('tracking_code')->on('documents');
         });
