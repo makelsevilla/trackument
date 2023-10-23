@@ -12,18 +12,18 @@ class DraftDocumentFileController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $document_id = $request->query('document_id');
+        $role = $request->query('role');
 
-        return json_encode(["message" => "Hello World!"]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $document_files = DB::table('draft_document_files')->join('users', 'draft_document_files.uploader_id', '=', 'users.id')->select('draft_document_files.*', 'users.name as uploader_name')->get();
+//        $document_files = DB::table('draft_document_files')->join('users', 'draft_document_files.uploader_id', '=', 'users.id')->select('draft_document_files.*', 'users.name')->where('draft_document_id', '=', $document_id)->where('role', '=', $role)->get();
+        /*foreach ($document_files as $key => $value) {
+            error_log('key: ' . $key . ' value: ' . $value);
+        }*/
+        return response()->json($document_files);
+//        return json_encode(["message" => "Hello World!"]);
     }
 
     /**
@@ -68,75 +68,13 @@ class DraftDocumentFileController extends Controller
         return response()->json(["message" => "File added successfully."]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(DraftDocumentFile $draftDocumentFile)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(DraftDocumentFile $draftDocumentFile)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, DraftDocumentFile $draftDocumentFile)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DraftDocumentFile $draftDocumentFile)
+    public function destroy($draftDocumentFile)
     {
-        //
+        DB::table('draft_document_files')->where('id', '=', $draftDocumentFile)->delete();
+        return response()->json(["message" => "File deleted successfully."]);
     }
-
-    public function saveFile(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|file|max:1024',
-        ]);
-
-        $file = $request->file('file');
-        $file->store('public');
-
-        return json_encode(["message" => "Hello World!"]);
-    }
-
-    public function saveLink(Request $request, $document_id)
-    {
-        $validated = $request->validate([
-            'link' => 'required|url',
-            'fileName' => 'required|string',
-            'role' => 'required|in:backup,attachment'
-        ]);
-
-        $file = new DraftDocumentFile();
-        $file->draft_document_id = $document_id;
-        $file->file_path = $validated['link'];
-        $file->file_name = $validated['fileName'];
-        $file['role'] = $validated['role'];
-
-        if (!$file->save()) {
-            return response()->json(["message" => "Error saving file"], 500);
-        }
-
-        return json_encode(["message" => "Hello World!"]);
-    }
-
-    public function getDocumentFiles($document_id)
-    {
-        $files = DB::table('draft_document_files')->where('draft_document_id', $document_id)->get();
-        return json_encode($files);
-    }
-
 }

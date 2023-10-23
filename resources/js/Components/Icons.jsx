@@ -3,8 +3,10 @@ import {
     ArrowRight,
     Bell,
     CheckCheck,
+    ChevronDown,
     ChevronLeft,
     ChevronRight,
+    ChevronsUpDown,
     Command,
     Files,
     Folder,
@@ -19,6 +21,7 @@ import {
     PencilLine,
     Settings,
     StopCircle,
+    Trash,
     User,
     X,
 } from "lucide-react";
@@ -46,6 +49,9 @@ const Icons = {
     activity: Activity,
     pencilLine: PencilLine,
     loading: Loader2,
+    chevronDown: ChevronDown,
+    chevronsUpDown: ChevronsUpDown,
+    trash: Trash,
 };
 
 export default Icons;

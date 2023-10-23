@@ -23,6 +23,7 @@ import { Textarea } from "@/Components/ui/textarea.jsx";
 import { ScrollArea } from "@/Components/ui/scroll-area.jsx";
 import { Checkbox } from "@/Components/ui/checkbox.jsx";
 import DocumentFilesForm from "@/Pages/Document/DocumentFilesForm.jsx";
+import { Separator } from "@/Components/ui/separator.jsx";
 
 export default function EditDraft({
     auth,
@@ -359,6 +360,10 @@ export default function EditDraft({
                                 </InputHelper>
                             </div>
 
+                            <Separator className="my-6" />
+                            <h2 className="text-xl font-semibold">
+                                Document Files
+                            </h2>
                             {/* File Backup */}
                             <DocumentFilesForm
                                 documentId={draftDocument.id}
