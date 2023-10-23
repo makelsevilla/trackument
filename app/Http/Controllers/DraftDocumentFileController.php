@@ -31,34 +31,31 @@ class DraftDocumentFileController extends Controller
      */
     public function store(Request $request)
     {
+        /*$inputs = $request->all();
+        foreach ($inputs as $key => $value) {
+            error_log($key . ': ' . $value);
+        }*/
         $user = $request->user();
         $validated = $request->validate([
             'type' => 'required|in:file,link',
             'role' => 'required|in:backup,attachment',
             'fileName' => 'required|string|max:255',
-            'documentId' => 'required|exists:draft_documents,id'
+            'documentId' => 'required|exists:draft_documents,id',
+            'file' => ['required_if:type,file', File::types(['pdf', 'jpg', 'png', 'docx', 'doc'])->max(10 * 1024)],
+            'link' => ['required_if:type,link', 'url']
         ]);
 
         $file_path = "";
         if ($validated['type'] == 'file') {
-            $validated = array_merge($validated, $request->validate([
-                'file' => ['required', File::types(['pdf', 'jpg', 'png', 'docx', 'doc'])->max(10 * 1024)],
-            ]));
-            // TODO: Save file to storage
+            // TODO Save the file to local storage then assign to the $file_path variable to location and filename of the file.
 
-        } else if ($validated['type'] == 'link') {
-            $validated = array_merge($validated, $request->validate([
-                'link' => 'required|url',
-            ]));
-
-            $file_path = $validated['link'];
         } else {
-            return response()->json(["message" => "Invalid type"], 400);
+            $file_path = $validated['link'];
         }
 
         $file = new DraftDocumentFile();
         $file['draft_document_id'] = $validated['documentId'];
-        $file['file_name'] = $validated['fileName'];
+        $file['file_name'] = $validated['fileName'] ?? "";
         $file['role'] = $validated['role'];
         $file['file_type'] = $validated['type'];
         $file['uploader_id'] = $user->id;

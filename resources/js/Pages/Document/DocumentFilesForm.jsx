@@ -12,7 +12,12 @@ import {
 } from "@/Components/ui/tabs.jsx";
 import { Button } from "@/Components/ui/button.jsx";
 
-function DocumentFilesForm({ role = "backup", documentId = null, ...props }) {
+function DocumentFilesForm({
+    role = "backup",
+    documentId = null,
+    withNameInput = false,
+    ...props
+}) {
     const [draftDocumentFiles, setDraftDocumentFiles] = useState(null);
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState("");
@@ -27,7 +32,8 @@ function DocumentFilesForm({ role = "backup", documentId = null, ...props }) {
     };
 
     const handleSubmit = (type = "file") => {
-        e.preventDefault();
+        // resetting the errors object
+        setErrors({});
 
         const data = {
             fileName: fileName,
@@ -43,13 +49,23 @@ function DocumentFilesForm({ role = "backup", documentId = null, ...props }) {
         }
 
         axios
-            .post(route("draft.document_files.store"), { ...data })
+            .post(
+                route("draft.document_files.store"),
+                { ...data },
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                },
+            )
             .then((response) => {
-                console.log(response.data);
+                console.log(response);
                 getDraftDocumentFiles();
             })
             .catch((error) => {
+                console.log(error.response.data);
                 if (error.response.status === 422) {
+                    // console.log(error.response.data.errors);
                     setErrors(error.response.data.errors);
                 }
             });
@@ -63,21 +79,24 @@ function DocumentFilesForm({ role = "backup", documentId = null, ...props }) {
         <div {...props}>
             <div className="grid w-full gap-1.5">
                 <Label>File Backup</Label>
-                <div>
-                    <Input
-                        onChange={(e) => setFileName(e.target.value)}
-                        value={fileName}
-                        placeholder="File Name"
-                    />
-                    <InputError
-                        message="File name is required."
-                        className="mt-2"
-                    />
-                </div>
+                {withNameInput && (
+                    <div>
+                        <Input
+                            onChange={(e) => setFileName(e.target.value)}
+                            value={fileName}
+                            placeholder="File Name"
+                        />
+                        <InputError
+                            message={errors.fileName}
+                            className="mt-2"
+                        />
+                    </div>
+                )}
+
                 <Tabs defaultValue="upload">
                     <TabsList>
                         <TabsTrigger value="upload">Upload</TabsTrigger>
-                        <TabsTrigger value="url">URL</TabsTrigger>
+                        <TabsTrigger value="link">Link</TabsTrigger>
                     </TabsList>
                     <TabsContent value="upload">
                         <div className="flex items-center gap-2">
@@ -89,13 +108,14 @@ function DocumentFilesForm({ role = "backup", documentId = null, ...props }) {
                             <Button
                                 variant="secondary"
                                 size="sm"
-                                onClick={handleSubmit}
+                                onClick={() => handleSubmit("file")}
                             >
                                 Upload
                             </Button>
                         </div>
+                        <InputError message={errors.file} className="mt-2" />
                     </TabsContent>
-                    <TabsContent value="url">
+                    <TabsContent value="link">
                         <div className="flex items-center gap-2">
                             <Input
                                 value={fileLink}
@@ -106,15 +126,15 @@ function DocumentFilesForm({ role = "backup", documentId = null, ...props }) {
                             <Button
                                 variant="secondary"
                                 size="sm"
-                                onClick={handleSubmit}
+                                onClick={() => handleSubmit("link")}
                             >
                                 Add
                             </Button>
                         </div>
+                        <InputError message={errors.link} className="mt-2" />
                     </TabsContent>
                 </Tabs>
 
-                <InputError message="error message" className="mt-2" />
                 <InputHelper>
                     <p>- Max 10 MB file size.</p>
                     <p>

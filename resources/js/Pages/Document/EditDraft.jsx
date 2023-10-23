@@ -360,7 +360,12 @@ export default function EditDraft({
                             </div>
 
                             {/* File Backup */}
-                            <DocumentFilesForm className="mt-4" />
+                            <DocumentFilesForm
+                                documentId={draftDocument.id}
+                                role="backup"
+                                withNameInput
+                                className="mt-4"
+                            />
                         </div>
                     </div>
                 </div>
