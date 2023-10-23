@@ -42,7 +42,6 @@ export default function EditDraft({
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // console.log(data);
 
         put(route("draft.documents.update", { document: draftDocument.id }));
     };
@@ -75,7 +74,6 @@ export default function EditDraft({
         setTypeIdDescription(typeIdDescription);
     }, [documentTypes]);
 
-    console.log(data.related_documents);
     return (
         <div className="container mx-auto grid items-start gap-10 py-8">
             <Head title="Edit Draft" />

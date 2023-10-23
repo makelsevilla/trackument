@@ -12,12 +12,12 @@ import {
 } from "@/Components/ui/tabs.jsx";
 import { Button } from "@/Components/ui/button.jsx";
 
-function DocumentFilesForm({ ...props }) {
+function DocumentFilesForm({ role = "backup", documentId = null, ...props }) {
     const [draftDocumentFiles, setDraftDocumentFiles] = useState(null);
-    const { data, setData, errors, post } = useForm({
-        data: "",
-        type: "url",
-    });
+    const [file, setFile] = useState(null);
+    const [fileName, setFileName] = useState("");
+    const [fileLink, setFileLink] = useState("");
+    const [errors, setErrors] = useState({});
 
     const getDraftDocumentFiles = () => {
         axios
@@ -26,11 +26,33 @@ function DocumentFilesForm({ ...props }) {
             .catch((error) => console.log(error));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (type = "file") => {
         e.preventDefault();
-        post(route("draft.files.store"), {
-            onSuccess: () => getDraftDocumentFiles(),
-        });
+
+        const data = {
+            fileName: fileName,
+            documentId: documentId,
+            role: role,
+            type: type,
+        };
+
+        if (data.type === "file") {
+            data.file = file;
+        } else {
+            data.link = fileLink;
+        }
+
+        axios
+            .post(route("draft.document_files.store"), { ...data })
+            .then((response) => {
+                console.log(response.data);
+                getDraftDocumentFiles();
+            })
+            .catch((error) => {
+                if (error.response.status === 422) {
+                    setErrors(error.response.data.errors);
+                }
+            });
     };
 
     useEffect(() => {
@@ -41,6 +63,17 @@ function DocumentFilesForm({ ...props }) {
         <div {...props}>
             <div className="grid w-full gap-1.5">
                 <Label>File Backup</Label>
+                <div>
+                    <Input
+                        onChange={(e) => setFileName(e.target.value)}
+                        value={fileName}
+                        placeholder="File Name"
+                    />
+                    <InputError
+                        message="File name is required."
+                        className="mt-2"
+                    />
+                </div>
                 <Tabs defaultValue="upload">
                     <TabsList>
                         <TabsTrigger value="upload">Upload</TabsTrigger>
@@ -49,12 +82,7 @@ function DocumentFilesForm({ ...props }) {
                     <TabsContent value="upload">
                         <div className="flex items-center gap-2">
                             <Input
-                                onChange={(e) =>
-                                    setData({
-                                        data: e.target.files[0],
-                                        type: "file",
-                                    })
-                                }
+                                onChange={(e) => setFile(e.target.files[0])}
                                 id="backup_file"
                                 type="file"
                             />
@@ -70,12 +98,8 @@ function DocumentFilesForm({ ...props }) {
                     <TabsContent value="url">
                         <div className="flex items-center gap-2">
                             <Input
-                                onChange={(e) =>
-                                    setData({
-                                        data: e.target.value,
-                                        type: "url",
-                                    })
-                                }
+                                value={fileLink}
+                                onChange={(e) => setFileLink(e.target.value)}
                                 placeholder="e.g https://www.example-site.com/"
                                 type="text"
                             />
@@ -90,7 +114,7 @@ function DocumentFilesForm({ ...props }) {
                     </TabsContent>
                 </Tabs>
 
-                <InputError message={errors.data} className="mt-2" />
+                <InputError message="error message" className="mt-2" />
                 <InputHelper>
                     <p>- Max 10 MB file size.</p>
                     <p>
