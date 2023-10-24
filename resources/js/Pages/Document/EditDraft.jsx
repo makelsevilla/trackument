@@ -1,5 +1,5 @@
 import { Button } from "@/Components/ui/button.jsx";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
 import Icons from "@/Components/Icons.jsx";
 import { Label } from "@/Components/ui/label.jsx";
 import { Input } from "@/Components/ui/input.jsx";
@@ -41,10 +41,12 @@ export default function EditDraft({
         related_documents: document?.related_documents || [],
     });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        put(route("documents.update", { document: document.id }));
+    const handleSubmit = (type = "update") => {
+        if (type === "update") {
+            put(route("documents.update", { document: document.id }));
+        } else if (type === "finalize") {
+            put(route("documents.finalize", { document: document.id }));
+        }
     };
 
     const addRelatedDocumentToData = (e) => {
@@ -95,32 +97,18 @@ export default function EditDraft({
                         <div className="flex space-x-4">
                             <Button
                                 size="sm"
-                                onClick={handleSubmit}
+                                onClick={(e) => handleSubmit("update")}
                                 disabled={processing}
                                 variant="secondary"
                             >
-                                {processing ? (
-                                    <>
-                                        <Icons.loading className="mr-2 h-4 w-4 animate-spin" />
-                                        Saving...
-                                    </>
-                                ) : (
-                                    <span>Save</span>
-                                )}
+                                <span>Save</span>
                             </Button>
                             <Button
                                 size="sm"
-                                onClick={handleSubmit}
+                                onClick={(e) => handleSubmit("finalize")}
                                 disabled={processing}
                             >
-                                {processing ? (
-                                    <>
-                                        <Icons.loading className="mr-2 h-4 w-4 animate-spin" />
-                                        Finalizing...
-                                    </>
-                                ) : (
-                                    <span>Finalize</span>
-                                )}
+                                <span>Finalize</span>
                             </Button>
                         </div>
                     </div>

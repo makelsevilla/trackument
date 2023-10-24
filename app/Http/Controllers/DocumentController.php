@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FinalizeDocumentRequest;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
 use App\Models\Document;
@@ -85,21 +86,9 @@ class DocumentController extends Controller
         $document->update($validated);
 
         // handling related documents
-        try {
-
-            DB::table('related_documents')->where('document_id', $document->id)->delete();
-            if (isset($validated['related_documents'])) {
-                foreach ($validated['related_documents'] as $related_document) {
-                    DB::table('draft_related_documents')->insert([
-                        'document_id' => $document->id,
-                        'related_document_code' => $related_document
-                    ]);
-                }
-            }
-        } catch (\Exception $e) {
-            return back()->with(['message' => "An error occured while saving the related document/s.", 'status' => 'error']);
+        if (isset($validated['related_documents'])) {
+            $document->saveRelatedDocuments($document->id, $validated['related_documents']);
         }
-
 
         return back()->with(['message' => "Document saved successfully.", 'status' => 'success']);
     }
@@ -109,6 +98,10 @@ class DocumentController extends Controller
      */
     public function destroy(Document $document)
     {
+        $user = auth()->user();
+        if ($document->owner_id !== $user->id && $document->current_owner_id !== $user->id && $document->status === 'terminal') {
+            abort(403, 'Unauthorized action. You can only delete the document if you are the owner, you currently own the document, and the document is not tagged as terminal.');
+        }
 
         if ($document['is_draft']) {
             // delete document and its files permanently
@@ -118,14 +111,45 @@ class DocumentController extends Controller
                 return back()->with(['message' => "Document deleted successfully.", 'status' => 'success']);
             }
         } else {
-            // soft delete document
+            // the document is not a draft, so we soft delete it
             if ($document->delete()) {
                 return back()->with(['message' => "Document deleted successfully.", 'status' => 'success']);
             }
         }
 
-        // if no successfull deletion, return this
+        // if no successfull deletion, return error
         return back()->with(['message' => "An error occured while deleting the document.", 'status' => 'error']);
 
     }
+
+    public function finalize(FinalizeDocumentRequest $request, Document $document)
+    {
+        $validated = $request->validated();
+
+        // handling related documents
+        if (isset($validated['related_documents'])) {
+            $document->saveRelatedDocuments($document->id, $validated['related_documents']);
+        }
+
+        // fill the document with validated data
+        $document->fill($validated);
+
+        // generate tracking code
+        $document_type = DB::table('document_types')->where('id', $document->document_type_id)->select('abbreviation')->first();
+        $document->tracking_code = $document->generateTrackingCode($document_type->abbreviation);
+
+        $document->is_draft = false;
+        $document->status = 'available';
+
+        if (!$document->save()) {
+            // if saving failed, return error
+            return back()->with(['message' => "An error occured while finalizing the document.", 'status' => 'error']);
+
+        }
+
+        return back()->with(['message' => "Document finalized successfully.", 'status' => 'success']);
+    }
+
+
 }
+

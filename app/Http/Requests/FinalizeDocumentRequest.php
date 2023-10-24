@@ -4,9 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class UpdateDocumentRequest extends FormRequest
+class FinalizeDocumentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,9 +27,10 @@ class UpdateDocumentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'document_type_id' => 'nullable|exists:document_types,id',
+            'document_type_id' => 'required|exists:document_types,id',
             'title' => 'required|regex:/^[a-zA-Z0-9\s]+$/|max:255',
             'description' => 'nullable|string',
+            'purpose' => 'required|array',
             'purpose.*' => 'nullable|string',
             'related_documents.*' => ['nullable', 'exists:documents,tracking_code']
         ];

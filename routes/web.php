@@ -41,6 +41,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('documents', \App\Http\Controllers\DocumentController::class)->except(['show', 'create']);
+    Route::put('/documents/{document}/finalize', [\App\Http\Controllers\DocumentController::class, 'finalize'])->name('documents.finalize');
     Route::resource('document_files', \App\Http\Controllers\DocumentFileController::class)->only(['index', 'store', 'destroy']);
     Route::get('/download/{document_file}', [\App\Http\Controllers\FileController::class, 'download'])->name('file.download');
 });

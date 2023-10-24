@@ -132,13 +132,12 @@ function DocumentFilesForm({
     return (
         <div {...props}>
             <div className="grid w-full gap-1.5">
-                <Label>File Backup</Label>
+                <Label>File Name</Label>
                 {withNameInput && (
                     <div>
                         <Input
                             onChange={(e) => setFileName(e.target.value)}
                             value={fileName}
-                            placeholder="File Name"
                         />
                         <InputError
                             message={errors.fileName}
@@ -234,8 +233,25 @@ function DocumentFilesForm({
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
+                                                        asChild
                                                     >
-                                                        <Icons.download className="h-4 w-4" />
+                                                        <a
+                                                            href={
+                                                                file.file_type ===
+                                                                "file"
+                                                                    ? route(
+                                                                          "file.download",
+                                                                          {
+                                                                              document_file:
+                                                                                  file.id,
+                                                                          },
+                                                                      )
+                                                                    : file.file_path
+                                                            }
+                                                            target="_blank"
+                                                        >
+                                                            <Icons.download className="h-4 w-4" />
+                                                        </a>
                                                     </Button>
                                                     {user.id ===
                                                         file.uploader_id && (

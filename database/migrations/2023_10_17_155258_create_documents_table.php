@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('title')->default('Untitled Document');
             $table->json('purpose')->nullable();
             $table->text('description')->nullable();
-            $table->string('status')->default('unavailable')->comment("available, unavailable, archived"); // available means it is available for transfer, archived means that it is tagged as terminal
+            $table->string('status')->default('unavailable')->comment("available, unavailable, terminal"); // available means it is available for transfer, unavailable means it is not available for transfer, terminal means it is not available for transfer and it is the final owner
             $table->string('tracking_code')->unique()->nullable();
             $table->boolean('is_draft')->default(true);
             $table->timestamps();
