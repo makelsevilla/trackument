@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->dateTime('uploaded_at')->useCurrent();
 
             $table->foreignId('uploader_id')->constrained('users');
-            $table->foreignId('document_id')->constrained('documents')->onDelete('cascade');
+            $table->foreignId('document_id')->constrained('documents');
         });
     }
 

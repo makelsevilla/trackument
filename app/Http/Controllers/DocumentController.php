@@ -109,6 +109,23 @@ class DocumentController extends Controller
      */
     public function destroy(Document $document)
     {
-        // if isDraft, force delete
+
+        if ($document['is_draft']) {
+            // delete document and its files permanently
+            if ($document->forceDelete()) {
+                DB::table('document_files')->where('document_id', $document->id)->delete();
+
+                return back()->with(['message' => "Document deleted successfully.", 'status' => 'success']);
+            }
+        } else {
+            // soft delete document
+            if ($document->delete()) {
+                return back()->with(['message' => "Document deleted successfully.", 'status' => 'success']);
+            }
+        }
+
+        // if no successfull deletion, return this
+        return back()->with(['message' => "An error occured while deleting the document.", 'status' => 'error']);
+
     }
 }
