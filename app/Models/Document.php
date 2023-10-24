@@ -31,16 +31,24 @@ class Document extends Model
         return $doc_type_abbr . "-" . $this->id . "-" . $this->owner_id;
     }
 
-    public function saveRelatedDocuments(string $document_id, array $related_documents)
+    public function saveRelatedDocuments($document_id, $related_documents)
     {
         try {
             DB::table('related_documents')->where('document_id', $document_id)->delete();
-            foreach ($related_documents as $related_document) {
-                DB::table('draft_related_documents')->insert([
-                    'document_id' => $document_id,
-                    'related_document_code' => $related_document
-                ]);
+            if (count($related_documents)) {
+
+                foreach ($related_documents as $related_document) {
+                    $success = DB::table('related_documents')->insert([
+                        'document_id' => $document_id,
+                        'related_document_code' => $related_document
+                    ]);
+
+                    if (!$success) {
+                        return back()->with(['message' => "An error occured while saving the related document/s.", 'status' => 'error']);
+                    }
+                }
             }
+
         } catch (\Exception $e) {
             return back()->with(['message' => "An error occured while saving the related document/s.", 'status' => 'error']);
         }

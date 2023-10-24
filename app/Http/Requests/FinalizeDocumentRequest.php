@@ -32,6 +32,7 @@ class FinalizeDocumentRequest extends FormRequest
             'description' => 'nullable|string',
             'purpose' => 'required|array',
             'purpose.*' => 'nullable|string',
+            'related_documents' => 'nullable|array',
             'related_documents.*' => ['nullable', 'exists:documents,tracking_code']
         ];
     }

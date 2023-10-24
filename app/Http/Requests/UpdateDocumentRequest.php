@@ -32,6 +32,7 @@ class UpdateDocumentRequest extends FormRequest
             'title' => 'required|regex:/^[a-zA-Z0-9\s]+$/|max:255',
             'description' => 'nullable|string',
             'purpose.*' => 'nullable|string',
+            'related_documents' => 'nullable|array',
             'related_documents.*' => ['nullable', 'exists:documents,tracking_code']
         ];
     }

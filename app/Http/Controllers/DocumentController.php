@@ -68,7 +68,9 @@ class DocumentController extends Controller
 
         $document_types = DB::table('document_types')->select('id', 'name', 'description')->get();
         $document_purposes = DB::table('document_purposes')->get();
-        $related_documents = DB::table('related_documents')->where('document_id', $document->id)->select('related_document_code')->get();
+
+        $related_documents = DB::table('related_documents')->where('document_id', $document->id)->select('related_document_code')->get()->toArray();
+        $related_documents = array_column($related_documents, 'related_document_code');
 
         return Inertia::render('Document/EditDraft', [
             'document' => array_merge($document->toArray(), ['related_documents' => $related_documents]),
