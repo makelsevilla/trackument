@@ -39,7 +39,6 @@ class DocumentFileController extends Controller
 
         $file_path = "";
         if ($validated['type'] == 'file') {
-            // TODO Save the file to local storage then assign to the $file_path variable to location and filename of the file.
             $file_path = $request->file('file')->store('documents/files/');
 
         } else {
@@ -67,17 +66,24 @@ class DocumentFileController extends Controller
      */
     public function destroy(DocumentFile $document_file)
     {
-        if (!$document_file->delete()) {
-            return response()->json(["message" => "Error deleting file."], 500);
-        }
-
-        // determine if the file is a link or a file
-        // if a file, delete the file from storage
-        if ($document_file['file_type'] == 'file') {
-            if (!Storage::delete($document_file['file_path'])) {
+        // Ensure the file_type and file_path are available
+        if ($document_file->file_type === 'file' && $document_file->file_path) {
+            // Attempt to delete the file from storage
+            if (Storage::delete($document_file->file_path)) {
+                // File deleted successfully, continue with record deletion
+                $document_file->delete();
+                return response()->json(["message" => "File deleted successfully"]);
+            } else {
+                // Error deleting the file
+                return response()->json(["message" => "Error deleting file."], 500);
+            }
+        } else {
+            // If the file type is not 'file' or file_path is missing, just delete the record
+            if ($document_file->delete()) {
+                return response()->json(["message" => "File deleted successfully"]);
+            } else {
                 return response()->json(["message" => "Error deleting file."], 500);
             }
         }
-        return response()->json(["message" => "File deleted successfully."]);
     }
 }

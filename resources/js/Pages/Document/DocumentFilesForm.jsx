@@ -19,6 +19,15 @@ import Icons from "@/Components/Icons.jsx";
 import { Card, CardContent } from "@/Components/ui/card.jsx";
 import axios from "axios";
 import { Progress } from "@/Components/ui/progress.jsx";
+import { usePage } from "@inertiajs/react";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/Components/ui/table.jsx";
 
 function DocumentFilesForm({
     role = "backup",
@@ -33,6 +42,7 @@ function DocumentFilesForm({
     const [errors, setErrors] = useState({});
     const [processing, setProcessing] = useState(false);
     const [progress, setProgress] = useState(0);
+    const user = usePage().props.auth.user;
 
     const getDocumentFiles = () => {
         axios
@@ -186,52 +196,76 @@ function DocumentFilesForm({
                     </div>
                 )}
 
-                {documentFiles.length > 0 && (
+                {documentFiles.length > 0 ? (
                     <Collapsible>
                         <div className="flex items-center space-x-4">
-                            <Label>Backup Files</Label>
                             <CollapsibleTrigger asChild>
-                                <Button variant="ghost">
-                                    <Icons.chevronsUpDown className="h-4 w-4" />
+                                <Button variant="ghost" size="sm">
+                                    View Included Files
+                                    <Icons.chevronsUpDown className="ml-2 h-4 w-4" />
                                 </Button>
                             </CollapsibleTrigger>
                         </div>
 
-                        <CollapsibleContent className="space-y-2 px-2">
-                            {documentFiles.map((file, index) => (
-                                <div
-                                    key={index}
-                                    className="flex items-center gap-2"
-                                >
-                                    <a
-                                        href={
-                                            file.file_type === "file"
-                                                ? route("file.download", {
-                                                      document_file: file.id,
-                                                  })
-                                                : file.file_path
-                                        }
-                                        target="_blank"
-                                        className="flex flex-1 items-center justify-between gap-4 rounded-md border px-4 py-2 shadow-sm hover:shadow-md"
-                                    >
-                                        <div>{file.file_name}</div>
-                                        <div>{file.uploader_name}</div>
-                                        <div>{file.uploaded_at}</div>
-                                    </a>
-                                    <Button
-                                        onClick={() =>
-                                            handleFileDelete(file.id)
-                                        }
-                                        variant="ghost"
-                                        size="icon"
-                                        className="hover:bg-destructive hover:text-destructive-foreground"
-                                    >
-                                        <Icons.trash className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            ))}
+                        <CollapsibleContent className="mt-2 space-y-2 px-2">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Name</TableHead>
+                                        <TableHead>Uploaded By</TableHead>
+                                        <TableHead>Date</TableHead>
+                                        <TableHead>Action</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {documentFiles.map((file, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell>
+                                                {file.file_name}
+                                            </TableCell>
+                                            <TableCell>
+                                                {file.uploader_name}
+                                            </TableCell>
+                                            <TableCell>
+                                                {file.uploaded_at}
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                    >
+                                                        <Icons.download className="h-4 w-4" />
+                                                    </Button>
+                                                    {user.id ===
+                                                        file.uploader_id && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="hover:bg-destructive hover:text-destructive-foreground"
+                                                        >
+                                                            <Icons.trash
+                                                                className="h-4 w-4"
+                                                                onClick={() =>
+                                                                    handleFileDelete(
+                                                                        file.id,
+                                                                    )
+                                                                }
+                                                            />
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </CollapsibleContent>
                     </Collapsible>
+                ) : (
+                    <div className="text-sm text-muted-foreground">
+                        No Files Uploaded.
+                    </div>
                 )}
 
                 <InputHelper>

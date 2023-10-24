@@ -8,6 +8,7 @@ import {
     ChevronRight,
     ChevronsUpDown,
     Command,
+    Download,
     Files,
     Folder,
     HelpCircle,
@@ -52,6 +53,7 @@ const Icons = {
     chevronDown: ChevronDown,
     chevronsUpDown: ChevronsUpDown,
     trash: Trash,
+    download: Download,
 };
 
 export default Icons;
