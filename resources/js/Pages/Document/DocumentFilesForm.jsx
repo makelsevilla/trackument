@@ -204,7 +204,13 @@ function DocumentFilesForm({
                                     className="flex items-center gap-2"
                                 >
                                     <a
-                                        href={file.file_path}
+                                        href={
+                                            file.file_type === "file"
+                                                ? route("file.download", {
+                                                      document_file: file.id,
+                                                  })
+                                                : file.file_path
+                                        }
                                         target="_blank"
                                         className="flex flex-1 items-center justify-between gap-4 rounded-md border px-4 py-2 shadow-sm hover:shadow-md"
                                     >
