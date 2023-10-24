@@ -85,6 +85,7 @@ class DocumentController extends Controller
     public function update(UpdateDocumentRequest $request, Document $document)
     {
         $validated = $request->validated();
+        $validated['title'] = ucwords(strtolower($validated['title']));
         $document->update($validated);
 
         // handling related documents

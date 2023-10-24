@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->default('UNTITLED DOCUMENT');
+            $table->string('title')->default('Untitled Document');
             $table->json('purpose')->nullable();
             $table->text('description')->nullable();
             $table->string('status')->default('unavailable')->comment("available, unavailable, terminal"); // available means it is available for transfer, unavailable means it is not available for transfer, terminal means it is not available for transfer and it is the final owner

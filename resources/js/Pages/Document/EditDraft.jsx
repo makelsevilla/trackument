@@ -24,6 +24,7 @@ import { ScrollArea } from "@/Components/ui/scroll-area.jsx";
 import { Checkbox } from "@/Components/ui/checkbox.jsx";
 import DocumentFilesForm from "@/Pages/Document/DocumentFilesForm.jsx";
 import { Separator } from "@/Components/ui/separator.jsx";
+import { ucwords } from "@/lib/utils.js";
 
 export default function EditDraft({
     auth,
@@ -35,18 +36,20 @@ export default function EditDraft({
     const [relatedDocumentInput, setRelatedDocumentInput] = useState("");
     const { data, setData, errors, put, processing } = useForm({
         document_type_id: document["document_type_id"]?.toString(),
-        title: document.title,
+        title: document.title || "",
         description: document.description || "",
         purpose: document.purpose || [],
         related_documents: document?.related_documents || [],
     });
 
     const handleSubmit = (type = "update") => {
+        let routeName = "";
         if (type === "update") {
-            put(route("documents.update", { document: document.id }));
+            routeName = "documents.update";
         } else if (type === "finalize") {
-            put(route("documents.finalize", { document: document.id }));
+            routeName = "documents.finalize";
         }
+        put(route(routeName, { document: document.id }));
     };
 
     const addRelatedDocumentToData = (e) => {
@@ -174,7 +177,7 @@ export default function EditDraft({
                                     onChange={(e) =>
                                         setData(
                                             "title",
-                                            e.target.value.toUpperCase(),
+                                            ucwords(e.target.value),
                                         )
                                     }
                                     value={data.title}
