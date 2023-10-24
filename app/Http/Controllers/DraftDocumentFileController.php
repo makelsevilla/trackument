@@ -17,13 +17,8 @@ class DraftDocumentFileController extends Controller
         $document_id = $request->query('document_id');
         $role = $request->query('role');
 
-        $document_files = DB::table('draft_document_files')->join('users', 'draft_document_files.uploader_id', '=', 'users.id')->select('draft_document_files.*', 'users.name as uploader_name')->get();
-//        $document_files = DB::table('draft_document_files')->join('users', 'draft_document_files.uploader_id', '=', 'users.id')->select('draft_document_files.*', 'users.name')->where('draft_document_id', '=', $document_id)->where('role', '=', $role)->get();
-        /*foreach ($document_files as $key => $value) {
-            error_log('key: ' . $key . ' value: ' . $value);
-        }*/
+        $document_files = DB::table('draft_document_files')->join('users', 'draft_document_files.uploader_id', '=', 'users.id')->where('draft_document_files.draft_document_id', '=', $document_id)->where('draft_document_files.role', '=', $role)->select('draft_document_files.*', 'users.name as uploader_name')->get();
         return response()->json($document_files);
-//        return json_encode(["message" => "Hello World!"]);
     }
 
     /**
@@ -48,6 +43,7 @@ class DraftDocumentFileController extends Controller
         $file_path = "";
         if ($validated['type'] == 'file') {
             // TODO Save the file to local storage then assign to the $file_path variable to location and filename of the file.
+            $file_path = $request->file('file')->store('documents/files/');
 
         } else {
             $file_path = $validated['link'];

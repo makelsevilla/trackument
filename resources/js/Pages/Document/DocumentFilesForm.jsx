@@ -18,6 +18,7 @@ import {
 import Icons from "@/Components/Icons.jsx";
 import { Card, CardContent } from "@/Components/ui/card.jsx";
 import axios from "axios";
+import { Progress } from "@/Components/ui/progress.jsx";
 
 function DocumentFilesForm({
     role = "backup",
@@ -30,6 +31,8 @@ function DocumentFilesForm({
     const [fileName, setFileName] = useState("");
     const [fileLink, setFileLink] = useState("");
     const [errors, setErrors] = useState({});
+    const [processing, setProcessing] = useState(false);
+    const [progress, setProgress] = useState(0);
 
     const getDraftDocumentFiles = () => {
         axios
@@ -50,6 +53,7 @@ function DocumentFilesForm({
     }
 
     const handleSubmit = (type = "file") => {
+        setProcessing(true);
         // resetting the errors object
         setErrors({});
 
@@ -74,6 +78,12 @@ function DocumentFilesForm({
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
+                    onUploadProgress: (progressEvent) => {
+                        let percentCompleted = Math.round(
+                            (progressEvent.loaded * 100) / progressEvent.total,
+                        );
+                        setProgress(percentCompleted);
+                    },
                 },
             )
             .then((response) => {
@@ -87,7 +97,8 @@ function DocumentFilesForm({
                     // console.log(error.response.data.errors);
                     setErrors(error.response.data.errors);
                 }
-            });
+            })
+            .finally(() => setProcessing(false));
     };
 
     function handleFileDelete(fileId) {
@@ -108,7 +119,7 @@ function DocumentFilesForm({
         getDraftDocumentFiles();
     }, []);
 
-    console.log(draftDocumentFiles);
+    // console.log(draftDocumentFiles);
     return (
         <div {...props}>
             <div className="grid w-full gap-1.5">
@@ -127,7 +138,7 @@ function DocumentFilesForm({
                     </div>
                 )}
 
-                <Tabs defaultValue="upload">
+                <Tabs className="mt-4" defaultValue="upload">
                     <TabsList>
                         <TabsTrigger value="upload">Upload</TabsTrigger>
                         <TabsTrigger value="link">Link</TabsTrigger>
@@ -140,6 +151,7 @@ function DocumentFilesForm({
                                 type="file"
                             />
                             <Button
+                                disabled={processing}
                                 variant="secondary"
                                 size="sm"
                                 onClick={() => handleSubmit("file")}
@@ -158,6 +170,7 @@ function DocumentFilesForm({
                                 type="text"
                             />
                             <Button
+                                disabled={processing}
                                 variant="secondary"
                                 size="sm"
                                 onClick={() => handleSubmit("link")}
@@ -168,6 +181,11 @@ function DocumentFilesForm({
                         <InputError message={errors.link} className="mt-2" />
                     </TabsContent>
                 </Tabs>
+                {processing && (
+                    <div>
+                        <Progress value={progress} />
+                    </div>
+                )}
 
                 {draftDocumentFiles && (
                     <Collapsible>
@@ -182,11 +200,13 @@ function DocumentFilesForm({
 
                         <CollapsibleContent className="space-y-2 px-2">
                             {draftDocumentFiles.map((file, index) => (
-                                <div className="flex items-center gap-2">
+                                <div
+                                    key={index}
+                                    className="flex items-center gap-2"
+                                >
                                     <a
                                         href={file.file_path}
                                         target="_blank"
-                                        key={index}
                                         className="flex flex-1 items-center justify-between gap-4 rounded-md border px-4 py-2 shadow-sm hover:shadow-md"
                                     >
                                         <div>{file.file_name}</div>
@@ -202,7 +222,6 @@ function DocumentFilesForm({
                                         className="hover:bg-destructive hover:text-destructive-foreground"
                                     >
                                         <Icons.trash className="h-4 w-4" />
-                                        {file.id}
                                     </Button>
                                 </div>
                             ))}

@@ -44,6 +44,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('draft/documents', \App\Http\Controllers\DraftDocumentController::class)->except(['show', 'create']);
         Route::resource('draft/document_files', \App\Http\Controllers\DraftDocumentFileController::class)->only(['store', 'destroy', 'index']);
     });
+
+    Route::get('/download/{filename}', [\App\Http\Controllers\FileController::class, 'download'])->name('file.download');
 });
 
 
