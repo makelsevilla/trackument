@@ -4,23 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\DocumentFile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\File;
 
 class DocumentFileController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $document_id = $request->query('document_id');
+        $role = $request->query('role');
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $document_files = DB::table('document_files')->join('users', 'document_files.uploader_id', '=', 'users.id')->where('document_files.document_id', '=', $document_id)->where('document_files.role', '=', $role)->select('document_files.*', 'users.name as uploader_name')->get();
+        return response()->json($document_files);
     }
 
     /**
@@ -28,38 +26,50 @@ class DocumentFileController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = $request->user();
+        $validated = $request->validate([
+            'type' => 'required|in:file,link',
+            'role' => 'required|in:backup,attachment',
+            'fileName' => 'required|string|max:255',
+            'documentId' => 'required|exists:documents,id',
+            'file' => ['required_if:type,file', File::types(['pdf', 'jpg', 'png', 'docx', 'doc'])->max(10 * 1024)],
+            'link' => ['required_if:type,link', 'url']
+        ]);
+
+        $file_path = "";
+        if ($validated['type'] == 'file') {
+            // TODO Save the file to local storage then assign to the $file_path variable to location and filename of the file.
+            $file_path = $request->file('file')->store('documents/files/');
+
+        } else {
+            $file_path = $validated['link'];
+        }
+
+        $file = new DocumentFile();
+        $file['document_id'] = $validated['documentId'];
+        $file['file_name'] = $validated['fileName'] ?? "";
+        $file['role'] = $validated['role'];
+        $file['file_type'] = $validated['type'];
+        $file['uploader_id'] = $user->id;
+        $file['file_path'] = $file_path;
+
+        if (!$file->save()) {
+            return response()->json(["message" => "Error saving to database."], 500);
+        }
+
+        return response()->json(["message" => "File added successfully."]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(DocumentFile $documentFile)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(DocumentFile $documentFile)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, DocumentFile $documentFile)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DocumentFile $documentFile)
+    public function destroy(DocumentFile $document_file)
     {
-        //
+        if (!$document_file->delete()) {
+            return response()->json(["message" => "Error deleting file."], 500);
+        }
+
+        return response()->json(["message" => "File deleted successfully."]);
     }
 }

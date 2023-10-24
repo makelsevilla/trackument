@@ -26,7 +26,7 @@ function DocumentFilesForm({
     withNameInput = false,
     ...props
 }) {
-    const [draftDocumentFiles, setDraftDocumentFiles] = useState(null);
+    const [documentFiles, setDocumentFiles] = useState([]);
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState("");
     const [fileLink, setFileLink] = useState("");
@@ -34,15 +34,15 @@ function DocumentFilesForm({
     const [processing, setProcessing] = useState(false);
     const [progress, setProgress] = useState(0);
 
-    const getDraftDocumentFiles = () => {
+    const getDocumentFiles = () => {
         axios
             .get(
-                route("draft.document_files.index", {
+                route("document_files.index", {
                     document_id: documentId,
                     role: role,
                 }),
             )
-            .then((response) => setDraftDocumentFiles(response.data))
+            .then((response) => setDocumentFiles(response.data))
             .catch((error) => console.log(error));
     };
 
@@ -72,7 +72,7 @@ function DocumentFilesForm({
 
         axios
             .post(
-                route("draft.document_files.store"),
+                route("document_files.store"),
                 { ...data },
                 {
                     headers: {
@@ -89,7 +89,7 @@ function DocumentFilesForm({
             .then((response) => {
                 // console.log(response);
                 resetData();
-                getDraftDocumentFiles();
+                getDocumentFiles();
             })
             .catch((error) => {
                 console.log(error.response.data);
@@ -104,22 +104,21 @@ function DocumentFilesForm({
     function handleFileDelete(fileId) {
         axios
             .delete(
-                route("draft.document_files.destroy", {
+                route("document_files.destroy", {
                     document_file: fileId,
                 }),
             )
             .then((response) => {
                 console.log(response);
-                getDraftDocumentFiles();
+                getDocumentFiles();
             })
             .catch((error) => console.log(error));
     }
 
     useEffect(() => {
-        getDraftDocumentFiles();
+        getDocumentFiles();
     }, []);
 
-    // console.log(draftDocumentFiles);
     return (
         <div {...props}>
             <div className="grid w-full gap-1.5">
@@ -187,7 +186,7 @@ function DocumentFilesForm({
                     </div>
                 )}
 
-                {draftDocumentFiles && (
+                {documentFiles.length > 0 && (
                     <Collapsible>
                         <div className="flex items-center space-x-4">
                             <Label>Backup Files</Label>
@@ -199,7 +198,7 @@ function DocumentFilesForm({
                         </div>
 
                         <CollapsibleContent className="space-y-2 px-2">
-                            {draftDocumentFiles.map((file, index) => (
+                            {documentFiles.map((file, index) => (
                                 <div
                                     key={index}
                                     className="flex items-center gap-2"

@@ -13,8 +13,10 @@ class UpdateDocumentRequest extends FormRequest
      */
     public function authorize(Request $request): bool
     {
-        $document = DB::table('documents')->where('id', $this->route('document'))->first();
-        return $document && ($this->user()->id == $document['owner_id']);
+        // get the implicitly bind document model from route
+        $document = $request->route('document');
+        
+        return $document && $this->user()->id == $document->owner_id;
     }
 
     /**

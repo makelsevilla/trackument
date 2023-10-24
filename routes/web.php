@@ -40,12 +40,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::name('draft.')->group(function () {
-        Route::resource('draft/documents', \App\Http\Controllers\DraftDocumentController::class)->except(['show', 'create']);
-        Route::resource('draft/document_files', \App\Http\Controllers\DraftDocumentFileController::class)->only(['store', 'destroy', 'index']);
-    });
-
     Route::resource('documents', \App\Http\Controllers\DocumentController::class)->except(['show', 'create']);
+    Route::resource('document_files', \App\Http\Controllers\DocumentFileController::class)->only(['index', 'store', 'destroy']);
     Route::get('/download/{filename}', [\App\Http\Controllers\FileController::class, 'download'])->name('file.download');
 });
 

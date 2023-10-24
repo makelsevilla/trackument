@@ -51,7 +51,7 @@ export const dashboardConfig = {
                 },
                 {
                     title: "Drafts",
-                    href: route("draft.documents.index"),
+                    href: route("documents.index"),
                     icon: "documents",
                 },
                 {

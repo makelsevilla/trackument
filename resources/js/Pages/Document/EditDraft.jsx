@@ -69,7 +69,7 @@ export default function EditDraft({
 
     useEffect(() => {
         const typeIdDescription = {};
-        documentTypes.forEach((type) => {
+        documentTypes?.forEach((type) => {
             typeIdDescription[type.id.toString()] = type.description;
         });
         setTypeIdDescription(typeIdDescription);
@@ -157,7 +157,7 @@ export default function EditDraft({
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            {documentTypes.map(
+                                            {documentTypes?.map(
                                                 (type, index) => {
                                                     return (
                                                         <SelectItem
@@ -230,7 +230,7 @@ export default function EditDraft({
                                     </p>
                                 </div>
                                 <ScrollArea className="max-h-[200px] rounded-md border p-4">
-                                    {documentPurposes.map((purpose, index) => {
+                                    {documentPurposes?.map((purpose, index) => {
                                         return (
                                             <div
                                                 key={index}

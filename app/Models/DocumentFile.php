@@ -7,5 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class DocumentFile extends Model
 {
-    use HasFactory;
+//    use HasFactory;
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 }
+

@@ -17,7 +17,7 @@ class DocumentController extends Controller
     public function index()
     {
 
-        return Inertia::render('UserDraftDocuments');
+        return Inertia::render('Document/UserDraftDocuments');
 
     }
 
@@ -71,8 +71,8 @@ class DocumentController extends Controller
 
         return Inertia::render('Document/EditDraft', [
             'document' => array_merge($document->toArray(), ['related_documents' => $related_documents]),
-            'document_types' => $document_types,
-            'document_purposes' => $document_purposes,
+            'documentTypes' => $document_types,
+            'documentPurposes' => $document_purposes,
         ]);
     }
 
