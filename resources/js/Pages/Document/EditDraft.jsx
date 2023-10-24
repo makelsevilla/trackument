@@ -27,24 +27,24 @@ import { Separator } from "@/Components/ui/separator.jsx";
 
 export default function EditDraft({
     auth,
-    draftDocument,
+    document,
     documentTypes,
     documentPurposes,
 }) {
     const [typeIdDescription, setTypeIdDescription] = useState({});
     const [relatedDocumentInput, setRelatedDocumentInput] = useState("");
     const { data, setData, errors, put, processing } = useForm({
-        document_type_id: draftDocument["document_type_id"]?.toString(),
-        title: draftDocument.title,
-        description: draftDocument.description || "",
-        purpose: draftDocument.purpose || [],
-        related_documents: draftDocument?.related_documents || [],
+        document_type_id: document["document_type_id"]?.toString(),
+        title: document.title,
+        description: document.description || "",
+        purpose: document.purpose || [],
+        related_documents: document?.related_documents || [],
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        put(route("draft.documents.update", { document: draftDocument.id }));
+        put(route("documents.update", { document: document.id }));
     };
 
     const addRelatedDocumentToData = (e) => {
@@ -366,7 +366,7 @@ export default function EditDraft({
                             </h2>
                             {/* File Backup */}
                             <DocumentFilesForm
-                                documentId={draftDocument.id}
+                                documentId={document.id}
                                 role="backup"
                                 withNameInput
                                 className="mt-4"

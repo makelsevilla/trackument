@@ -14,7 +14,6 @@ class Document extends Model
         'title',
         'purpose',
         'description',
-
     ];
 
     protected $casts = [

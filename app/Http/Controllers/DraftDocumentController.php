@@ -57,13 +57,13 @@ class DraftDocumentController extends Controller
     public function edit(DraftDocument $document)
     {
         $user = auth()->user();
-        if ($user->id !== $document->owner_id) {
+        if ($user->id !== $document->owner_id || !$document['is_draft']) {
             abort(403, 'Unauthorized action.');
         }
 
         $document_types = DB::table('document_types')->select('id', 'name', 'description')->get();
         $document_purposes = DB::table('document_purposes')->get();
-        $related_documents = DB::table('draft_related_documents')->where('draft_document_id', $document->id)->select('related_document_code')->get();
+        $related_documents = DB::table('related_documents')->where('draft_document_id', $document->id)->select('related_document_code')->get();
         $document_files = DB::table('draft_document_files')->where('draft_document_id', $document->id)->select('file_name', 'file_path')->get();
 
         $document['document_files'] = $document_files;
@@ -89,22 +89,6 @@ class DraftDocumentController extends Controller
 
         if (!$document->save()) {
             return back()->with(['message' => "An error occured while saving the document.", 'status' => 'error']);
-        }
-
-        // handling related documents
-        try {
-
-            DB::table('draft_related_documents')->where('draft_document_id', $document->id)->delete();
-            if (isset($validated['related_documents'])) {
-                foreach ($validated['related_documents'] as $related_document) {
-                    DB::table('draft_related_documents')->insert([
-                        'draft_document_id' => $document->id,
-                        'related_document_code' => $related_document
-                    ]);
-                }
-            }
-        } catch (\Exception $e) {
-            return back()->with(['message' => "An error occured while saving the related document/s.", 'status' => 'error']);
         }
 
 

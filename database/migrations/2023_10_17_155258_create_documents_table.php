@@ -12,18 +12,19 @@ return new class extends Migration {
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->json('purpose');
+            $table->string('title')->default('Untitled Document');
+            $table->json('purpose')->nullable();
             $table->text('description')->nullable();
-            $table->string('status')->default('draft')->comment("available, archived"); // available means it is available for transfer, archived means that it is tagged as terminal
-            $table->string('tracking_code')->unique();
+            $table->string('status')->default('unavailable')->comment("available, unavailable, archived"); // available means it is available for transfer, archived means that it is tagged as terminal
+            $table->string('tracking_code')->unique()->nullable();
+            $table->boolean('is_draft')->default(true);
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreignId('owner_id')->constrained('users');
             $table->foreignId('current_owner_id')->constrained('users');
             $table->foreignId('previous_owner_id')->nullable()->constrained('users');
-            $table->foreignId('document_type_id')->constrained('document_types');
+            $table->foreignId('document_type_id')->nullable()->constrained('document_types');
         });
     }
 

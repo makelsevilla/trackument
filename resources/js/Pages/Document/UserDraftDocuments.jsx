@@ -13,7 +13,7 @@ export default function UserDraftDocuments({ auth }) {
                     <Link
                         as="button"
                         method="post"
-                        href={route("draft.documents.store")}
+                        href={route("documents.store")}
                     >
                         Add Document
                     </Link>
