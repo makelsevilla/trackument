@@ -1,11 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { dashboardConfig } from "@/config/dashboard.js";
 import MainNav from "@/Components/MainNav.jsx";
 import UserAccountNav from "@/Components/UserAccountNav.jsx";
 import DashboardNav from "@/Components/DashboardNav.jsx";
+import { Toaster } from "@/Components/ui/toaster.jsx";
+import { usePage } from "@inertiajs/react";
+import { useToast } from "@/Components/ui/use-toast.js";
 
 export default function Authenticated({ user, header, children }) {
     const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const { flash } = usePage().props;
+    const { toast } = useToast();
+
+    useEffect(() => {
+        if (flash?.message) {
+            toast({
+                description: flash.message,
+                variant: flash?.type === "error" ? "destructive" : "",
+                duration: 5000,
+            });
+        }
+    }, [flash]);
 
     return (
         <div className="flex min-h-screen flex-col space-y-6">
@@ -30,6 +45,7 @@ export default function Authenticated({ user, header, children }) {
                 <main className="flex w-full flex-1 flex-col overflow-hidden">
                     {children}
                 </main>
+                <Toaster />
             </div>
             {/*<div className="border-t"> Footer </div>*/}
         </div>

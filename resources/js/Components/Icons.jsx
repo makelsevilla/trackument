@@ -2,7 +2,9 @@ import {
     Activity,
     ArrowRight,
     Bell,
+    BookUser,
     CheckCheck,
+    CheckSquare,
     ChevronDown,
     ChevronLeft,
     ChevronRight,
@@ -19,7 +21,9 @@ import {
     LogOut,
     Pause,
     PauseCircle,
+    Pencil,
     PencilLine,
+    PenSquare,
     Settings,
     StopCircle,
     Trash,
@@ -54,6 +58,10 @@ const Icons = {
     chevronsUpDown: ChevronsUpDown,
     trash: Trash,
     download: Download,
+    myDocuments: BookUser,
+    draft: PenSquare,
+    finalized: CheckSquare,
+    edit: Pencil,
 };
 
 export default Icons;

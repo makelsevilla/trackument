@@ -256,18 +256,16 @@ function DocumentFilesForm({
                                                     {user.id ===
                                                         file.uploader_id && (
                                                         <Button
+                                                            onClick={() =>
+                                                                handleFileDelete(
+                                                                    file.id,
+                                                                )
+                                                            }
                                                             variant="ghost"
                                                             size="icon"
                                                             className="hover:bg-destructive hover:text-destructive-foreground"
                                                         >
-                                                            <Icons.trash
-                                                                className="h-4 w-4"
-                                                                onClick={() =>
-                                                                    handleFileDelete(
-                                                                        file.id,
-                                                                    )
-                                                                }
-                                                            />
+                                                            <Icons.trash className="h-4 w-4" />
                                                         </Button>
                                                     )}
                                                 </div>

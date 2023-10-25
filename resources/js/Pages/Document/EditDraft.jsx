@@ -1,5 +1,5 @@
 import { Button } from "@/Components/ui/button.jsx";
-import { Head, Link, router, useForm } from "@inertiajs/react";
+import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
 import Icons from "@/Components/Icons.jsx";
 import { Label } from "@/Components/ui/label.jsx";
 import { Input } from "@/Components/ui/input.jsx";
@@ -25,6 +25,8 @@ import { Checkbox } from "@/Components/ui/checkbox.jsx";
 import DocumentFilesForm from "@/Pages/Document/DocumentFilesForm.jsx";
 import { Separator } from "@/Components/ui/separator.jsx";
 import { ucwords } from "@/lib/utils.js";
+import { Toaster } from "@/Components/ui/toaster.jsx";
+import { useToast } from "@/Components/ui/use-toast.js";
 
 export default function EditDraft({
     auth,
@@ -41,7 +43,18 @@ export default function EditDraft({
         purpose: document.purpose || [],
         related_documents: document?.related_documents || [],
     });
+    const { toast } = useToast();
+    const { flash } = usePage().props;
 
+    useEffect(() => {
+        if (flash?.message) {
+            toast({
+                description: flash.message,
+                variant: flash?.type === "error" ? "destructive" : "",
+                duration: 3000,
+            });
+        }
+    }, [flash]);
     const handleSubmit = (type = "update") => {
         let routeName = "";
         if (type === "update") {
@@ -88,7 +101,7 @@ export default function EditDraft({
                     <div className="flex w-full flex-wrap items-center justify-between">
                         <div className="flex items-center space-x-10">
                             <Button variant="ghost" asChild>
-                                <Link href={route("dashboard")}>
+                                <Link href={route("documents.lists.drafts")}>
                                     <Icons.chevronLeft className="mr-2 h-4 w-4" />
                                     Back
                                 </Link>
@@ -366,6 +379,7 @@ export default function EditDraft({
                     </div>
                 </div>
             </div>
+            <Toaster />
         </div>
     );
 }

@@ -17,9 +17,7 @@ class DocumentController extends Controller
      */
     public function index()
     {
-
-        return Inertia::render('Document/UserDraftDocuments');
-
+        return Inertia::render("Document/UserDraftDocuments");
     }
 
     /**
@@ -30,7 +28,6 @@ class DocumentController extends Controller
         //
     }
 
-
     /**
      * Store a newly created resource in storage.
      */
@@ -38,14 +35,16 @@ class DocumentController extends Controller
     {
         $user = auth()->user();
         $document = Document::make([
-            'owner_id' => $user->id,
-            'current_owner_id' => $user->id,
+            "owner_id" => $user->id,
+            "current_owner_id" => $user->id,
         ]);
         if (!$document->save()) {
-            return back()->with(['message' => "An error occured while creating a document."]);
+            return back()->with([
+                "message" => "An error occured while creating a document.",
+            ]);
         }
 
-        return to_route('documents.edit', ['document' => $document->id]);
+        return to_route("documents.edit", ["document" => $document->id]);
     }
 
     /**
@@ -62,20 +61,31 @@ class DocumentController extends Controller
     public function edit(Document $document)
     {
         $user = auth()->user();
-        if ($user->id !== $document->owner_id || !$document['is_draft']) {
-            abort(403, 'Unauthorized action.');
+        if ($user->id !== $document->owner_id || !$document["is_draft"]) {
+            abort(403, "Unauthorized action.");
         }
 
-        $document_types = DB::table('document_types')->select('id', 'name', 'description')->get();
-        $document_purposes = DB::table('document_purposes')->get();
+        $document_types = DB::table("document_types")
+            ->select("id", "name", "description")
+            ->get();
+        $document_purposes = DB::table("document_purposes")->get();
 
-        $related_documents = DB::table('related_documents')->where('document_id', $document->id)->select('related_document_code')->get()->toArray();
-        $related_documents = array_column($related_documents, 'related_document_code');
+        $related_documents = DB::table("related_documents")
+            ->where("document_id", $document->id)
+            ->select("related_document_code")
+            ->get()
+            ->toArray();
+        $related_documents = array_column(
+            $related_documents,
+            "related_document_code"
+        );
 
-        return Inertia::render('Document/EditDraft', [
-            'document' => array_merge($document->toArray(), ['related_documents' => $related_documents]),
-            'documentTypes' => $document_types,
-            'documentPurposes' => $document_purposes,
+        return Inertia::render("Document/EditDraft", [
+            "document" => array_merge($document->toArray(), [
+                "related_documents" => $related_documents,
+            ]),
+            "documentTypes" => $document_types,
+            "documentPurposes" => $document_purposes,
         ]);
     }
 
@@ -85,15 +95,21 @@ class DocumentController extends Controller
     public function update(UpdateDocumentRequest $request, Document $document)
     {
         $validated = $request->validated();
-        $validated['title'] = ucwords(strtolower($validated['title']));
+        $validated["title"] = ucwords(strtolower($validated["title"]));
         $document->update($validated);
 
         // handling related documents
-        if (isset($validated['related_documents'])) {
-            $document->saveRelatedDocuments($document->id, $validated['related_documents']);
+        if (isset($validated["related_documents"])) {
+            $document->saveRelatedDocuments(
+                $document->id,
+                $validated["related_documents"]
+            );
         }
 
-        return back()->with(['message' => "Document saved successfully.", 'status' => 'success']);
+        return back()->with([
+            "message" => "Document saved successfully.",
+            "status" => "success",
+        ]);
     }
 
     /**
@@ -102,57 +118,121 @@ class DocumentController extends Controller
     public function destroy(Document $document)
     {
         $user = auth()->user();
-        if ($document->owner_id !== $user->id && $document->current_owner_id !== $user->id && $document->status === 'terminal') {
-            abort(403, 'Unauthorized action. You can only delete the document if you are the owner, you currently own the document, and the document is not tagged as terminal.');
+        if (
+            $document->owner_id !== $user->id &&
+            $document->current_owner_id !== $user->id &&
+            $document->status === "terminal"
+        ) {
+            abort(
+                403,
+                "Unauthorized action. You can only delete the document if you are the owner, you currently own the document, and the document is not tagged as terminal."
+            );
         }
 
-        if ($document['is_draft']) {
+        if ($document["is_draft"]) {
             // delete document and its files permanently
-            if ($document->forceDelete()) {
-                DB::table('document_files')->where('document_id', $document->id)->delete();
+            $document->deleteFiles();
+            $document->deleteRelatedDocuments();
+            $document->forceDelete();
 
-                return back()->with(['message' => "Document deleted successfully.", 'status' => 'success']);
-            }
+            return back()->with([
+                "message" => "Document deleted successfully.",
+                "status" => "success",
+            ]);
         } else {
             // the document is not a draft, so we soft delete it
             if ($document->delete()) {
-                return back()->with(['message' => "Document deleted successfully.", 'status' => 'success']);
+                return back()->with([
+                    "message" => "Document deleted successfully.",
+                    "status" => "success",
+                ]);
             }
         }
 
         // if no successfull deletion, return error
-        return back()->with(['message' => "An error occured while deleting the document.", 'status' => 'error']);
-
+        return back()->with([
+            "message" => "An error occured while deleting the document.",
+            "status" => "error",
+        ]);
     }
 
-    public function finalize(FinalizeDocumentRequest $request, Document $document)
-    {
+    public function finalize(
+        FinalizeDocumentRequest $request,
+        Document $document
+    ) {
         $validated = $request->validated();
 
         // handling related documents
-        if (isset($validated['related_documents'])) {
-            $document->saveRelatedDocuments($document->id, $validated['related_documents']);
+        if (isset($validated["related_documents"])) {
+            $document->saveRelatedDocuments(
+                $document->id,
+                $validated["related_documents"]
+            );
         }
 
         // fill the document with validated data
         $document->fill($validated);
 
         // generate tracking code
-        $document_type = DB::table('document_types')->where('id', $document->document_type_id)->select('abbreviation')->first();
-        $document->tracking_code = $document->generateTrackingCode($document_type->abbreviation);
+        $document_type = DB::table("document_types")
+            ->where("id", $document->document_type_id)
+            ->select("abbreviation")
+            ->first();
+        $document->tracking_code = $document->generateTrackingCode(
+            $document_type->abbreviation
+        );
 
         $document->is_draft = false;
-        $document->status = 'available';
+        $document->status = "available";
 
         if (!$document->save()) {
             // if saving failed, return error
-            return back()->with(['message' => "An error occured while finalizing the document.", 'status' => 'error']);
-
+            return back()->with([
+                "message" => "An error occured while finalizing the document.",
+                "status" => "error",
+            ]);
         }
 
-        return back()->with(['message' => "Document finalized successfully.", 'status' => 'success']);
+        return back()->with([
+            "message" => "Document finalized successfully.",
+            "status" => "success",
+        ]);
     }
 
+    public function transfer(Request $request, Document $document)
+    {
+        $validated = $request->validate([
+            "current_owner_id" => "required|exists:users,id",
+        ]);
 
+        $user = auth()->user();
+        if ($document->current_owner_id !== $user->id) {
+            abort(
+                403,
+                "Unauthorized action. You can only transfer the document if you currently own the document."
+            );
+        }
+
+        $document->current_owner_id = $validated["current_owner_id"];
+        $document->previous_owner_id = $user->id;
+
+        if (!$document->save()) {
+            // if saving failed, return error
+            return back()->with([
+                "message" =>
+                    "An error occured while transferring the document.",
+                "status" => "error",
+            ]);
+        }
+
+        return back()->with([
+            "message" => "Document transferred successfully.",
+            "status" => "success",
+        ]);
+    }
+
+    public function terminate(Document $document)
+    {
+        // set the status of the document to terminal
+    }
 }
-

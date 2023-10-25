@@ -18,6 +18,22 @@ export const dashboardConfig = {
             icon: "activity",
         },
         {
+            title: "My Documents",
+            icon: "myDocuments",
+            subMenu: [
+                {
+                    title: "Draft",
+                    href: route("documents.lists.drafts"),
+                    icon: "draft",
+                },
+                {
+                    title: "Finalized",
+                    href: route("documents.lists.finalized"),
+                    icon: "finalized",
+                },
+            ],
+        },
+        {
             title: "Documents",
             icon: "folder",
             subMenu: [
@@ -26,12 +42,6 @@ export const dashboardConfig = {
                     href: "/",
                     icon: "pending",
                 },
-                {
-                    title: "Tagged as Terminal",
-                    href: "/dashboard/settings",
-                    icon: "terminal",
-                },
-
                 {
                     id: "incoming",
                     title: "Incoming",
@@ -44,20 +54,16 @@ export const dashboardConfig = {
                     href: "/dashboard/settings",
                     icon: "outgoing",
                 },
-                {
-                    title: "My Documents",
-                    href: "/dashboard/billing",
-                    icon: "documents",
-                },
-                {
-                    title: "Drafts",
-                    href: route("documents.index"),
-                    icon: "documents",
-                },
+
                 {
                     title: "Received / Released",
                     href: "/dashboard/settings",
                     icon: "listChecks",
+                },
+                {
+                    title: "Tagged as Terminal",
+                    href: "/dashboard/settings",
+                    icon: "terminal",
                 },
             ],
         },
