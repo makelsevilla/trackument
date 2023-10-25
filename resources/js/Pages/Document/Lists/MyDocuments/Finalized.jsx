@@ -37,18 +37,34 @@ export default function Finalized({ auth, documents }) {
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead>Tracking Code</TableHead>
                                 <TableHead>Title</TableHead>
+                                <TableHead>Document Type</TableHead>
+                                <TableHead>Current Owner</TableHead>
                                 <TableHead>Date Created</TableHead>
-                                <TableHead>Actions</TableHead>
+                                <TableHead></TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {documents &&
                                 documents.map((document, index) => {
                                     return (
-                                        <TableRow>
+                                        <TableRow key={index}>
                                             <TableCell>
-                                                {document.title}
+                                                <div className="font-medium">
+                                                    {document.tracking_code}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="font-medium">
+                                                    {document.title}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                {document.document_type_name}
+                                            </TableCell>
+                                            <TableCell>
+                                                {document.current_owner_name}
                                             </TableCell>
                                             <TableCell>
                                                 {dayjs(
@@ -56,44 +72,15 @@ export default function Finalized({ auth, documents }) {
                                                 ).format("MMMM DD, YYYY")}
                                             </TableCell>
                                             <TableCell>
-                                                <div className="flex items-center space-x-2">
-                                                    <Button
-                                                        size="icon"
-                                                        variant="ghost"
-                                                    >
-                                                        <Link
-                                                            href={route(
-                                                                "documents.edit",
-                                                                {
-                                                                    document:
-                                                                        document.id,
-                                                                },
-                                                            )}
-                                                        >
-                                                            <Icons.edit className="h-4 w-4" />
-                                                        </Link>
-                                                    </Button>
-                                                    <Button
-                                                        className="hover:bg-destructive hover:text-destructive-foreground"
-                                                        size="icon"
-                                                        variant="ghost"
-                                                        asChild
-                                                    >
-                                                        <Link
-                                                            href={route(
-                                                                "documents.destroy",
-                                                                {
-                                                                    document:
-                                                                        document.id,
-                                                                },
-                                                            )}
-                                                            method="delete"
-                                                            as="button"
-                                                        >
-                                                            <Icons.trash className="h-4 w-4" />
-                                                        </Link>
-                                                    </Button>
-                                                </div>
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                >
+                                                    <div className="flex items-center space-x-2">
+                                                        <Icons.view className="h-4 w-4" />
+                                                        <span>View</span>
+                                                    </div>
+                                                </Button>
                                             </TableCell>
                                         </TableRow>
                                     );

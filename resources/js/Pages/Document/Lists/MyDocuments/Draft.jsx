@@ -48,7 +48,9 @@ export default function Draft({ auth, documents }) {
                                     return (
                                         <TableRow key={index}>
                                             <TableCell>
-                                                {document.title}
+                                                <div className="font-bold">
+                                                    {document.title}
+                                                </div>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex flex-col items-start">

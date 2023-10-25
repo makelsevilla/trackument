@@ -28,13 +28,24 @@ class DocumentListController extends Controller
         $documents = DB::table("documents")
             ->where("owner_id", "=", $user->id)
             ->where("is_draft", "=", false)
+            ->select("id", "title", "tracking_code", "current_owner_id")
+            ->get();
+
+        $documents = DB::table("documents")
+            ->join("users", "documents.current_owner_id", "=", "users.id")
+            ->join(
+                "document_types",
+                "documents.document_type_id",
+                "=",
+                "document_types.id"
+            )
             ->select(
-                "id",
-                "title",
-                "updated_at",
-                "created_at",
-                "tracking_code",
-                "status"
+                "documents.id",
+                "documents.title",
+                "documents.tracking_code",
+                "users.name as current_owner_name",
+                "document_types.name as document_type_name",
+                "documents.created_at"
             )
             ->get();
 

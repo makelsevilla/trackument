@@ -11,7 +11,9 @@ import {
     ChevronsUpDown,
     Command,
     Download,
+    Eye,
     Files,
+    FileWarning,
     Folder,
     HelpCircle,
     LayoutDashboard,
@@ -25,6 +27,7 @@ import {
     PencilLine,
     PenSquare,
     Settings,
+    Siren,
     StopCircle,
     Trash,
     User,
@@ -62,6 +65,9 @@ const Icons = {
     draft: PenSquare,
     finalized: CheckSquare,
     edit: Pencil,
+    view: Eye,
+    fileWarning: FileWarning,
+    action: Siren,
 };
 
 export default Icons;

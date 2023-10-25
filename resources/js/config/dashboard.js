@@ -38,9 +38,9 @@ export const dashboardConfig = {
             icon: "folder",
             subMenu: [
                 {
-                    title: "Pending for Action",
+                    title: "Requiring Action",
                     href: "/",
-                    icon: "pending",
+                    icon: "action",
                 },
                 {
                     id: "incoming",
