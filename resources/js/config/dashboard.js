@@ -39,7 +39,7 @@ export const dashboardConfig = {
             subMenu: [
                 {
                     title: "Requiring Action",
-                    href: "/",
+                    href: route("documents.lists.actionable"),
                     icon: "action",
                 },
                 {

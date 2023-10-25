@@ -54,6 +54,11 @@ class DocumentListController extends Controller
         ]);
     }
 
+    public function actionable()
+    {
+        return Inertia::render("Document/Lists/Actionable");
+    }
+
     public function incoming()
     {
     }
