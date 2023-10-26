@@ -83,4 +83,26 @@ class Document extends Model
                 ->delete();
         }
     }
+
+    public function getOwner(string $owner_type)
+    {
+        $query = DB::table("users");
+
+        switch ($owner_type) {
+            case "owner":
+                $query = $query->where("id", "=", $this->owner_id);
+                break;
+
+            case "current":
+                $query = $query->where("id", "=", $this->current_owner_id);
+
+                break;
+
+            case "previous":
+                $query = $query->where("id", "=", $this->previous_owner_id);
+                break;
+        }
+
+        return $query;
+    }
 }

@@ -14,7 +14,7 @@ import dayjs from "dayjs";
 import Icons from "@/Components/Icons.jsx";
 
 export default function Finalized({ auth, documents }) {
-    console.log(documents);
+    // console.log(documents);
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Finalized Documents" />

@@ -63,19 +63,39 @@ class DocumentController extends Controller
         // if the user is only the current owner, display the details and action button
         // if the user is neither, display the overview
 
-        $withActionButtons = $document->current_owner_id === $user->id;
-        $withDocumentHistories = $document->owner_id === $user->id;
+        /*        $withActionButtons = $document->current_owner_id === $user->id;
+         $withDocumentHistories = $document->owner_id === $user->id;*/
 
+        // sa front-end ko nalang gawin yung logic
+        $is_current_owner = $document->current_owner_id === $user->id;
+        $is_owner = $document->owner_id === $user->id;
+
+        // Getting the document type name and description
         $document_type = DB::table("document_types")
             ->where("id", $document->document_type_id)
             ->select("name", "description")
             ->first();
         $document["document_type"] = $document_type;
 
+        // getting the owner and current owner
+        $document["current_owner"] = $document
+            ->getOwner("current")
+            ->select("name")
+            ->first();
+        $document["owner"] = $document
+            ->getOwner("owner")
+            ->select("name")
+            ->first();
+
+        // getting the related documents code
+        $document["related_documents"] = DB::table("related_documents")
+            ->where("document_id", "=", $document->id)
+            ->get();
+
         return Inertia::render("Document/ViewDocument", [
-            "withActionButtons" => $withActionButtons,
-            "withDocumentHistories" => $withDocumentHistories,
             "document" => $document,
+            "isCurrentOwner" => $is_current_owner,
+            "isOwner" => $is_owner,
         ]);
     }
 

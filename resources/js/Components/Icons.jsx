@@ -15,6 +15,7 @@ import {
     Files,
     FileWarning,
     Folder,
+    Forward,
     HelpCircle,
     LayoutDashboard,
     ListChecks,
@@ -26,6 +27,7 @@ import {
     Pencil,
     PencilLine,
     PenSquare,
+    Printer,
     Settings,
     Siren,
     StopCircle,
@@ -68,6 +70,8 @@ const Icons = {
     view: Eye,
     fileWarning: FileWarning,
     action: Siren,
+    forward: Forward,
+    printer: Printer,
 };
 
 export default Icons;

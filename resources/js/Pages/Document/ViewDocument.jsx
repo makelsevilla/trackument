@@ -14,11 +14,16 @@ import { Button } from "@/Components/ui/button.jsx";
 import Icons from "@/Components/Icons.jsx";
 import { ucwords } from "@/lib/utils.js";
 import dayjs from "dayjs";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/Components/ui/popover.jsx";
 
 export default function ViewDocument({
     auth,
-    withActionButtons = false,
-    withDocumentHistories = false,
+    isOwner = false,
+    isCurrentOwner = false,
     document,
 }) {
     // console.log(withDocumentHistories, withActionButtons);
@@ -35,8 +40,28 @@ export default function ViewDocument({
                     <Icons.chevronLeft className="h-4 w-4" />
                     <span>Back</span>
                 </Button>
+                {/*Document actions*/}
+
+                <div className="flex w-full">
+                    {isCurrentOwner && (
+                        <div className="space-x-2">
+                            <Button variant="outline">
+                                <Icons.terminal className="h-4 w-4" />
+                                <span className="ml-2">Tag as Terminal</span>
+                            </Button>
+                            <Button variant="outline">
+                                <Icons.forward className="h-4 w-4" />
+                                <span className="ml-2">Release</span>
+                            </Button>
+                        </div>
+                    )}
+                    <Button className="ml-auto" variant="outline">
+                        <Icons.printer className="h-4 w-4" />
+                        <span className="ml-2">Print Tracking Slip</span>
+                    </Button>
+                </div>
                 <DashboardHeader heading="Document Details" />
-                <div className="px-2">
+                <div className="w-full px-2">
                     <Table>
                         <TableBody>
                             <TableRow>
@@ -55,8 +80,17 @@ export default function ViewDocument({
                                 <TableCell className="font-bold">
                                     Document Type
                                 </TableCell>
-                                <TableCell>
+                                <TableCell className="flex items-center gap-4">
                                     {document.document_type.name}
+
+                                    <Popover>
+                                        <PopoverTrigger>
+                                            <Icons.helpCircle className="h-4 w-4" />
+                                        </PopoverTrigger>
+                                        <PopoverContent>
+                                            {document.document_type.description}
+                                        </PopoverContent>
+                                    </Popover>
                                 </TableCell>
                             </TableRow>
                             <TableRow>
@@ -96,6 +130,20 @@ export default function ViewDocument({
                                             "hh:mm A",
                                         )}
                                     </div>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell className="font-bold">
+                                    Owner
+                                </TableCell>
+                                <TableCell>{document.owner.name}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell className="font-bold">
+                                    Current Owner
+                                </TableCell>
+                                <TableCell>
+                                    {document.current_owner.name}
                                 </TableCell>
                             </TableRow>
                         </TableBody>
