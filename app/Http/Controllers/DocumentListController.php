@@ -25,11 +25,6 @@ class DocumentListController extends Controller
     public function finalized()
     {
         $user = auth()->user();
-        $documents = DB::table("documents")
-            ->where("owner_id", "=", $user->id)
-            ->where("is_draft", "=", false)
-            ->select("id", "title", "tracking_code", "current_owner_id")
-            ->get();
 
         $documents = DB::table("documents")
             ->join("users", "documents.current_owner_id", "=", "users.id")
@@ -39,6 +34,8 @@ class DocumentListController extends Controller
                 "=",
                 "document_types.id"
             )
+            ->where("documents.owner_id", "=", $user->id)
+            ->where("documents.is_draft", "=", false)
             ->select(
                 "documents.id",
                 "documents.title",
@@ -47,6 +44,7 @@ class DocumentListController extends Controller
                 "document_types.name as document_type_name",
                 "documents.created_at"
             )
+            ->orderBy("documents.updated_at", "desc")
             ->get();
 
         return Inertia::render("Document/Lists/MyDocuments/Finalized", [

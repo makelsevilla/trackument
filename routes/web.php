@@ -53,7 +53,7 @@ Route::middleware(["auth"])->group(function () {
     Route::resource(
         "documents",
         \App\Http\Controllers\DocumentController::class
-    )->except(["show", "create"]);
+    )->except(["create"]);
     Route::put("/documents/{document}/finalize", [
         \App\Http\Controllers\DocumentController::class,
         "finalize",
@@ -66,7 +66,8 @@ Route::middleware(["auth"])->group(function () {
         \App\Http\Controllers\FileController::class,
         "download",
     ])->name("file.download");
+
+    require __DIR__ . "/documentslists.php";
 });
 
-require __DIR__ . "/documentslists.php";
 require __DIR__ . "/auth.php";

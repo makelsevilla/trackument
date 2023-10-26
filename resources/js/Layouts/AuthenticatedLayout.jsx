@@ -7,7 +7,12 @@ import { Toaster } from "@/Components/ui/toaster.jsx";
 import { usePage } from "@inertiajs/react";
 import { useToast } from "@/Components/ui/use-toast.js";
 
-export default function Authenticated({ user, header, children }) {
+export default function Authenticated({
+    user,
+    header,
+    children,
+    withSidebar = true,
+}) {
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const { flash } = usePage().props;
     const { toast } = useToast();
@@ -38,15 +43,25 @@ export default function Authenticated({ user, header, children }) {
                     </div>
                 </div>
             </header>
-            <div className="container grid flex-1 gap-12 md:grid-cols-[250px_1fr]">
-                <aside className="hidden w-[250px] flex-col md:flex">
-                    <DashboardNav items={dashboardConfig.sidebarNav} />
-                </aside>
-                <main className="flex w-full flex-1 flex-col overflow-hidden">
-                    {children}
-                </main>
-                <Toaster />
-            </div>
+            {withSidebar ? (
+                <div className="container grid flex-1 gap-12 md:grid-cols-[250px_1fr]">
+                    <aside className="hidden w-[250px] flex-col md:flex">
+                        <DashboardNav items={dashboardConfig.sidebarNav} />
+                    </aside>
+                    <main className="flex w-full flex-1 flex-col overflow-hidden">
+                        {children}
+                    </main>
+                    <Toaster />
+                </div>
+            ) : (
+                <div className="container flex-1">
+                    <main className="flex w-full flex-1 flex-col overflow-hidden">
+                        {children}
+                    </main>
+                    <Toaster />
+                </div>
+            )}
+
             {/*<div className="border-t"> Footer </div>*/}
         </div>
     );

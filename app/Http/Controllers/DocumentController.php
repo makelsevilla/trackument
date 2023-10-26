@@ -52,7 +52,31 @@ class DocumentController extends Controller
      */
     public function show(Document $document)
     {
-        //
+        $user = auth()->user();
+
+        // can only be viewed if is_draft is false
+        if ($document->is_draft) {
+            abort(403, "This document is not yet available for viewing.");
+        }
+
+        // if the user is the current_owner and the author, display action button and document histories
+        // if the user is only the current owner, display the details and action button
+        // if the user is neither, display the overview
+
+        $withActionButtons = $document->current_owner_id === $user->id;
+        $withDocumentHistories = $document->owner_id === $user->id;
+
+        $document_type = DB::table("document_types")
+            ->where("id", $document->document_type_id)
+            ->select("name", "description")
+            ->first();
+        $document["document_type"] = $document_type;
+
+        return Inertia::render("Document/ViewDocument", [
+            "withActionButtons" => $withActionButtons,
+            "withDocumentHistories" => $withDocumentHistories,
+            "document" => $document,
+        ]);
     }
 
     /**
@@ -193,7 +217,9 @@ class DocumentController extends Controller
             ]);
         }
 
-        return back()->with([
+        return to_route("documents.lists.finalized", [
+            "document" => $document->id,
+        ])->with([
             "message" => "Document finalized successfully.",
             "status" => "success",
         ]);

@@ -75,11 +75,21 @@ export default function Finalized({ auth, documents }) {
                                                 <Button
                                                     size="sm"
                                                     variant="ghost"
+                                                    asChild
                                                 >
-                                                    <div className="flex items-center space-x-2">
+                                                    <Link
+                                                        href={route(
+                                                            "documents.show",
+                                                            {
+                                                                document:
+                                                                    document.id,
+                                                            },
+                                                        )}
+                                                        className="flex items-center space-x-2"
+                                                    >
                                                         <Icons.view className="h-4 w-4" />
                                                         <span>View</span>
-                                                    </div>
+                                                    </Link>
                                                 </Button>
                                             </TableCell>
                                         </TableRow>
