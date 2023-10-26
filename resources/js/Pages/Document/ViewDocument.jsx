@@ -22,11 +22,9 @@ import {
 
 export default function ViewDocument({
     auth,
-    isOwner = false,
-    isCurrentOwner = false,
     document,
+    withActionButtons = false,
 }) {
-    // console.log(withDocumentHistories, withActionButtons);
     console.log(document);
     return (
         <AuthenticatedLayout user={auth.user} withSidebar={false}>
@@ -43,15 +41,21 @@ export default function ViewDocument({
                 {/*Document actions*/}
 
                 <div className="flex w-full">
-                    {isCurrentOwner && (
+                    {withActionButtons && (
                         <div className="space-x-2">
                             <Button variant="outline">
                                 <Icons.terminal className="h-4 w-4" />
                                 <span className="ml-2">Tag as Terminal</span>
                             </Button>
-                            <Button variant="outline">
-                                <Icons.forward className="h-4 w-4" />
-                                <span className="ml-2">Release</span>
+                            <Button variant="outline" asChild>
+                                <Link
+                                    href={route("documents.release", {
+                                        document: document.id,
+                                    })}
+                                >
+                                    <Icons.forward className="h-4 w-4" />
+                                    <span className="ml-2">Release</span>
+                                </Link>
                             </Button>
                         </div>
                     )}

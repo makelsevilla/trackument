@@ -54,21 +54,19 @@ class DocumentController extends Controller
     {
         $user = auth()->user();
 
+        if (
+            $document->owner_id !== $user->id &&
+            $document->current_owner_id !== $user->id
+        ) {
+            abort(403, "Unauthorized Access.");
+        }
+
         // can only be viewed if is_draft is false
         if ($document->is_draft) {
             abort(403, "This document is not yet available for viewing.");
         }
 
-        // if the user is the current_owner and the author, display action button and document histories
-        // if the user is only the current owner, display the details and action button
-        // if the user is neither, display the overview
-
-        /*        $withActionButtons = $document->current_owner_id === $user->id;
-         $withDocumentHistories = $document->owner_id === $user->id;*/
-
-        // sa front-end ko nalang gawin yung logic
-        $is_current_owner = $document->current_owner_id === $user->id;
-        $is_owner = $document->owner_id === $user->id;
+        $with_action_buttons = $document->current_owner_id === $user->id;
 
         // Getting the document type name and description
         $document_type = DB::table("document_types")
@@ -94,8 +92,7 @@ class DocumentController extends Controller
 
         return Inertia::render("Document/ViewDocument", [
             "document" => $document,
-            "isCurrentOwner" => $is_current_owner,
-            "isOwner" => $is_owner,
+            "withActionButtons" => $with_action_buttons,
         ]);
     }
 
@@ -242,6 +239,37 @@ class DocumentController extends Controller
         ])->with([
             "message" => "Document finalized successfully.",
             "status" => "success",
+        ]);
+    }
+
+    public function release(Document $document)
+    {
+        $user = auth()->user();
+        if ($document->current_owner_id !== $user->id) {
+            abort(
+                403,
+                "Unauthorized action. You can only release the document if you currently own the document."
+            );
+        }
+
+        $document["previous_owner"] = $document
+            ->getOwner("previous")
+            ->select("name")
+            ->first();
+
+        $document["owner"] = $document
+            ->getOwner("owner")
+            ->select("name")
+            ->first();
+
+        $document_release_actions = DB::table("document_release_actions")
+            ->select("action_name")
+            ->get()
+            ->toArray();
+
+        return Inertia::render("Document/ReleaseDocument", [
+            "document" => $document,
+            "releaseActions" => $document_release_actions,
         ]);
     }
 

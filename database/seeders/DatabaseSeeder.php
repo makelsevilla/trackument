@@ -15,14 +15,21 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::factory(20)->create();
 
         \App\Models\User::factory()->create([
-            'name' => 'Test Admin',
-            'email' => 'admin@example.com',
-            'role' => 'admin',
+            "name" => "Test Admin",
+            "email" => "admin@example.com",
+            "role" => "admin",
+        ]);
+
+        \App\Models\User::factory()->create([
+            "name" => "Test User",
+            "email" => "user@example.com",
+            "role" => "user",
         ]);
 
         $this->call([
             DocumentTypeSeeder::class,
             DocumentPurposeSeeder::class,
+            DocumentReleaseActionSeeder::class,
         ]);
     }
 }

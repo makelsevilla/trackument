@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\DocumentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,18 +51,23 @@ Route::middleware("auth")->group(function () {
 });
 
 Route::middleware(["auth"])->group(function () {
-    Route::resource(
-        "documents",
-        \App\Http\Controllers\DocumentController::class
-    )->except(["create"]);
+    Route::resource("documents", DocumentController::class)->except(["create"]);
+
     Route::put("/documents/{document}/finalize", [
         \App\Http\Controllers\DocumentController::class,
         "finalize",
     ])->name("documents.finalize");
+
+    Route::get("/documents/{document}/release", [
+        DocumentController::class,
+        "release",
+    ])->name("documents.release");
+
     Route::resource(
         "document_files",
         \App\Http\Controllers\DocumentFileController::class
     )->only(["index", "store", "destroy"]);
+
     Route::get("/download/{document_file}", [
         \App\Http\Controllers\FileController::class,
         "download",
