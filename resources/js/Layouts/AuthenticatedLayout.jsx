@@ -21,7 +21,7 @@ export default function Authenticated({
         if (flash?.message) {
             toast({
                 description: flash.message,
-                variant: flash?.type === "error" ? "destructive" : "",
+                variant: flash?.status === "error" ? "destructive" : "",
                 duration: 5000,
             });
         }

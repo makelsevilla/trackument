@@ -66,6 +66,7 @@ class DocumentController extends Controller
             abort(403, "This document is not yet available for viewing.");
         }
 
+        // only actionable when status is available
         $with_action_buttons = $document->current_owner_id === $user->id;
 
         // Getting the document type name and description
@@ -240,73 +241,5 @@ class DocumentController extends Controller
             "message" => "Document finalized successfully.",
             "status" => "success",
         ]);
-    }
-
-    public function release(Document $document)
-    {
-        $user = auth()->user();
-        if ($document->current_owner_id !== $user->id) {
-            abort(
-                403,
-                "Unauthorized action. You can only release the document if you currently own the document."
-            );
-        }
-
-        $document["previous_owner"] = $document
-            ->getOwner("previous")
-            ->select("name")
-            ->first();
-
-        $document["owner"] = $document
-            ->getOwner("owner")
-            ->select("name")
-            ->first();
-
-        $document_release_actions = DB::table("document_release_actions")
-            ->select("action_name")
-            ->get()
-            ->toArray();
-
-        return Inertia::render("Document/ReleaseDocument", [
-            "document" => $document,
-            "releaseActions" => $document_release_actions,
-        ]);
-    }
-
-    public function transfer(Request $request, Document $document)
-    {
-        $validated = $request->validate([
-            "current_owner_id" => "required|exists:users,id",
-        ]);
-
-        $user = auth()->user();
-        if ($document->current_owner_id !== $user->id) {
-            abort(
-                403,
-                "Unauthorized action. You can only transfer the document if you currently own the document."
-            );
-        }
-
-        $document->current_owner_id = $validated["current_owner_id"];
-        $document->previous_owner_id = $user->id;
-
-        if (!$document->save()) {
-            // if saving failed, return error
-            return back()->with([
-                "message" =>
-                    "An error occured while transferring the document.",
-                "status" => "error",
-            ]);
-        }
-
-        return back()->with([
-            "message" => "Document transferred successfully.",
-            "status" => "success",
-        ]);
-    }
-
-    public function terminate(Document $document)
-    {
-        // set the status of the document to terminal
     }
 }

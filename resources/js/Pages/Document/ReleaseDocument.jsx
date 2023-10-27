@@ -7,10 +7,8 @@ import {
     TableRow,
 } from "@/Components/ui/table.jsx";
 import { Label } from "@/Components/ui/label.jsx";
-import { Input } from "@/Components/ui/input.jsx";
-import { ucwords } from "@/lib/utils.js";
+import { cn, ucwords } from "@/lib/utils.js";
 import InputError from "@/Components/InputError.jsx";
-import InputHelper from "@/Components/InputHelper.jsx";
 import {
     Select,
     SelectContent,
@@ -20,20 +18,47 @@ import {
     SelectValue,
 } from "@/Components/ui/select.jsx";
 import { useForm } from "@inertiajs/react";
+import Breadcrumb from "@/Components/Breadcrumb.jsx";
+import { Textarea } from "@/Components/ui/textarea.jsx";
+import { Button } from "@/Components/ui/button.jsx";
+import DocumentFilesForm from "@/Pages/Document/DocumentFilesForm.jsx";
 
-export default function ReleaseDocument({ auth, document, releaseActions }) {
-    const { data, setData, errors } = useForm({
+export default function ReleaseDocument({
+    auth,
+    document,
+    releaseActions,
+    offices,
+}) {
+    const { data, setData, errors, post } = useForm({
         release_action: "",
+        receiver_id: null,
+        comment: "",
     });
 
-    console.log(releaseActions);
+    function handleSubmit() {
+        post(route("documents.transfer", { document: document.id }));
+    }
+
     return (
-        <AuthenticatedLayout auth={auth}>
+        <AuthenticatedLayout user={auth.user}>
             <div className="flex flex-col items-start gap-8">
+                <Breadcrumb
+                    items={[
+                        {
+                            href: route("documents.show", {
+                                document: document.id,
+                            }),
+                            label: document.tracking_code,
+                        },
+                        {
+                            label: "Release",
+                        },
+                    ]}
+                />
                 <DashboardHeader heading="Release Document" />
                 <div className="w-full">
                     <div className="max-w-xl px-2">
-                        <Table>
+                        <Table className="border">
                             <TableBody>
                                 <TableRow>
                                     <TableCell className="font-bold">
@@ -68,9 +93,43 @@ export default function ReleaseDocument({ auth, document, releaseActions }) {
                             </TableBody>
                         </Table>
 
-                        <div>
+                        <div className="items-start gap-4 pt-8">
                             <div className="mt-4 grid w-full gap-1.5">
-                                <Label htmlFor="release_action">Title</Label>
+                                <Label htmlFor="receiver">
+                                    Receiving Office
+                                </Label>
+                                <Select
+                                    value={data.receiver_id}
+                                    onValueChange={(value) =>
+                                        setData("receiver_id", value)
+                                    }
+                                    id="receiver"
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select offce" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            {offices.map((office, index) => {
+                                                return (
+                                                    <SelectItem
+                                                        value={office.id}
+                                                        key={index}
+                                                    >
+                                                        {ucwords(office.name)}
+                                                    </SelectItem>
+                                                );
+                                            })}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                                <InputError
+                                    message={errors.receiver_id}
+                                    className="mt-2"
+                                />
+                            </div>
+                            <div className="mt-4 grid w-full gap-1.5">
+                                <Label htmlFor="release_action">Action</Label>
                                 <Select
                                     value={data.release_action}
                                     onValueChange={(value) =>
@@ -108,6 +167,31 @@ export default function ReleaseDocument({ auth, document, releaseActions }) {
                                     message={errors.release_action}
                                     className="mt-2"
                                 />
+                            </div>
+
+                            {/* Comment */}
+                            <div className="mt-4 grid w-full gap-1.5">
+                                <Label htmlFor="comment">Comment</Label>
+                                <Textarea id="comment" />
+                                <InputError
+                                    message={errors.comment}
+                                    className="mt-2"
+                                />
+                            </div>
+
+                            {/* Document Files */}
+                            <div className="mt-4 grid w-full gap-1.5">
+                                <Label>Attachments</Label>
+                                <DocumentFilesForm
+                                    documentId={document.id}
+                                    withNameInput
+                                />
+                            </div>
+
+                            <div className="flex justify-end pt-6">
+                                <Button onClick={() => handleSubmit()}>
+                                    Release Document
+                                </Button>
                             </div>
                         </div>
                     </div>

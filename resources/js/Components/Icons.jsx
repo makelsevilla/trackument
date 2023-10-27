@@ -3,6 +3,7 @@ import {
     ArrowRight,
     Bell,
     BookUser,
+    Check,
     CheckCheck,
     CheckSquare,
     ChevronDown,
@@ -32,11 +33,13 @@ import {
     Siren,
     StopCircle,
     Trash,
+    Unlock,
     User,
     X,
 } from "lucide-react";
 
 const Icons = {
+    unlock: Unlock,
     logo: Command,
     close: X,
     user: User,
@@ -72,6 +75,7 @@ const Icons = {
     action: Siren,
     forward: Forward,
     printer: Printer,
+    check: Check,
 };
 
 export default Icons;

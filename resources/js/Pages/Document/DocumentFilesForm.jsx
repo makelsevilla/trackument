@@ -28,6 +28,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/Components/ui/table.jsx";
+import { hyphen_uc_words } from "@/lib/utils.js";
 
 function DocumentFilesForm({
     role = "backup",
@@ -132,11 +133,13 @@ function DocumentFilesForm({
     return (
         <div {...props}>
             <div className="grid w-full gap-1.5">
-                <Label>File Name</Label>
                 {withNameInput && (
-                    <div>
+                    <div className="space-y-1.5">
                         <Input
-                            onChange={(e) => setFileName(e.target.value)}
+                            placeholder="File Name"
+                            onChange={(e) =>
+                                setFileName(hyphen_uc_words(e.target.value))
+                            }
                             value={fileName}
                         />
                         <InputError
@@ -146,7 +149,7 @@ function DocumentFilesForm({
                     </div>
                 )}
 
-                <Tabs className="mt-4" defaultValue="upload">
+                <Tabs defaultValue="upload">
                     <TabsList>
                         <TabsTrigger value="upload">Upload</TabsTrigger>
                         <TabsTrigger value="link">Link</TabsTrigger>

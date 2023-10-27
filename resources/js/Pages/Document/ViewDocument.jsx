@@ -19,44 +19,80 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/Components/ui/popover.jsx";
+import { Badge } from "@/Components/ui/badge.jsx";
+import { Separator } from "@/Components/ui/separator.jsx";
 
 export default function ViewDocument({
     auth,
     document,
     withActionButtons = false,
 }) {
-    console.log(document);
+    // console.log(document);
     return (
-        <AuthenticatedLayout user={auth.user} withSidebar={false}>
+        <AuthenticatedLayout user={auth.user}>
             <Head title="Pending Documents" />
             <div className="flex flex-col items-start gap-8">
-                <Button
-                    variant="ghost"
-                    className="space-x-2"
-                    onClick={() => history.back()}
-                >
-                    <Icons.chevronLeft className="h-4 w-4" />
-                    <span>Back</span>
-                </Button>
+                <Breadcrumb
+                    items={[
+                        { label: "Home", href: route("dashboard") },
+                        {
+                            label: "Documents",
+                            href: route("documents.lists.actionable"),
+                        },
+                        {
+                            label: document.tracking_code,
+                        },
+                    ]}
+                />
                 {/*Document actions*/}
 
                 <div className="flex w-full">
                     {withActionButtons && (
                         <div className="space-x-2">
-                            <Button variant="outline">
-                                <Icons.terminal className="h-4 w-4" />
-                                <span className="ml-2">Tag as Terminal</span>
-                            </Button>
-                            <Button variant="outline" asChild>
-                                <Link
-                                    href={route("documents.release", {
-                                        document: document.id,
-                                    })}
-                                >
-                                    <Icons.forward className="h-4 w-4" />
-                                    <span className="ml-2">Release</span>
-                                </Link>
-                            </Button>
+                            {document.status &&
+                            document.status === "terminal" ? (
+                                <Button variant="outline" asChild>
+                                    <Link
+                                        as="button"
+                                        method="post"
+                                        href={route("documents.unlock", {
+                                            document: document.id,
+                                        })}
+                                    >
+                                        <Icons.unlock className="h-4 w-4" />
+                                        <span className="ml-2">Unlock</span>
+                                    </Link>
+                                </Button>
+                            ) : (
+                                <>
+                                    <Button variant="outline" asChild>
+                                        <Link
+                                            as="button"
+                                            method="post"
+                                            href={route("documents.terminate", {
+                                                document: document.id,
+                                            })}
+                                        >
+                                            <Icons.terminal className="h-4 w-4" />
+                                            <span className="ml-2">
+                                                Tag as Terminal
+                                            </span>
+                                        </Link>
+                                    </Button>
+                                    <Button variant="outline" asChild>
+                                        <Link
+                                            href={route("documents.release", {
+                                                document: document.id,
+                                            })}
+                                        >
+                                            <Icons.forward className="h-4 w-4" />
+                                            <span className="ml-2">
+                                                Release
+                                            </span>
+                                        </Link>
+                                    </Button>
+                                </>
+                            )}
                         </div>
                     )}
                     <Button className="ml-auto" variant="outline">
@@ -150,8 +186,36 @@ export default function ViewDocument({
                                     {document.current_owner.name}
                                 </TableCell>
                             </TableRow>
+                            <TableRow>
+                                <TableCell className="font-bold">
+                                    Related Documents
+                                </TableCell>
+                                <TableCell>
+                                    {document?.related_documents.length > 0 ? (
+                                        <>
+                                            {document.related_documents.map(
+                                                (related, index) => (
+                                                    <Badge
+                                                        variant="outline"
+                                                        key={index}
+                                                    >
+                                                        {
+                                                            related.related_document_code
+                                                        }
+                                                    </Badge>
+                                                ),
+                                            )}
+                                        </>
+                                    ) : (
+                                        <>No related documents</>
+                                    )}
+                                </TableCell>
+                            </TableRow>
                         </TableBody>
                     </Table>
+
+                    <Separator className="my-8" />
+                    <DashboardHeader heading="Comments" />
                 </div>
             </div>
         </AuthenticatedLayout>

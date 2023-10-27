@@ -58,11 +58,6 @@ Route::middleware(["auth"])->group(function () {
         "finalize",
     ])->name("documents.finalize");
 
-    Route::get("/documents/{document}/release", [
-        DocumentController::class,
-        "release",
-    ])->name("documents.release");
-
     Route::resource(
         "document_files",
         \App\Http\Controllers\DocumentFileController::class
@@ -73,6 +68,8 @@ Route::middleware(["auth"])->group(function () {
         "download",
     ])->name("file.download");
 
+    require __DIR__ . "/document/terminate.php";
+    require __DIR__ . "/document/release.php";
     require __DIR__ . "/documentslists.php";
 });
 

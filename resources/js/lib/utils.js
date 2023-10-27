@@ -10,3 +10,7 @@ export function ucwords(str) {
         return $1.toUpperCase();
     });
 }
+
+export function hyphen_uc_words(str) {
+    return str.toUpperCase().replace(/\s+/g, "-");
+}

@@ -16,6 +16,7 @@ return new class extends Migration {
                 ->string("status")
                 ->default("pending")
                 ->comment("pending, completed");
+            $table->string("receiver_name")->nullable();
             $table->dateTime("transferred_at")->useCurrent();
             $table->dateTime("completed_at")->nullable();
 
