@@ -67,7 +67,9 @@ class DocumentController extends Controller
         }
 
         // only actionable when status is available
-        $with_action_buttons = $document->current_owner_id === $user->id;
+        $with_action_buttons =
+            $document->current_owner_id === $user->id &&
+            in_array($document->status, ["available", "terminal"]);
 
         // Getting the document type name and description
         $document_type = DB::table("document_types")

@@ -52,7 +52,6 @@ Route::middleware("auth")->group(function () {
 
 Route::middleware(["auth"])->group(function () {
     Route::resource("documents", DocumentController::class)->except(["create"]);
-
     Route::put("/documents/{document}/finalize", [
         \App\Http\Controllers\DocumentController::class,
         "finalize",
@@ -69,7 +68,7 @@ Route::middleware(["auth"])->group(function () {
     ])->name("file.download");
 
     require __DIR__ . "/document/terminate.php";
-    require __DIR__ . "/document/release.php";
+    require __DIR__ . "/document/transfer.php";
     require __DIR__ . "/documentslists.php";
 });
 

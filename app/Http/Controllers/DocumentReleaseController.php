@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Models\DocumentTransfer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -15,7 +16,7 @@ class DocumentReleaseController extends Controller
         $user = auth()->user();
         if (
             $document->current_owner_id !== $user->id ||
-            $document->status === "terminal" ||
+            $document->status !== "available" ||
             $document->is_draft
         ) {
             abort(403, "Unauthorized/Invalid action.");
@@ -53,7 +54,7 @@ class DocumentReleaseController extends Controller
         $user = auth()->user();
         if (
             $document->current_owner_id !== $user->id ||
-            $document->status === "terminal" ||
+            $document->status !== "available" ||
             $document->is_draft
         ) {
             abort(403, "Unauthorized/Invalid action.");
@@ -66,25 +67,38 @@ class DocumentReleaseController extends Controller
             "comment" => "nullable|string|max:255",
         ]);
 
-        dd($validated);
+        $document_transfer = DocumentTransfer::create([
+            "sender_id" => $user->id,
+            "document_id" => $document->id,
+            ...$validated,
+        ]);
 
-        // process the transfer
-
-        $document->current_owner_id = $validated["current_owner_id"];
-        $document->previous_owner_id = $user->id;
-
+        // if document transfer creation is successful, set document status to pending.
+        $document->status = "pending";
         if (!$document->save()) {
-            // if saving failed, return error
+            // if document saving had failed. delete the document_transfer
+            $document_transfer->delete();
+
+            // then return error
             return back()->with([
-                "message" =>
-                    "An error occured while transferring the document.",
+                "message" => "Document releasing failed. Please try again.",
                 "status" => "error",
             ]);
         }
 
-        return back()->with([
+        return to_route("documents.lists.actionable")->with([
             "message" => "Document transferred successfully.",
             "status" => "success",
         ]);
+    }
+
+    // deletes the Document Transfer
+    public function cancel()
+    {
+    }
+
+    public function receive()
+    {
+        // shows receive page
     }
 }

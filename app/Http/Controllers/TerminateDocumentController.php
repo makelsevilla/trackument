@@ -15,6 +15,10 @@ class TerminateDocumentController extends Controller
             abort(403, "Unauthorized action.");
         }
 
+        if ($document->status !== "available") {
+            abort(403, "Invalid action.");
+        }
+
         $document->status = "terminal";
 
         if (!$document->save()) {

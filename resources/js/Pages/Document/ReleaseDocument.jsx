@@ -172,7 +172,13 @@ export default function ReleaseDocument({
                             {/* Comment */}
                             <div className="mt-4 grid w-full gap-1.5">
                                 <Label htmlFor="comment">Comment</Label>
-                                <Textarea id="comment" />
+                                <Textarea
+                                    onChange={(e) =>
+                                        setData("comment", e.target.value)
+                                    }
+                                    value={data.comment}
+                                    id="comment"
+                                />
                                 <InputError
                                     message={errors.comment}
                                     className="mt-2"

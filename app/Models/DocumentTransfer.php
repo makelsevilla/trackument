@@ -11,9 +11,10 @@ class DocumentTransfer extends Model
 
     protected $fillable = [
         "receiver_id",
-        "receiver_name",
+        "received_by",
         "document_id",
         "sender_id",
+        "comment",
     ];
     public $timestamps = false;
 }
