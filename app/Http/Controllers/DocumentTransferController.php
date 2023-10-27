@@ -48,7 +48,6 @@ class DocumentTransferController extends Controller
         ]);
     }
 
-    // Transfer the current ownership of the document to another user
     public function transfer(Request $request, Document $document)
     {
         $user = auth()->user();
@@ -100,5 +99,18 @@ class DocumentTransferController extends Controller
     public function receive()
     {
         // shows receive page
+
+        return Inertia::render("Document/ReceiveDocument");
+    }
+
+    public function accept()
+    {
+        // accept the document transfer
+        // update the document transfer row
+        // update the document
+    }
+
+    public function reject()
+    {
     }
 }
