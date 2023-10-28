@@ -13,44 +13,44 @@ import dayjs from "dayjs";
 import Icons from "@/Components/Icons.jsx";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 
-export default function Actionable({ auth, documents }) {
+export default function Incoming({ auth, documentTransfers }) {
+    console.log(documentTransfers);
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="Pending Documents" />
+            <Head title="Incoming" />
             <div className="grid items-start gap-8">
                 <DashboardHeader
-                    heading="Actionable"
-                    text="Take actions to received documents."
+                    heading="Incoming Documents"
+                    text="Incoming documents coming from other offices."
                 />
                 <div className="px-2">
                     <Table>
                         <TableHeader>
                             <TableRow className="border-t">
                                 <TableHead>Title</TableHead>
-                                <TableHead>Tracking Code</TableHead>
-                                <TableHead>Originated From</TableHead>
-                                <TableHead>Date Received</TableHead>
+                                <TableHead>Sender</TableHead>
+                                <TableHead>Date Released</TableHead>
+                                <TableHead>Purpose</TableHead>
                             </TableRow>
-                            {documents.map((document, index) => (
+                            {documentTransfers.map((dt, index) => (
                                 <TableRow key={index}>
+                                    <TableCell>{dt.title}</TableCell>
+                                    <TableCell>{dt.sender_name}</TableCell>
                                     <TableCell>
-                                        <Link
-                                            href={`/documents/${document.id}`}
-                                        >
-                                            {document.title}
-                                        </Link>
-                                    </TableCell>
-                                    <TableCell>
-                                        {document.tracking_code}
-                                    </TableCell>
-                                    <TableCell>
-                                        {document.previous_owner_name}
-                                    </TableCell>
-                                    {/*<TableCell>
-                                        {dayjs(document.created_at).format(
-                                            "MMMM DD, YYYY"
+                                        {dayjs(dt.date_released).format(
+                                            "MMMM DD, YY h:mm a",
                                         )}
-                                    </TableCel  l>*/}
+                                    </TableCell>
+                                    <TableCell>
+                                        {dt.purposes.map((purpose, index) => (
+                                            <div
+                                                className="text-sm text-muted-foreground"
+                                                key={index}
+                                            >
+                                                {purpose}
+                                            </div>
+                                        ))}
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableHeader>

@@ -45,7 +45,7 @@ export const dashboardConfig = {
                 {
                     id: "incoming",
                     title: "Incoming",
-                    href: "/dashboard/settings",
+                    href: route("documents.lists.incoming"),
                     icon: "incoming",
                 },
                 {

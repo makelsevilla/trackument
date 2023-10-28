@@ -54,11 +54,42 @@ class DocumentListController extends Controller
 
     public function actionable()
     {
-        return Inertia::render("Document/Lists/Actionable");
+        // get the documents that are currently owned by the user
+        $user = auth()->user();
+        $documents = DB::table("documents as d")
+            ->join("users as u", "d.previous_owner_id", "=", "u.id")
+            ->where("d.current_owner_id", "=", $user->id)
+            ->where("d.status", "=", "available")
+            ->select("d.*", "u.name as previous_owner_name")
+            ->get();
+
+        return Inertia::render("Document/Lists/Actionable", [
+            "documents" => $documents,
+        ]);
     }
 
     public function incoming()
     {
+        // get the document transfers that are not yet completed and that the receiver_id is equal to the user id
+        $user = auth()->user();
+
+        $dt = DB::table("document_transfers as dt")
+            ->join("documents as d", "dt.document_id", "=", "d.id")
+            ->join("users as u", "dt.sender_id", "=", "u.id")
+            ->where("dt.receiver_id", "=", $user->id)
+            ->where("dt.is_completed", "=", false)
+            ->select(
+                "d.title",
+                "u.name as sender_name",
+                "d.purposes",
+                "dt.transferred_at as date_released",
+                "dt.id"
+            )
+            ->get();
+
+        return Inertia::render("Document/Lists/Incoming", [
+            "documentTransfers" => $dt,
+        ]);
     }
 
     public function outgoing()

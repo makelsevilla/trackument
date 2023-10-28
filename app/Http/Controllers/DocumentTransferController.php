@@ -38,6 +38,7 @@ class DocumentTransferController extends Controller
             ->toArray();
 
         $offices = DB::table("users")
+            ->whereNot("id", "=", $user->id)
             ->select("id", "name")
             ->get();
 
