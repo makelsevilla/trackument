@@ -97,11 +97,42 @@ class DocumentTransferController extends Controller
     {
     }
 
-    public function receive()
+    public function show(Request $request, $documentTransferId)
     {
-        // shows receive page
+        // shows document transfer page
+        // document details needed: id, title, purpose, tracking_code, owner
+        $transferDetails = DB::table("document_transfers as dt")
+            ->join("users as u_sender", "dt.sender_id", "=", "u_sender.id")
+            ->join(
+                "users as u_receiver",
+                "dt.receiver_id",
+                "=",
+                "u_receiver.id"
+            )
+            ->where("dt.id", "=", $documentTransferId)
+            ->select(
+                "dt.*",
+                "u_sender.name as sender_name",
+                "u_receiver.name as receiver_name"
+            )
+            ->first();
 
-        return Inertia::render("Document/ReceiveDocument");
+        $documentDetails = DB::table("documents as d")
+            ->join("users as u", "d.owner_id", "=", "u.id")
+            ->where("d.id", "=", $transferDetails->document_id)
+            ->select(
+                "d.id",
+                "d.title",
+                "d.purpose",
+                "d.tracking_code",
+                "u.name as owner_name"
+            )
+            ->first();
+
+        return Inertia::render("Document/ViewDocumentTransfer", [
+            "transferDetails" => $transferDetails,
+            "documentDetails" => $documentDetails,
+        ]);
     }
 
     public function accept()

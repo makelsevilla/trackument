@@ -81,7 +81,7 @@ class DocumentListController extends Controller
             ->select(
                 "d.title",
                 "u.name as sender_name",
-                "d.purposes",
+                "d.purpose",
                 "dt.transferred_at as date_released",
                 "dt.id"
             )

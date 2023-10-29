@@ -21,7 +21,7 @@ export default function Incoming({ auth, documentTransfers }) {
             <div className="grid items-start gap-8">
                 <DashboardHeader
                     heading="Incoming Documents"
-                    text="Incoming documents coming from other offices."
+                    text="Documents released by other offices."
                 />
                 <div className="px-2">
                     <Table>
@@ -31,28 +31,52 @@ export default function Incoming({ auth, documentTransfers }) {
                                 <TableHead>Sender</TableHead>
                                 <TableHead>Date Released</TableHead>
                                 <TableHead>Purpose</TableHead>
+                                <TableHead></TableHead>
                             </TableRow>
-                            {documentTransfers.map((dt, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>{dt.title}</TableCell>
-                                    <TableCell>{dt.sender_name}</TableCell>
-                                    <TableCell>
-                                        {dayjs(dt.date_released).format(
-                                            "MMMM DD, YY h:mm a",
-                                        )}
-                                    </TableCell>
-                                    <TableCell>
-                                        {dt.purposes.map((purpose, index) => (
-                                            <div
-                                                className="text-sm text-muted-foreground"
-                                                key={index}
+                            {documentTransfers.map((dt, index) => {
+                                const purposes = JSON.parse(dt.purpose);
+
+                                return (
+                                    <TableRow key={index}>
+                                        <TableCell>{dt.title}</TableCell>
+                                        <TableCell>{dt.sender_name}</TableCell>
+                                        <TableCell>
+                                            {dayjs(dt.date_released).format(
+                                                "MMMM DD, YY h:mm a",
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            {purposes.map((purpose, index) => (
+                                                <div
+                                                    className="text-sm capitalize"
+                                                    key={index}
+                                                >
+                                                    {purpose}
+                                                </div>
+                                            ))}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                size="icon"
+                                                variant="link"
+                                                asChild
                                             >
-                                                {purpose}
-                                            </div>
-                                        ))}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                                                <Link
+                                                    href={route(
+                                                        "documents.transfer.show",
+                                                        {
+                                                            documentTransferId:
+                                                                dt.id,
+                                                        },
+                                                    )}
+                                                >
+                                                    <Icons.view className="h-5 w-5" />
+                                                </Link>
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
                         </TableHeader>
                         <TableBody></TableBody>
                     </Table>

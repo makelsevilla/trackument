@@ -7,10 +7,10 @@ Route::get("/documents/{document}/release", [
     "release",
 ])->name("documents.release");
 
-Route::get("/documents/{document}/receive", [
+Route::get("/documents-transfer/{documentTransferId}", [
     \App\Http\Controllers\DocumentTransferController::class,
-    "receive",
-])->name("documents.receive");
+    "show",
+])->name("documents.transfer.show");
 
 Route::post("/documents/{document}/transfer", [
     \App\Http\Controllers\DocumentTransferController::class,
