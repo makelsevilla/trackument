@@ -93,9 +93,19 @@ class DocumentController extends Controller
             ->where("document_id", "=", $document->id)
             ->get();
 
+        $documentTransfer = DB::table("document_transfers")
+            ->where("document_id", "=", $document->id)
+            ->orderBy("transferred_at", "desc")
+            ->first();
+
+        $documentTransfer = $documentTransfer->is_completed
+            ? $documentTransfer
+            : null;
+
         return Inertia::render("Document/ViewDocument", [
             "document" => $document,
             "withActionButtons" => $with_action_buttons,
+            "documentTransfer" => $documentTransfer,
         ]);
     }
 

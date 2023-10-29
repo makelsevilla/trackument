@@ -1,6 +1,6 @@
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import { Head, Link } from "@inertiajs/react";
 import DashboardHeader from "@/Components/DashboardHeader.jsx";
-import { Button } from "@/Components/ui/button.jsx";
 import {
     Table,
     TableBody,
@@ -10,54 +10,44 @@ import {
     TableRow,
 } from "@/Components/ui/table.jsx";
 import dayjs from "dayjs";
+import { Button } from "@/Components/ui/button.jsx";
 import Icons from "@/Components/Icons.jsx";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 
-export default function Incoming({ auth, documentTransfers }) {
-    console.log(documentTransfers);
+export default function Outgoing({ auth, documentTransfers }) {
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="Incoming" />
+            <Head title="Outgoing" />
             <div className="grid items-start gap-8">
                 <DashboardHeader
-                    heading="Incoming Documents"
-                    text="Documents released by other offices."
+                    heading="Outgoing Documents"
+                    text="Documents released from your office."
                 />
                 <div className="px-2">
                     {documentTransfers.length > 0 ? (
                         <Table>
-                            <TableHeader>
-                                <TableRow className="bg-secondary">
+                            <TableHeader className="bg-secondary">
+                                <TableRow>
+                                    <TableHead>Tracking Code</TableHead>
                                     <TableHead>Title</TableHead>
-                                    <TableHead>Sender</TableHead>
+                                    <TableHead>Receiver</TableHead>
                                     <TableHead>Date Released</TableHead>
-                                    <TableHead>Purpose</TableHead>
                                     <TableHead></TableHead>
                                 </TableRow>
+                            </TableHeader>
+                            <TableBody>
                                 {documentTransfers.map((dt, index) => {
-                                    const purposes = JSON.parse(dt.purpose);
-
                                     return (
-                                        <TableRow key={index}>
+                                        <TableRow>
+                                            <TableCell>
+                                                {dt.tracking_code}
+                                            </TableCell>
                                             <TableCell>{dt.title}</TableCell>
                                             <TableCell>
-                                                {dt.sender_name}
+                                                {dt.receiver_name}
                                             </TableCell>
                                             <TableCell>
                                                 {dayjs(dt.date_released).format(
-                                                    "MMMM DD, YY h:mm a",
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {purposes.map(
-                                                    (purpose, index) => (
-                                                        <div
-                                                            className="text-sm capitalize"
-                                                            key={index}
-                                                        >
-                                                            {purpose}
-                                                        </div>
-                                                    ),
+                                                    "h:mm a | MMM DD, YYYY",
                                                 )}
                                             </TableCell>
                                             <TableCell>
@@ -82,8 +72,7 @@ export default function Incoming({ auth, documentTransfers }) {
                                         </TableRow>
                                     );
                                 })}
-                            </TableHeader>
-                            <TableBody></TableBody>
+                            </TableBody>
                         </Table>
                     ) : (
                         <div className="flex justify-center border-t py-4 text-muted-foreground">

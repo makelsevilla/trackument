@@ -51,7 +51,7 @@ export const dashboardConfig = {
                 {
                     id: "outgoing",
                     title: "Outoing",
-                    href: "/dashboard/settings",
+                    href: route("documents.lists.outgoing"),
                     icon: "outgoing",
                 },
 

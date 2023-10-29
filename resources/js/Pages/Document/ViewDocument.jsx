@@ -27,8 +27,9 @@ export default function ViewDocument({
     document,
     withActionButtons = false,
     withFiles = false,
+    documentTransfer,
 }) {
-    // console.log(document);
+    console.log(document);
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Pending Documents" />
@@ -61,6 +62,7 @@ export default function ViewDocument({
                             document.status === "terminal" ? (
                                 <Button variant="outline" asChild>
                                     <Link
+                                        size="sm"
                                         as="button"
                                         method="post"
                                         href={route("documents.unlock", {
@@ -73,7 +75,7 @@ export default function ViewDocument({
                                 </Button>
                             ) : (
                                 <>
-                                    <Button variant="outline" asChild>
+                                    <Button size="sm" variant="outline" asChild>
                                         <Link
                                             as="button"
                                             method="post"
@@ -87,7 +89,7 @@ export default function ViewDocument({
                                             </span>
                                         </Link>
                                     </Button>
-                                    <Button variant="outline" asChild>
+                                    <Button size="sm" variant="outline" asChild>
                                         <Link
                                             href={route("documents.release", {
                                                 document: document.id,
@@ -103,9 +105,20 @@ export default function ViewDocument({
                             )}
                         </div>
                     )}
-                    <Button className="ml-auto" variant="outline">
+                    {documentTransfer && (
+                        <Button className="ml-8" size="sm" variant="link">
+                            <Link
+                                href={route("documents.transfer.show", {
+                                    documentTransferId: documentTransfer.id,
+                                })}
+                            >
+                                See Transfer Detail
+                            </Link>
+                        </Button>
+                    )}
+                    <Button size="sm" className="ml-auto" variant="outline">
                         <Icons.printer className="h-4 w-4" />
-                        <span className="ml-2">Print Tracking Slip</span>
+                        <span className="ml-2">Tracking Slip</span>
                     </Button>
                 </div>
                 <DashboardHeader heading="Document Details" />

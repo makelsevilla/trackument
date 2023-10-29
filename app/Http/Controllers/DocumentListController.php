@@ -94,5 +94,60 @@ class DocumentListController extends Controller
 
     public function outgoing()
     {
+        // get the document transfers that are not yet completed and that the sender_id is equal to the user id
+        $user = auth()->user();
+        $dt = DB::table("document_transfers as dt")
+            ->join("documents as d", "dt.document_id", "=", "d.id")
+            ->join("users as u", "dt.receiver_id", "=", "u.id")
+            ->where("dt.sender_id", "=", $user->id)
+            ->where("dt.is_completed", "=", false)
+            ->select(
+                "d.tracking_code",
+                "d.title",
+                "u.name as receiver_name",
+                "dt.transferred_at as date_released",
+                "dt.id"
+            )
+            ->get();
+
+        return Inertia::render("Document/Lists/Outgoing", [
+            "documentTransfers" => $dt,
+        ]);
+    }
+
+    public function transferLogs()
+    {
+        // get the document transfers that are completed and that the sender_id or receiver_id is equal to the user id
+        $user = auth()->user();
+        $dt = DB::table("document_transfers as dt")
+            ->join("documents as d", "dt.document_id", "=", "d.id")
+            ->join("users as u", "dt.sender_id", "=", "u.id")
+            ->where("dt.sender_id", "=", $user->id)
+            ->orWhere("dt.receiver_id", "=", $user->id)
+            ->where("dt.is_completed", "=", true)
+            ->select(
+                "d.title",
+                "u.name as sender_name",
+                "d.purpose",
+                "dt.transferred_at as date_released",
+                "dt.id"
+            )
+            ->get();
+    }
+
+    public function terminalTagged()
+    {
+        // get the documents that are currently owned by the user
+        $user = auth()->user();
+        $documents = DB::table("documents as d")
+            ->join("users as u", "d.owner_id", "=", "u.id")
+            ->where("d.current_owner_id", "=", $user->id)
+            ->where("d.status", "=", "terminal")
+            ->select("d.*", "u.name as owner_name")
+            ->get();
+
+        return Inertia::render("Document/Lists/TerminalTagged", [
+            "documents" => $documents,
+        ]);
     }
 }
