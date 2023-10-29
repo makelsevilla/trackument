@@ -15,7 +15,7 @@ return new class extends Migration {
             $table
                 ->string("status")
                 ->default("pending")
-                ->comment("pending, completed");
+                ->comment("pending, completed, rejected");
             $table->string("received_by")->nullable();
             $table->string("comment")->nullable();
             $table->boolean("is_completed")->default(false);

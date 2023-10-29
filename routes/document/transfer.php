@@ -7,12 +7,22 @@ Route::get("/documents/{document}/release", [
     "release",
 ])->name("documents.release");
 
+Route::post("/documents/{document}/transfer", [
+    \App\Http\Controllers\DocumentTransferController::class,
+    "transfer",
+])->name("documents.transfer");
+
 Route::get("/documents-transfer/{documentTransferId}", [
     \App\Http\Controllers\DocumentTransferController::class,
     "show",
 ])->name("documents.transfer.show");
 
-Route::post("/documents/{document}/transfer", [
+Route::post("/documents-transfer/{documentTransfer}/accept", [
     \App\Http\Controllers\DocumentTransferController::class,
-    "transfer",
-])->name("documents.transfer");
+    "accept",
+])->name("documents.transfer.accept");
+
+Route::post("/documents-transfer/{documentTransfer}/reject", [
+    \App\Http\Controllers\DocumentTransferController::class,
+    "reject",
+])->name("documents.transfer.reject");

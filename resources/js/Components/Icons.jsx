@@ -1,6 +1,7 @@
 import {
     Activity,
     ArrowRight,
+    Ban,
     Bell,
     BookUser,
     Check,
@@ -13,8 +14,10 @@ import {
     Command,
     Download,
     Eye,
+    FileInput,
     Files,
     FileWarning,
+    FileX2,
     Folder,
     Forward,
     HelpCircle,
@@ -39,6 +42,7 @@ import {
 } from "lucide-react";
 
 const Icons = {
+    abort: Ban,
     unlock: Unlock,
     logo: Command,
     close: X,
@@ -76,6 +80,8 @@ const Icons = {
     forward: Forward,
     printer: Printer,
     check: Check,
+    fileInput: FileInput,
+    fileX2: FileX2,
 };
 
 export default Icons;

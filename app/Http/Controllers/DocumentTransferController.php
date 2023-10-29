@@ -87,14 +87,9 @@ class DocumentTransferController extends Controller
         }
 
         return to_route("documents.lists.actionable")->with([
-            "message" => "Document transferred successfully.",
+            "message" => "Document released successfully.",
             "status" => "success",
         ]);
-    }
-
-    // deletes the Document Transfer
-    public function cancel()
-    {
     }
 
     public function show(Request $request, $documentTransferId)
@@ -117,6 +112,15 @@ class DocumentTransferController extends Controller
             )
             ->first();
 
+        // check if the user is the receiver or the sender of the document transfer
+        $user = auth()->user();
+        if (
+            $user->id !== $transferDetails->sender_id &&
+            $user->id !== $transferDetails->receiver_id
+        ) {
+            abort(403, "Unauthorized/Invalid action.");
+        }
+
         $documentDetails = DB::table("documents as d")
             ->join("users as u", "d.owner_id", "=", "u.id")
             ->where("d.id", "=", $transferDetails->document_id)
@@ -125,24 +129,98 @@ class DocumentTransferController extends Controller
                 "d.title",
                 "d.purpose",
                 "d.tracking_code",
-                "u.name as owner_name"
+                "u.name as owner_name",
+                "d.current_owner_id"
             )
             ->first();
+
+        $withActionButtons = !$transferDetails->is_completed;
+        $withDocumentLink = $documentDetails->current_owner_id === $user->id;
 
         return Inertia::render("Document/ViewDocumentTransfer", [
             "transferDetails" => $transferDetails,
             "documentDetails" => $documentDetails,
+            "withActionButtons" => $withActionButtons,
+            "withDocumentLink" => $withDocumentLink,
         ]);
     }
 
-    public function accept()
+    public function accept(DocumentTransfer $documentTransfer)
     {
+        $user = auth()->user();
+        if ($user->id !== $documentTransfer->receiver_id) {
+            abort(403, "Unauthorized/Invalid action.");
+        }
+
         // accept the document transfer
         // update the document transfer row
         // update the document
+
+        DB::beginTransaction(); // Start a database transaction
+
+        try {
+            $documentTransfer->status = "completed";
+            $documentTransfer->is_completed = true;
+            $documentTransfer->completed_at = now();
+            $documentTransfer->save(); // Save the DocumentTransfer model
+
+            $document = Document::find($documentTransfer->document_id);
+            $document->status = "available";
+            $document->previous_owner_id = $document->current_owner_id;
+            $document->current_owner_id = $documentTransfer->receiver_id;
+            $document->save(); // Save the Document model
+
+            DB::commit(); // All changes were successful, so commit the transaction
+        } catch (\Exception $e) {
+            DB::rollBack(); // Something went wrong, so rollback the transaction
+
+            // You can log the error or perform other error handling here
+            return back()->with([
+                "message" => "Document transfer failed. Please try again.",
+                "status" => "error",
+            ]);
+        }
+
+        return back()->with([
+            "message" => "Document transfer successful.",
+            "status" => "success",
+        ]);
     }
 
-    public function reject()
+    public function reject(DocumentTransfer $documentTransfer)
+    {
+        $user = auth()->user();
+        if ($user->id !== $documentTransfer->receiver_id) {
+            abort(403, "Unauthorized/Invalid action.");
+        }
+
+        DB::beginTransaction(); // Start a database transaction
+
+        try {
+            $documentTransfer->status = "rejected";
+            $documentTransfer->is_completed = true;
+            $documentTransfer->completed_at = now();
+            $documentTransfer->save();
+
+            $document = Document::find($documentTransfer->document_id);
+            $document->status = "available";
+            $document->save();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack(); // Something went wrong, so rollback the transaction
+
+            // You can log the error or perform other error handling here
+            return back()->with([
+                "message" => "Document rejection failed. Please try again.",
+                "status" => "error",
+            ]);
+        }
+    }
+
+    // deletes the Document Transfer
+    // for the document sender only
+    public function cancel()
     {
     }
 }

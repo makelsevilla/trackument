@@ -26,6 +26,7 @@ export default function ViewDocument({
     auth,
     document,
     withActionButtons = false,
+    withFiles = false,
 }) {
     // console.log(document);
     return (
@@ -45,7 +46,14 @@ export default function ViewDocument({
                     ]}
                 />
                 {/*Document actions*/}
-
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => history.back()}
+                >
+                    <Icons.chevronLeft className="h-4 w-4" />
+                    <span className="ml-2">Back</span>
+                </Button>
                 <div className="flex w-full">
                     {withActionButtons && (
                         <div className="space-x-2">
@@ -211,11 +219,25 @@ export default function ViewDocument({
                                     )}
                                 </TableCell>
                             </TableRow>
+                            <TableRow>
+                                <TableCell className="font-bold">
+                                    Status
+                                </TableCell>
+                                <TableCell>
+                                    <Badge variant="outline">
+                                        {document.status}
+                                    </Badge>
+                                </TableCell>
+                            </TableRow>
                         </TableBody>
                     </Table>
 
-                    <Separator className="my-8" />
-                    <DashboardHeader heading="Comments" />
+                    {withFiles && (
+                        <>
+                            <Separator className="my-8" />
+                            <DashboardHeader heading="Files" />
+                        </>
+                    )}
                 </div>
             </div>
         </AuthenticatedLayout>
