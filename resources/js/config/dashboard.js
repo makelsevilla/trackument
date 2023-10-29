@@ -56,7 +56,7 @@ export const dashboardConfig = {
                 },
 
                 {
-                    title: "Received / Released",
+                    title: "Transfer Logs",
                     href: "/dashboard/settings",
                     icon: "listChecks",
                 },

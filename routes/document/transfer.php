@@ -26,3 +26,8 @@ Route::post("/documents-transfer/{documentTransfer}/reject", [
     \App\Http\Controllers\DocumentTransferController::class,
     "reject",
 ])->name("documents.transfer.reject");
+
+Route::post("/documents-transfer/{documentTransfer}/cancel", [
+    \App\Http\Controllers\DocumentTransferController::class,
+    "cancel",
+])->name("documents.transfer.cancel");

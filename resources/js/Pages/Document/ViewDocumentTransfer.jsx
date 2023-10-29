@@ -9,21 +9,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/Components/ui/table.jsx";
-import { Label } from "@/Components/ui/label.jsx";
-import { cn, ucwords } from "@/lib/utils.js";
-import InputError from "@/Components/InputError.jsx";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Components/ui/select.jsx";
-import Breadcrumb from "@/Components/Breadcrumb.jsx";
-import { Textarea } from "@/Components/ui/textarea.jsx";
 import { Button } from "@/Components/ui/button.jsx";
-import DocumentFilesForm from "@/Pages/Document/DocumentFilesForm.jsx";
 import { Separator } from "@/Components/ui/separator.jsx";
 import dayjs from "dayjs";
 import { Badge } from "@/Components/ui/badge.jsx";
@@ -37,7 +23,6 @@ export default function ViewDocumentTransfer({
     withActionButtons,
     withDocumentLink,
 }) {
-    console.log(withActionButtons);
     return (
         <AuthenticatedLayout user={auth.user}>
             <div className="flex flex-col items-start gap-8">
@@ -71,14 +56,35 @@ export default function ViewDocumentTransfer({
                                 </Button>
 
                                 <Button size="sm" variant="destructive" asChild>
-                                    <Link href="#">
+                                    <Link
+                                        as="button"
+                                        method="post"
+                                        href={route(
+                                            "documents.transfer.reject",
+                                            {
+                                                documentTransfer:
+                                                    transferDetails.id,
+                                            },
+                                        )}
+                                    >
                                         <Icons.fileX2 className="mr-2 h-5 w-5" />
                                         Reject
                                     </Link>
                                 </Button>
                             </div>
                         ) : (
-                            <div className="space-x-2">asdlfak</div>
+                            <Button size="sm" variant="destructive" asChild>
+                                <Link
+                                    href={route("documents.transfer.cancel", {
+                                        documentTransfer: transferDetails.id,
+                                    })}
+                                    method="post"
+                                    as="button"
+                                >
+                                    <Icons.abort className="mr-2 h-5 w-5" />
+                                    Cancel Transfer
+                                </Link>
+                            </Button>
                         ))}
 
                     {withDocumentLink && (
@@ -98,10 +104,19 @@ export default function ViewDocumentTransfer({
                 </div>
                 <DashboardHeader heading="Document Transfer" />
                 <div className="w-full">
-                    <div className="max-w-xl px-2">
+                    <div className="px-2">
                         {/* Overview of the Document Then Transfer Status*/}
                         <Table className="border">
-                            <TableCaption>Document Overview</TableCaption>
+                            <TableHeader className="bg-secondary">
+                                <TableRow>
+                                    <TableHead
+                                        colspan="2"
+                                        className="text-center"
+                                    >
+                                        Document Overview
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
                             <TableBody>
                                 <TableRow>
                                     <TableCell className="font-bold">
@@ -150,7 +165,16 @@ export default function ViewDocumentTransfer({
                         <Separator className="my-6" />
 
                         <Table className="border">
-                            <TableCaption>Transfer Details</TableCaption>
+                            <TableHeader className="bg-secondary">
+                                <TableRow>
+                                    <TableHead
+                                        colspan="2"
+                                        className="text-center"
+                                    >
+                                        Transfer Details
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
                             <TableBody>
                                 <TableRow>
                                     <TableCell className="font-bold">
@@ -190,7 +214,7 @@ export default function ViewDocumentTransfer({
                                                 className="text-muted-foreground
                                             "
                                             >
-                                                Not completed yet.
+                                                Not yet completed.
                                             </p>
                                         )}
                                     </TableCell>

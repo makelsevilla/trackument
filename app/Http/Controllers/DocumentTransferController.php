@@ -147,6 +147,11 @@ class DocumentTransferController extends Controller
 
     public function accept(DocumentTransfer $documentTransfer)
     {
+        // check if the transfer is already completed
+        if ($documentTransfer->is_completed) {
+            abort(403, "Unauthorized/Invalid action.");
+        }
+
         $user = auth()->user();
         if ($user->id !== $documentTransfer->receiver_id) {
             abort(403, "Unauthorized/Invalid action.");
@@ -187,17 +192,40 @@ class DocumentTransferController extends Controller
         ]);
     }
 
-    public function reject(DocumentTransfer $documentTransfer)
-    {
+    public function rejectOrCancelDocumentTransfer(
+        DocumentTransfer $documentTransfer,
+        $action
+    ) {
+        // check if the transfer is already completed
+        if ($documentTransfer->is_completed) {
+            abort(403, "Unauthorized/Invalid action.");
+        }
+
         $user = auth()->user();
-        if ($user->id !== $documentTransfer->receiver_id) {
+
+        // Determine the allowed actions based on the user's role
+        $allowedActions = [];
+        if ($user->id === $documentTransfer->sender_id) {
+            $allowedActions = ["cancel"];
+        } elseif ($user->id === $documentTransfer->receiver_id) {
+            $allowedActions = ["reject"];
+        } else {
+            abort(403, "Unauthorized/Invalid action.");
+        }
+
+        if (!in_array($action, $allowedActions)) {
             abort(403, "Unauthorized/Invalid action.");
         }
 
         DB::beginTransaction(); // Start a database transaction
 
         try {
-            $documentTransfer->status = "rejected";
+            if ($action === "reject") {
+                $documentTransfer->status = "rejected";
+            } elseif ($action === "cancel") {
+                $documentTransfer->status = "cancelled";
+            }
+
             $documentTransfer->is_completed = true;
             $documentTransfer->completed_at = now();
             $documentTransfer->save();
@@ -212,15 +240,29 @@ class DocumentTransferController extends Controller
 
             // You can log the error or perform other error handling here
             return back()->with([
-                "message" => "Document rejection failed. Please try again.",
+                "message" => "Document transfer $action failed. Please try again.",
                 "status" => "error",
             ]);
         }
+
+        return back()->with([
+            "message" => "Document transfer $action successful.",
+        ]);
     }
 
-    // deletes the Document Transfer
-    // for the document sender only
-    public function cancel()
+    public function reject(DocumentTransfer $documentTransfer)
     {
+        return $this->rejectOrCancelDocumentTransfer(
+            $documentTransfer,
+            "reject"
+        );
+    }
+
+    public function cancel(DocumentTransfer $documentTransfer)
+    {
+        return $this->rejectOrCancelDocumentTransfer(
+            $documentTransfer,
+            "cancel"
+        );
     }
 }
