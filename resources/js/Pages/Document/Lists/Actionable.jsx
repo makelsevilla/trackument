@@ -28,7 +28,7 @@ export default function Actionable({ auth, documents }) {
                             <TableRow className="border-t">
                                 <TableHead>Title</TableHead>
                                 <TableHead>Tracking Code</TableHead>
-                                <TableHead>Originated From</TableHead>
+                                <TableHead>Sender</TableHead>
                                 <TableHead>Date Received</TableHead>
                             </TableRow>
                             {documents.map((document, index) => (
@@ -46,11 +46,11 @@ export default function Actionable({ auth, documents }) {
                                     <TableCell>
                                         {document.previous_owner_name}
                                     </TableCell>
-                                    {/*<TableCell>
-                                        {dayjs(document.created_at).format(
-                                            "MMMM DD, YYYY"
+                                    <TableCell>
+                                        {dayjs(document.date_received).format(
+                                            "h:mm a MMMM DD, YYYY",
                                         )}
-                                    </TableCel  l>*/}
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableHeader>

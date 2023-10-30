@@ -15,6 +15,7 @@ class DocumentTransfer extends Model
         "document_id",
         "sender_id",
         "comment",
+        "transferred_at",
     ];
     public $timestamps = false;
 }

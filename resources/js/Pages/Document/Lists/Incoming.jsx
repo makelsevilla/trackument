@@ -87,7 +87,7 @@ export default function Incoming({ auth, documentTransfers }) {
                         </Table>
                     ) : (
                         <div className="flex justify-center border-t py-4 text-muted-foreground">
-                            No Documents List.
+                            No Documents
                         </div>
                     )}
                 </div>

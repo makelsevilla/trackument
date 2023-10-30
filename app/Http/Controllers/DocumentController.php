@@ -98,9 +98,10 @@ class DocumentController extends Controller
             ->orderBy("transferred_at", "desc")
             ->first();
 
-        $documentTransfer = $documentTransfer->is_completed
-            ? $documentTransfer
-            : null;
+        $documentTransfer =
+            $documentTransfer && $documentTransfer->is_completed
+                ? $documentTransfer
+                : null;
 
         return Inertia::render("Document/ViewDocument", [
             "document" => $document,

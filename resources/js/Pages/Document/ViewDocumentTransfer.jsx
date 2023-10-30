@@ -192,7 +192,7 @@ export default function ViewDocumentTransfer({
                                     </TableCell>
                                     <TableCell>
                                         {dayjs(
-                                            transferDetails.transfered_at,
+                                            transferDetails.transferred_at,
                                         ).format("MMMM DD, YYYY h:mm a")}
                                     </TableCell>
                                 </TableRow>

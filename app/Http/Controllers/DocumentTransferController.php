@@ -70,6 +70,7 @@ class DocumentTransferController extends Controller
         $document_transfer = DocumentTransfer::create([
             "sender_id" => $user->id,
             "document_id" => $document->id,
+            "transferred_at" => now("Asia/Manila"),
             ...$validated,
         ]);
 
@@ -166,7 +167,7 @@ class DocumentTransferController extends Controller
         try {
             $documentTransfer->status = "completed";
             $documentTransfer->is_completed = true;
-            $documentTransfer->completed_at = now();
+            $documentTransfer->completed_at = now("Asia/Manila");
             $documentTransfer->save(); // Save the DocumentTransfer model
 
             $document = Document::find($documentTransfer->document_id);

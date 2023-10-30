@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -56,11 +57,45 @@ class DocumentListController extends Controller
     {
         // get the documents that are currently owned by the user
         $user = auth()->user();
+
+        // grouping the document transfer table by document_id and getting the latest document transfer
+        $latestDocumentsTransfer = DB::table("document_transfers as dt_a")
+            ->joinSub(
+                DB::table("document_transfers")
+                    ->select(
+                        "document_id",
+                        DB::raw("MAX(transferred_at) as transferred_at")
+                    )
+                    ->groupBy("document_id"),
+                "dt_b",
+                function (JoinClause $join) {
+                    $join->on("dt_a.document_id", "=", "dt_b.document_id");
+                    $join->on(
+                        "dt_a.transferred_at",
+                        "=",
+                        "dt_b.transferred_at"
+                    );
+                }
+            )
+            ->select("dt_a.*");
+
+        //                dd($latestDocumentsTransfer->toSql());
+
         $documents = DB::table("documents as d")
             ->join("users as u", "d.previous_owner_id", "=", "u.id")
             ->where("d.current_owner_id", "=", $user->id)
             ->where("d.status", "=", "available")
-            ->select("d.*", "u.name as previous_owner_name")
+            ->joinSub($latestDocumentsTransfer, "dt", function (
+                JoinClause $join
+            ) {
+                $join->on("d.id", "=", "dt.document_id");
+            })
+            ->select(
+                "d.*",
+                "u.name as previous_owner_name",
+                "dt.completed_at as date_received",
+                "dt.id as document_transfer_id"
+            )
             ->get();
 
         return Inertia::render("Document/Lists/Actionable", [
