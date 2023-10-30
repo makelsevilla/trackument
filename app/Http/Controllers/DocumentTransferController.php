@@ -228,7 +228,7 @@ class DocumentTransferController extends Controller
             }
 
             $documentTransfer->is_completed = true;
-            $documentTransfer->completed_at = now();
+            $documentTransfer->completed_at = now("Asia/Manila");
             $documentTransfer->save();
 
             $document = Document::find($documentTransfer->document_id);

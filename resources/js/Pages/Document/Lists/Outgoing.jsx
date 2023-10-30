@@ -28,8 +28,8 @@ export default function Outgoing({ auth, documentTransfers }) {
                             <TableHeader className="bg-secondary">
                                 <TableRow>
                                     <TableHead>Tracking Code</TableHead>
-                                    <TableHead>Title</TableHead>
-                                    <TableHead>Receiver</TableHead>
+                                    <TableHead>Document Title</TableHead>
+                                    <TableHead>Sent to</TableHead>
                                     <TableHead>Date Released</TableHead>
                                     <TableHead></TableHead>
                                 </TableRow>
