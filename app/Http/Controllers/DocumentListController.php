@@ -156,18 +156,30 @@ class DocumentListController extends Controller
         $user = auth()->user();
         $dt = DB::table("document_transfers as dt")
             ->join("documents as d", "dt.document_id", "=", "d.id")
-            ->join("users as u", "dt.sender_id", "=", "u.id")
+            ->join("users as u_sender", "dt.sender_id", "=", "u_sender.id")
+            ->join(
+                "users as u_receiver",
+                "dt.receiver_id",
+                "=",
+                "u_receiver.id"
+            )
             ->where("dt.sender_id", "=", $user->id)
             ->orWhere("dt.receiver_id", "=", $user->id)
             ->where("dt.is_completed", "=", true)
             ->select(
-                "d.title",
-                "u.name as sender_name",
-                "d.purpose",
+                "d.title as document_title",
+                "d.tracking_code as document_tracking_code",
+                "dt.id",
                 "dt.transferred_at as date_released",
-                "dt.id"
+                "dt.completed_at as date_received",
+                "u_sender.name as sender_name",
+                "u_receiver.name as receiver_name"
             )
             ->get();
+
+        return Inertia::render("Document/Lists/TransferLogs", [
+            "documentTransfers" => $dt,
+        ]);
     }
 
     public function terminalTagged()
