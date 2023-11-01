@@ -20,8 +20,8 @@ export default function Finalized({ auth, documents }) {
             <Head title="Finalized Documents" />
             <div className="grid items-start gap-8">
                 <DashboardHeader
-                    heading="Finalized"
-                    text="View finalized documents."
+                    heading="My Documents"
+                    text="Finalized documents."
                 >
                     <Button asChild>
                         <Link

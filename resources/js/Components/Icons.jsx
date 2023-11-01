@@ -19,6 +19,8 @@ import {
     FileWarning,
     FileX2,
     Folder,
+    FolderOpen,
+    FolderSync,
     Forward,
     HelpCircle,
     LayoutDashboard,
@@ -42,6 +44,8 @@ import {
 } from "lucide-react";
 
 const Icons = {
+    folderOpen: FolderOpen,
+    transfer: FolderSync,
     abort: Ban,
     unlock: Unlock,
     logo: Command,
@@ -72,7 +76,6 @@ const Icons = {
     download: Download,
     myDocuments: BookUser,
     draft: PenSquare,
-    finalized: CheckSquare,
     edit: Pencil,
     view: Eye,
     fileWarning: FileWarning,

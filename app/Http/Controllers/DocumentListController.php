@@ -189,12 +189,22 @@ class DocumentListController extends Controller
         // get the documents that are currently owned by the user
         $user = auth()->user();
         $documents = DB::table("documents as d")
-            ->join("users as u", "d.owner_id", "=", "u.id")
+            ->join("users as u_owner", "d.owner_id", "=", "u_owner.id")
+            ->leftJoin(
+                "users as u_previous",
+                "d.previous_owner_id",
+                "=",
+                "u_previous.id"
+            )
             ->where("d.current_owner_id", "=", $user->id)
             ->where("d.status", "=", "terminal")
-            ->select("d.*", "u.name as owner_name")
+            ->select(
+                "d.*",
+                "u_owner.name as owner_name",
+                "u_previous.name as previous_owner_name"
+            )
             ->get();
-
+        //        dd($documents);
         return Inertia::render("Document/Lists/TerminalTagged", [
             "documents" => $documents,
         ]);

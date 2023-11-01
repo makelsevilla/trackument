@@ -30,9 +30,16 @@ Route::prefix("/documents")
                     "outgoing",
                 ])->name("outgoing");
 
+                // Transfer Logs
                 Route::get("/transfers", [
                     DocumentListController::class,
                     "transferLogs",
                 ])->name("transfers");
+
+                // Terminal Documents
+                Route::get("/terminal", [
+                    DocumentListController::class,
+                    "terminalTagged",
+                ])->name("terminal");
             });
     });

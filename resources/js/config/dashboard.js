@@ -18,30 +18,35 @@ export const dashboardConfig = {
             icon: "activity",
         },
         {
-            title: "My Documents",
-            icon: "myDocuments",
-            subMenu: [
-                {
-                    title: "Draft",
-                    href: route("documents.lists.drafts"),
-                    icon: "draft",
-                },
-                {
-                    title: "Finalized",
-                    href: route("documents.lists.finalized"),
-                    icon: "finalized",
-                },
-            ],
-        },
-        {
             title: "Documents",
-            icon: "folder",
+            icon: "folderOpen",
             subMenu: [
                 {
                     title: "Requiring Action",
                     href: route("documents.lists.actionable"),
                     icon: "action",
                 },
+                {
+                    title: "Tagged as Terminal",
+                    href: route("documents.lists.terminal"),
+                    icon: "terminal",
+                },
+                {
+                    title: "Draft",
+                    href: route("documents.lists.drafts"),
+                    icon: "draft",
+                },
+                {
+                    title: "My Documents",
+                    href: route("documents.lists.finalized"),
+                    icon: "myDocuments",
+                },
+            ],
+        },
+        {
+            title: "Document Transfer",
+            icon: "transfer",
+            subMenu: [
                 {
                     id: "incoming",
                     title: "Incoming",
@@ -56,14 +61,9 @@ export const dashboardConfig = {
                 },
 
                 {
-                    title: "Transfer Logs",
+                    title: "Logs",
                     href: route("documents.lists.transfers"),
                     icon: "listChecks",
-                },
-                {
-                    title: "Tagged as Terminal",
-                    href: "/dashboard/settings",
-                    icon: "terminal",
                 },
             ],
         },
