@@ -21,7 +21,7 @@ export default function TransferLogs({ auth, documentTransfers }) {
             <Head title="Incoming" />
             <div className="grid items-start gap-8">
                 <DashboardHeader
-                    heading="Document Transfer Logs"
+                    heading="Transfer Logs"
                     text="Released and received documents."
                 />
                 <div className="px-2">
