@@ -36,26 +36,27 @@ import { Calendar } from "@/Components/ui/calendar.jsx";
 export default function Finalized({ auth, paginatedDocuments, filters }) {
     const [category, setCategory] = useState(filters?.category || "");
     const [filter, setFilter] = useState(filters?.filter || "");
-    const [date, setDate] = useState(
-        filters?.date || {
-            from: null,
-            to: null,
-        },
-    );
+    const [date, setDate] = useState({
+        from: filters?.date?.from ? new Date(filters.date.from) : null,
+        to: filters?.date?.to ? new Date(filters.date.to) : null,
+    });
 
     const documents = paginatedDocuments.data;
-
-    function handleFilterApply() {
-        console.log({ date, filter, category });
+    console.log(paginatedDocuments);
+    function handleFilterApply(e) {
+        e.preventDefault();
         router.get(
             route("documents.lists.finalized", {
-                date_from: date.from,
-                date_to: date.to,
+                date: {
+                    from: date?.from ? format(date.from, "yyyy-MM-dd") : null,
+                    to: date?.to ? format(date.to, "yyyy-MM-dd") : null,
+                },
                 filter,
                 category,
             }),
         );
     }
+
     const categories = [
         {
             value: "document_title",
@@ -90,7 +91,7 @@ export default function Finalized({ auth, paginatedDocuments, filters }) {
                 </DashboardHeader>
                 <div className="px-2">
                     {/*Table Filters*/}
-                    <div className="mb-4">
+                    <form onSubmit={handleFilterApply} className="mb-4">
                         <div className="flex items-end gap-4">
                             <div className="grid gap-2">
                                 <Label>Filter</Label>
@@ -104,6 +105,7 @@ export default function Finalized({ auth, paginatedDocuments, filters }) {
                             <div className="grid gap-2">
                                 <Label>Category</Label>
                                 <Select
+                                    value={category}
                                     onValueChange={(value) =>
                                         setCategory(value)
                                     }
@@ -123,8 +125,27 @@ export default function Finalized({ auth, paginatedDocuments, filters }) {
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className="grid gap-2">
-                                <Label>Date Range</Label>
+                            <div className="space-x-2">
+                                <Button
+                                    type="submit"
+                                    className="hover:bg-primary hover:text-primary-foreground"
+                                    variant="secondary"
+                                >
+                                    <Icons.filter className="mr-2 h-4 w-4" />
+                                    Apply
+                                </Button>
+                                <Button variant="ghost" asChild>
+                                    <Link
+                                        href={route(
+                                            "documents.lists.finalized",
+                                        )}
+                                    >
+                                        <Icons.loading className="mr-2 h-4 w-4" />
+                                        Reset
+                                    </Link>
+                                </Button>
+                            </div>
+                            <div className="ml-auto">
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <Button
@@ -157,7 +178,7 @@ export default function Finalized({ auth, paginatedDocuments, filters }) {
                                                     )
                                                 )
                                             ) : (
-                                                <span>Pick a date</span>
+                                                <span>Date Range</span>
                                             )}
                                         </Button>
                                     </PopoverTrigger>
@@ -172,26 +193,14 @@ export default function Finalized({ auth, paginatedDocuments, filters }) {
                                             selected={date}
                                             onSelect={setDate}
                                             numberOfMonths={2}
-                                            disabled={(date) =>
-                                                date > new Date() ||
-                                                date < new Date("2023-01-01")
-                                            }
                                         />
                                     </PopoverContent>
                                 </Popover>
                             </div>
-                            <div className="ml-auto">
-                                <Button
-                                    onClick={handleFilterApply}
-                                    className="hover:bg-primary hover:text-primary-foreground"
-                                    variant="secondary"
-                                >
-                                    <Icons.filter className="mr-2 h-4 w-4" />
-                                    Apply
-                                </Button>
-                            </div>
                         </div>
-                    </div>
+                    </form>
+
+                    {/*Data Table*/}
                     <Table>
                         <TableHeader className="bg-secondary">
                             <TableRow>
@@ -254,6 +263,45 @@ export default function Finalized({ auth, paginatedDocuments, filters }) {
                                 })}
                         </TableBody>
                     </Table>
+
+                    {/*Pagination*/}
+                    {paginatedDocuments.last_page > 1 && (
+                        <div className="flex justify-end pt-4">
+                            <div className="flex items-center gap-2">
+                                {paginatedDocuments.prev_page_url ? (
+                                    <Button variant="outline" asChild>
+                                        <Link
+                                            href={
+                                                paginatedDocuments.prev_page_url
+                                            }
+                                        >
+                                            Previous
+                                        </Link>
+                                    </Button>
+                                ) : (
+                                    <Button asChild variant="outline" disabled>
+                                        Previous
+                                    </Button>
+                                )}
+
+                                {paginatedDocuments.next_page_url ? (
+                                    <Button variant="outline" asChild>
+                                        <Link
+                                            href={
+                                                paginatedDocuments.next_page_url
+                                            }
+                                        >
+                                            Next
+                                        </Link>
+                                    </Button>
+                                ) : (
+                                    <Button asChild variant="outline" disabled>
+                                        Next
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </AuthenticatedLayout>

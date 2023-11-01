@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,6 @@ class DocumentListController extends Controller
     public function finalized(Request $request)
     {
         $user = auth()->user();
-
         $documents = DB::table("documents")
             ->join("users", "documents.current_owner_id", "=", "users.id")
             ->join(
@@ -49,35 +49,33 @@ class DocumentListController extends Controller
 
         $filters = [
             "filter" => $request->query("filter"),
-            "category" => $request->query("category"),
-            "date" => [
-                "from" => $request->query("date_from"),
-                "to" => $request->query("date_to"),
-            ],
+            "category" => $request->query("category", "document_title"),
+            "date" => $request->query("date"),
         ];
 
         // filtering categories
-        $documents = match ($filters["category"]) {
-            "document_title" => $documents->where(
-                "documents.title",
-                "=",
-                $filters["filter"]
-            ),
-            "document_type" => $documents->where(
-                "document_types.name",
-                "=",
-                $filters["filter"]
-            ),
-            "tracking_code" => $documents->where(
-                "documents.tracking_code",
-                "=",
-                $filters["filter"]
-            ),
-            default => $documents,
-        };
+        $columnMapping = [
+            "document_title" => "documents.title",
+            "document_type" => "document_types.name",
+            "tracking_code" => "documents.tracking_code",
+        ];
+
+        if (isset($filters["category"], $filters["filter"])) {
+            $documents = $documents->where(
+                $columnMapping[$filters["category"]],
+                "like",
+                "%" . $filters["filter"] . "%"
+            );
+        }
+
+        if (isset($filters["date"]["from"]) && isset($filters["date"]["to"])) {
+            $documents = $documents->whereBetween("documents.created_at", [
+                $filters["date"]["from"],
+                $filters["date"]["to"],
+            ]);
+        }
 
         $documents = $documents->paginate()->withQueryString();
-
         return Inertia::render("Document/Lists/MyDocuments/Finalized", [
             "paginatedDocuments" => $documents,
             "filters" => $filters,
