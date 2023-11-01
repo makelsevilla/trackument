@@ -20,6 +20,7 @@ class TerminateDocumentController extends Controller
         }
 
         $document->status = "terminal";
+        $document->terminated_at = now();
 
         if (!$document->save()) {
             return back()->with([
@@ -40,6 +41,7 @@ class TerminateDocumentController extends Controller
         }
 
         $document->status = "available";
+        $document->terminated_at = null;
 
         if (!$document->save()) {
             return back()->with([

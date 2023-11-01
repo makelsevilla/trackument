@@ -10,21 +10,34 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('documents', function (Blueprint $table) {
+        Schema::create("documents", function (Blueprint $table) {
             $table->id();
-            $table->string('title')->default('Untitled Document');
-            $table->json('purpose')->nullable();
-            $table->text('description')->nullable();
-            $table->string('status')->default('unavailable')->comment("available, unavailable, terminal, pending"); // available means it is available for transfer, unavailable means it is not available for transfer, terminal means it is not available for transfer and it is the final owner
-            $table->string('tracking_code')->unique()->nullable();
-            $table->boolean('is_draft')->default(true);
+            $table->string("title")->default("Untitled Document");
+            $table->json("purpose")->nullable();
+            $table->text("description")->nullable();
+            $table
+                ->string("status")
+                ->default("unavailable")
+                ->comment("available, unavailable, terminal, pending"); // available means it is available for transfer, unavailable means it is not available for transfer, terminal means it is not available for transfer and it is the final owner
+            $table
+                ->string("tracking_code")
+                ->unique()
+                ->nullable();
+            $table->boolean("is_draft")->default(true);
+            $table->dateTime("terminated_at")->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreignId('owner_id')->constrained('users');
-            $table->foreignId('current_owner_id')->constrained('users');
-            $table->foreignId('previous_owner_id')->nullable()->constrained('users');
-            $table->foreignId('document_type_id')->nullable()->constrained('document_types');
+            $table->foreignId("owner_id")->constrained("users");
+            $table->foreignId("current_owner_id")->constrained("users");
+            $table
+                ->foreignId("previous_owner_id")
+                ->nullable()
+                ->constrained("users");
+            $table
+                ->foreignId("document_type_id")
+                ->nullable()
+                ->constrained("document_types");
         });
     }
 
@@ -33,6 +46,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('documents');
+        Schema::dropIfExists("documents");
     }
 };

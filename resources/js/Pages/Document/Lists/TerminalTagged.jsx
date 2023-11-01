@@ -11,8 +11,10 @@ import {
 } from "@/Components/ui/table.jsx";
 import Icons from "@/Components/Icons.jsx";
 import { Button } from "@/Components/ui/button.jsx";
+import dayjs from "dayjs";
 
 export default function TerminalTagged({ auth, documents }) {
+    console.log(documents);
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Incoming" />
@@ -29,20 +31,34 @@ export default function TerminalTagged({ auth, documents }) {
                                     <TableHead>Tracking Code</TableHead>
                                     <TableHead>Title</TableHead>
                                     <TableHead>Owner</TableHead>
-                                    <TableHead>Sender</TableHead>
-                                    <TableHead></TableHead>
+                                    <TableHead>Date Tagged</TableHead>
+                                    <TableHead>Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {documents.map((doc, index) => (
                                     <TableRow key={index}>
                                         <TableCell>
-                                            <div>{doc.tracking_code}</div>
+                                            <div className="font-bold">
+                                                {doc.tracking_code}
+                                            </div>
+                                            <div className="text-sm text-muted-foreground">
+                                                {doc.document_type_name}
+                                            </div>
                                         </TableCell>
                                         <TableCell>{doc.title}</TableCell>
-                                        <TableCell>{doc.owner_name}</TableCell>
                                         <TableCell>
-                                            {doc?.previous_owner_name || "None"}
+                                            {doc.owner_name}
+
+                                            <span>
+                                                {doc.owner_id ===
+                                                    auth.user.id && "(You)"}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell>
+                                            {dayjs(
+                                                document.terminated_at,
+                                            ).format("MMMM DD, YYYY h:mm a ")}
                                         </TableCell>
                                         <TableCell>
                                             <Button

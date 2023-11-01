@@ -23,7 +23,7 @@ class DocumentListController extends Controller
         ]);
     }
 
-    public function finalized()
+    public function finalized(Request $request)
     {
         $user = auth()->user();
 
@@ -45,11 +45,42 @@ class DocumentListController extends Controller
                 "document_types.name as document_type_name",
                 "documents.created_at"
             )
-            ->orderBy("documents.updated_at", "desc")
-            ->get();
+            ->orderBy("documents.updated_at", "desc");
+
+        $filters = [
+            "filter" => $request->query("filter"),
+            "category" => $request->query("category"),
+            "date" => [
+                "from" => $request->query("date_from"),
+                "to" => $request->query("date_to"),
+            ],
+        ];
+
+        // filtering categories
+        $documents = match ($filters["category"]) {
+            "document_title" => $documents->where(
+                "documents.title",
+                "=",
+                $filters["filter"]
+            ),
+            "document_type" => $documents->where(
+                "document_types.name",
+                "=",
+                $filters["filter"]
+            ),
+            "tracking_code" => $documents->where(
+                "documents.tracking_code",
+                "=",
+                $filters["filter"]
+            ),
+            default => $documents,
+        };
+
+        $documents = $documents->paginate()->withQueryString();
 
         return Inertia::render("Document/Lists/MyDocuments/Finalized", [
-            "documents" => $documents,
+            "paginatedDocuments" => $documents,
+            "filters" => $filters,
         ]);
     }
 
@@ -190,6 +221,12 @@ class DocumentListController extends Controller
         $user = auth()->user();
         $documents = DB::table("documents as d")
             ->join("users as u_owner", "d.owner_id", "=", "u_owner.id")
+            ->join(
+                "document_types as type",
+                "d.document_type_id",
+                "=",
+                "type.id"
+            )
             ->leftJoin(
                 "users as u_previous",
                 "d.previous_owner_id",
@@ -201,7 +238,8 @@ class DocumentListController extends Controller
             ->select(
                 "d.*",
                 "u_owner.name as owner_name",
-                "u_previous.name as previous_owner_name"
+                "u_previous.name as previous_owner_name",
+                "type.name as document_type_name"
             )
             ->get();
         //        dd($documents);

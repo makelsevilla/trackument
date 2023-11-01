@@ -33,7 +33,7 @@ export default function TransferLogs({ auth, documentTransfers }) {
                                     <TableHead>Sender</TableHead>
                                     <TableHead>Receiver</TableHead>
                                     <TableHead>Status</TableHead>
-                                    <TableHead>Dates</TableHead>
+                                    <TableHead>Date Completed</TableHead>
                                     <TableHead></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -59,29 +59,12 @@ export default function TransferLogs({ auth, documentTransfers }) {
                                         </TableCell>
                                         <TableCell className="space-y-2">
                                             <div>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Released
-                                                </p>
-                                                {dt?.date_released && (
-                                                    <div>
-                                                        {dayjs(
-                                                            dt.date_released,
-                                                        ).format(
-                                                            "h:mm a MMM D, YYYY",
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Completed
-                                                </p>
                                                 {dt?.date_completed && (
                                                     <div>
                                                         {dayjs(
                                                             dt.date_received,
                                                         ).format(
-                                                            "h:mm a MMM D, YYYY",
+                                                            "MMM D, YYYY h:mm a",
                                                         )}
                                                     </div>
                                                 )}

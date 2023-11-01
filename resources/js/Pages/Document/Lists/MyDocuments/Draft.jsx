@@ -37,7 +37,6 @@ export default function Draft({ auth, documents }) {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Title</TableHead>
-                                <TableHead>Last Update</TableHead>
                                 <TableHead>Date Created</TableHead>
                                 <TableHead>Actions</TableHead>
                             </TableRow>
@@ -50,22 +49,6 @@ export default function Draft({ auth, documents }) {
                                             <TableCell>
                                                 <div className="font-bold">
                                                     {document.title}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex flex-col items-start">
-                                                    <div>
-                                                        {dayjs(
-                                                            document.updated_at,
-                                                        ).format("h:mm A")}
-                                                    </div>
-                                                    <div>
-                                                        {dayjs(
-                                                            document.updated_at,
-                                                        ).format(
-                                                            "MMMM DD, YYYY",
-                                                        )}
-                                                    </div>
                                                 </div>
                                             </TableCell>
                                             <TableCell>

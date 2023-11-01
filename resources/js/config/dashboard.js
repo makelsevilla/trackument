@@ -22,10 +22,11 @@ export const dashboardConfig = {
             icon: "folderOpen",
             subMenu: [
                 {
-                    title: "Requiring Action",
-                    href: route("documents.lists.actionable"),
-                    icon: "action",
+                    title: "My Documents",
+                    href: route("documents.lists.finalized"),
+                    icon: "myDocuments",
                 },
+
                 {
                     title: "Tagged as Terminal",
                     href: route("documents.lists.terminal"),
@@ -36,17 +37,17 @@ export const dashboardConfig = {
                     href: route("documents.lists.drafts"),
                     icon: "draft",
                 },
-                {
-                    title: "My Documents",
-                    href: route("documents.lists.finalized"),
-                    icon: "myDocuments",
-                },
             ],
         },
         {
             title: "Document Transfer",
             icon: "transfer",
             subMenu: [
+                {
+                    title: "Requiring Action",
+                    href: route("documents.lists.actionable"),
+                    icon: "action",
+                },
                 {
                     id: "incoming",
                     title: "Incoming",

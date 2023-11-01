@@ -18,6 +18,7 @@ import {
     Files,
     FileWarning,
     FileX2,
+    Filter,
     Folder,
     FolderOpen,
     FolderSync,
@@ -34,6 +35,7 @@ import {
     PencilLine,
     PenSquare,
     Printer,
+    Search,
     Settings,
     Siren,
     StopCircle,
@@ -44,6 +46,8 @@ import {
 } from "lucide-react";
 
 const Icons = {
+    filter: Filter,
+    search: Search,
     folderOpen: FolderOpen,
     transfer: FolderSync,
     abort: Ban,
