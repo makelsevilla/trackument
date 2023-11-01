@@ -171,12 +171,14 @@ class DocumentListController extends Controller
                 "d.tracking_code as document_tracking_code",
                 "dt.id",
                 "dt.transferred_at as date_released",
-                "dt.completed_at as date_received",
+                "dt.completed_at as date_completed",
+                "dt.status",
                 "u_sender.name as sender_name",
                 "u_receiver.name as receiver_name"
             )
             ->get();
 
+        //        dd($dt);
         return Inertia::render("Document/Lists/TransferLogs", [
             "documentTransfers" => $dt,
         ]);

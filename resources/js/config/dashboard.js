@@ -50,14 +50,14 @@ export const dashboardConfig = {
                 },
                 {
                     id: "outgoing",
-                    title: "Outoing",
+                    title: "Outgoing",
                     href: route("documents.lists.outgoing"),
                     icon: "outgoing",
                 },
 
                 {
                     title: "Transfer Logs",
-                    href: "/dashboard/settings",
+                    href: route("documents.lists.transfers"),
                     icon: "listChecks",
                 },
                 {
