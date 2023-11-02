@@ -54,7 +54,7 @@ class DocumentListController extends Controller
         ];
 
         // filtering categories
-        $columnMapping = [
+        $categoryMapping = [
             "document_title" => "documents.title",
             "document_type" => "document_types.name",
             "tracking_code" => "documents.tracking_code",
@@ -62,7 +62,7 @@ class DocumentListController extends Controller
 
         if (isset($filters["category"], $filters["filter"])) {
             $documents = $documents->where(
-                $columnMapping[$filters["category"]],
+                $categoryMapping[$filters["category"]],
                 "like",
                 "%" . $filters["filter"] . "%"
             );
@@ -77,6 +77,69 @@ class DocumentListController extends Controller
 
         $documents = $documents->paginate()->withQueryString();
         return Inertia::render("Document/Lists/MyDocuments/Finalized", [
+            "paginatedDocuments" => $documents,
+            "filters" => $filters,
+        ]);
+    }
+
+    public function terminalTagged(Request $request)
+    {
+        // get the documents that are currently owned by the user
+        $user = auth()->user();
+        $documents = DB::table("documents as d")
+            ->join("users as u_owner", "d.owner_id", "=", "u_owner.id")
+            ->join(
+                "document_types as type",
+                "d.document_type_id",
+                "=",
+                "type.id"
+            )
+            ->leftJoin(
+                "users as u_previous",
+                "d.previous_owner_id",
+                "=",
+                "u_previous.id"
+            )
+            ->where("d.current_owner_id", "=", $user->id)
+            ->where("d.status", "=", "terminal")
+            ->select(
+                "d.*",
+                "u_owner.name as owner_name",
+                "u_previous.name as previous_owner_name",
+                "type.name as document_type_name"
+            );
+
+        $filters = [
+            "filter" => $request->query("filter"),
+            "category" => $request->query("category", "document_title"),
+            "date" => $request->query("date"),
+        ];
+
+        // filtering categories
+        $categoryMapping = [
+            "owner" => "u_owner.name",
+            "document_title" => "d.title",
+            "document_type" => "type.name",
+            "tracking_code" => "d.tracking_code",
+        ];
+
+        if (isset($filters["category"], $filters["filter"])) {
+            $documents = $documents->where(
+                $categoryMapping[$filters["category"]],
+                "like",
+                "%" . $filters["filter"] . "%"
+            );
+        }
+
+        if (isset($filters["date"]["from"]) && isset($filters["date"]["to"])) {
+            $documents = $documents->whereBetween("d.terminated_at", [
+                $filters["date"]["from"],
+                $filters["date"]["to"],
+            ]);
+        }
+
+        $documents = $documents->paginate()->withQueryString();
+        return Inertia::render("Document/Lists/TerminalTagged", [
             "paginatedDocuments" => $documents,
             "filters" => $filters,
         ]);
@@ -210,39 +273,6 @@ class DocumentListController extends Controller
         //        dd($dt);
         return Inertia::render("Document/Lists/TransferLogs", [
             "documentTransfers" => $dt,
-        ]);
-    }
-
-    public function terminalTagged()
-    {
-        // get the documents that are currently owned by the user
-        $user = auth()->user();
-        $documents = DB::table("documents as d")
-            ->join("users as u_owner", "d.owner_id", "=", "u_owner.id")
-            ->join(
-                "document_types as type",
-                "d.document_type_id",
-                "=",
-                "type.id"
-            )
-            ->leftJoin(
-                "users as u_previous",
-                "d.previous_owner_id",
-                "=",
-                "u_previous.id"
-            )
-            ->where("d.current_owner_id", "=", $user->id)
-            ->where("d.status", "=", "terminal")
-            ->select(
-                "d.*",
-                "u_owner.name as owner_name",
-                "u_previous.name as previous_owner_name",
-                "type.name as document_type_name"
-            )
-            ->get();
-        //        dd($documents);
-        return Inertia::render("Document/Lists/TerminalTagged", [
-            "documents" => $documents,
         ]);
     }
 }
