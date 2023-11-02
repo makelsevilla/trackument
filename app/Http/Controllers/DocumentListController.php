@@ -223,7 +223,7 @@ class DocumentListController extends Controller
         ]);
     }
 
-    public function incoming()
+    public function incoming(Request $request)
     {
         // get the document transfers that are not yet completed and that the receiver_id is equal to the user id
         $user = auth()->user();
@@ -239,11 +239,41 @@ class DocumentListController extends Controller
                 "d.purpose",
                 "dt.transferred_at as date_released",
                 "dt.id"
-            )
-            ->get();
+            );
+
+        // Adding filters
+        $filters = [
+            "filter" => $request->query("filter"),
+            "category" => $request->query("category", "document_title"),
+            "date" => $request->query("date"),
+        ];
+
+        // filtering categories
+        $categoryMapping = [
+            "sender" => "u.name",
+            "document_title" => "d.title",
+        ];
+
+        if (isset($filters["category"], $filters["filter"])) {
+            $dt = $dt->where(
+                $categoryMapping[$filters["category"]],
+                "like",
+                "%" . $filters["filter"] . "%"
+            );
+        }
+
+        if (isset($filters["date"]["from"]) && isset($filters["date"]["to"])) {
+            $dt = $dt->whereBetween("dt.transferred_at", [
+                $filters["date"]["from"],
+                $filters["date"]["to"],
+            ]);
+        }
+
+        $dt = $dt->paginate()->withQueryString();
 
         return Inertia::render("Document/Lists/Incoming", [
-            "documentTransfers" => $dt,
+            "paginatedDocumentTransfers" => $dt,
+            "filters" => $filters,
         ]);
     }
 
