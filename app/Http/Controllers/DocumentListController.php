@@ -145,7 +145,7 @@ class DocumentListController extends Controller
         ]);
     }
 
-    public function actionable()
+    public function actionable(Request $request)
     {
         // get the documents that are currently owned by the user
         $user = auth()->user();
@@ -171,8 +171,6 @@ class DocumentListController extends Controller
             )
             ->select("dt_a.*");
 
-        //                dd($latestDocumentsTransfer->toSql());
-
         $documents = DB::table("documents as d")
             ->join("users as u", "d.previous_owner_id", "=", "u.id")
             ->where("d.current_owner_id", "=", $user->id)
@@ -187,11 +185,41 @@ class DocumentListController extends Controller
                 "u.name as previous_owner_name",
                 "dt.completed_at as date_received",
                 "dt.id as document_transfer_id"
-            )
-            ->get();
+            );
 
+        // Adding filters
+        $filters = [
+            "filter" => $request->query("filter"),
+            "category" => $request->query("category", "document_title"),
+            "date" => $request->query("date"),
+        ];
+
+        // filtering categories
+        $categoryMapping = [
+            "sender" => "u.name",
+            "document_title" => "d.title",
+            "tracking_code" => "d.tracking_code",
+        ];
+
+        if (isset($filters["category"], $filters["filter"])) {
+            $documents = $documents->where(
+                $categoryMapping[$filters["category"]],
+                "like",
+                "%" . $filters["filter"] . "%"
+            );
+        }
+
+        if (isset($filters["date"]["from"]) && isset($filters["date"]["to"])) {
+            $documents = $documents->whereBetween("dt.completed_at", [
+                $filters["date"]["from"],
+                $filters["date"]["to"],
+            ]);
+        }
+
+        $documents = $documents->paginate()->withQueryString();
         return Inertia::render("Document/Lists/Actionable", [
-            "documents" => $documents,
+            "paginatedDocuments" => $documents,
+            "filters" => $filters,
         ]);
     }
 
