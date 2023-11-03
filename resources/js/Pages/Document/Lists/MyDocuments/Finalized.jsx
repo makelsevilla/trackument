@@ -14,6 +14,8 @@ import dayjs from "dayjs";
 import Icons from "@/Components/Icons.jsx";
 import FinalizedTableFilter from "@/Pages/Document/Lists/Components/FinalizedTableFilter.jsx";
 import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButtons.jsx";
+import TableFilter from "@/Pages/Document/Lists/Components/TableFilter.jsx";
+import { finalizedCategories } from "@/Pages/Document/Lists/Components/pageFilterCategories.js";
 
 export default function Finalized({ auth, paginatedDocuments, filters }) {
     const documents = paginatedDocuments.data;
@@ -38,7 +40,11 @@ export default function Finalized({ auth, paginatedDocuments, filters }) {
                 </DashboardHeader>
                 <div className="px-2">
                     {/*Table Filter*/}
-                    <FinalizedTableFilter filters={filters} />
+                    <TableFilter
+                        url={route("documents.lists.finalized")}
+                        filters={filters}
+                        categories={finalizedCategories}
+                    />
 
                     {/*Data Table*/}
                     <Table>

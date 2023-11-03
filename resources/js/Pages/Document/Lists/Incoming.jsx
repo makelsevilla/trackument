@@ -108,8 +108,12 @@ export default function Incoming({
                     {paginatedDocumentTransfers.last_page > 1 && (
                         <div className="flex justify-end pt-4">
                             <PaginationButtons
-                                next_page_url={paginatedDocuments.next_page_url}
-                                prev_page_url={paginatedDocuments.prev_page_url}
+                                next_page_url={
+                                    paginatedDocumentTransfers.next_page_url
+                                }
+                                prev_page_url={
+                                    paginatedDocumentTransfers.prev_page_url
+                                }
                             />
                         </div>
                     )}
