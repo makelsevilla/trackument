@@ -21,6 +21,12 @@ import {
 } from "@/Components/ui/popover.jsx";
 import { Badge } from "@/Components/ui/badge.jsx";
 import { Separator } from "@/Components/ui/separator.jsx";
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+} from "@/Components/ui/dialog.jsx";
+import TrackingSlip from "@/Components/TrackingSlip.jsx";
 
 export default function ViewDocument({
     auth,
@@ -29,7 +35,6 @@ export default function ViewDocument({
     withFiles = false,
     documentTransfer,
 }) {
-    console.log(document);
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Pending Documents" />
@@ -116,10 +121,23 @@ export default function ViewDocument({
                             </Link>
                         </Button>
                     )}
-                    <Button size="sm" className="ml-auto" variant="outline">
-                        <Icons.printer className="h-4 w-4" />
-                        <span className="ml-2">Tracking Slip</span>
-                    </Button>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button
+                                size="sm"
+                                className="ml-auto"
+                                variant="outline"
+                            >
+                                <Icons.printer className="h-4 w-4" />
+                                <span className="ml-2">Tracking Slip</span>
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <TrackingSlip
+                                trackingCode={document.tracking_code}
+                            />
+                        </DialogContent>
+                    </Dialog>
                 </div>
                 <DashboardHeader heading="Document Details" />
                 <div className="w-full px-2">
