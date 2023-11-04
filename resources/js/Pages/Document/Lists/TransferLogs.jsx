@@ -13,9 +13,16 @@ import dayjs from "dayjs";
 import { Button } from "@/Components/ui/button.jsx";
 import Icons from "@/Components/Icons.jsx";
 import { Badge } from "@/Components/ui/badge.jsx";
+import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButtons.jsx";
+import TableFilter from "@/Pages/Document/Lists/Components/TableFilter.jsx";
+import { transferLogCategories } from "@/Pages/Document/Lists/Components/pageFilterCategories.js";
 
-export default function TransferLogs({ auth, documentTransfers }) {
-    console.log(documentTransfers);
+export default function TransferLogs({
+    auth,
+    paginatedDocumentTransfers,
+    filters,
+}) {
+    const documentTransfers = paginatedDocumentTransfers.data;
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Incoming" />
@@ -25,75 +32,102 @@ export default function TransferLogs({ auth, documentTransfers }) {
                     text="Released and received documents."
                 />
                 <div className="px-2">
-                    {documentTransfers.length > 0 ? (
-                        <Table>
-                            <TableHeader className="bg-secondary">
-                                <TableRow>
-                                    <TableHead>Document</TableHead>
-                                    <TableHead>Sender</TableHead>
-                                    <TableHead>Receiver</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Date Completed</TableHead>
-                                    <TableHead></TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {documentTransfers.map((dt, index) => (
-                                    <TableRow>
-                                        <TableCell>
-                                            <div className="text-sm text-muted-foreground">
-                                                {dt.document_tracking_code}
-                                            </div>
-                                            <div className="font-medium">
-                                                {dt.document_title}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="font-bold">
-                                            {dt.sender_name}
-                                        </TableCell>
-                                        <TableCell className="font-bold">
-                                            {dt.receiver_name}
-                                        </TableCell>
-                                        <TableCell className="capitalize">
-                                            {dt.status}
-                                        </TableCell>
-                                        <TableCell className="space-y-2">
-                                            <div>
-                                                {dt?.date_completed && (
-                                                    <div>
-                                                        {dayjs(
-                                                            dt.date_received,
-                                                        ).format(
-                                                            "MMM D, YYYY h:mm a",
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </TableCell>
+                    {/*Table Filter*/}
+                    <TableFilter
+                        filters={filters}
+                        categories={transferLogCategories}
+                        url={route("documents.lists.transfers")}
+                    />
 
-                                        <TableCell>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                asChild
-                                            >
-                                                <Link
-                                                    href={route(
-                                                        "documents.transfer.show",
-                                                        dt.id,
+                    {/*Data Table*/}
+                    <Table>
+                        <TableHeader className="bg-secondary">
+                            <TableRow>
+                                <TableHead>Document</TableHead>
+                                <TableHead>Sender</TableHead>
+                                <TableHead>Receiver</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead>Date Completed</TableHead>
+                                <TableHead></TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {documentTransfers.length === 0 && (
+                                <TableRow>
+                                    <TableCell colSpan="5">
+                                        <div className="flex items-center justify-center space-x-2">
+                                            <span className="py-8 font-medium text-gray-500">
+                                                No transfer logs.
+                                            </span>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                            {documentTransfers.map((dt, index) => (
+                                <TableRow key={index}>
+                                    <TableCell>
+                                        <div className="text-sm text-muted-foreground">
+                                            {dt.document_tracking_code}
+                                        </div>
+                                        <div className="font-medium">
+                                            {dt.document_title}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="font-bold">
+                                        {dt.sender_name}
+                                    </TableCell>
+                                    <TableCell className="font-bold">
+                                        {dt.receiver_name}
+                                    </TableCell>
+                                    <TableCell className="capitalize">
+                                        {dt.status}
+                                    </TableCell>
+                                    <TableCell className="space-y-2">
+                                        <div>
+                                            {dt?.date_completed && (
+                                                <div>
+                                                    {dayjs(
+                                                        dt.date_received,
+                                                    ).format(
+                                                        "MMM D, YYYY h:mm a",
                                                     )}
-                                                >
-                                                    <Icons.view className="h-5 w-5" />
-                                                </Link>
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    ) : (
-                        <div className="flex justify-center border-t py-4 text-muted-foreground">
-                            No Records.
+                                                </div>
+                                            )}
+                                        </div>
+                                    </TableCell>
+
+                                    <TableCell>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            asChild
+                                        >
+                                            <Link
+                                                href={route(
+                                                    "documents.transfer.show",
+                                                    dt.id,
+                                                )}
+                                            >
+                                                <Icons.view className="h-5 w-5" />
+                                            </Link>
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+
+                    {/*Pagination*/}
+                    {paginatedDocumentTransfers.last_page > 1 && (
+                        <div className="flex justify-end pt-4">
+                            <PaginationButtons
+                                next_page_url={
+                                    paginatedDocumentTransfers.next_page_url
+                                }
+                                prev_page_url={
+                                    paginatedDocumentTransfers.prev_page_url
+                                }
+                            />
                         </div>
                     )}
                 </div>

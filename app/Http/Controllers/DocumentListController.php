@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -330,7 +329,7 @@ class DocumentListController extends Controller
         ]);
     }
 
-    public function transferLogs()
+    public function transferLogs(Request $request)
     {
         // get the document transfers that are completed and that the sender_id or receiver_id is equal to the user id
         $user = auth()->user();
@@ -343,8 +342,11 @@ class DocumentListController extends Controller
                 "=",
                 "u_receiver.id"
             )
-            ->where("dt.sender_id", "=", $user->id)
-            ->orWhere("dt.receiver_id", "=", $user->id)
+            ->where(function ($query) use ($user) {
+                $query
+                    ->where("dt.sender_id", "=", $user->id)
+                    ->orWhere("dt.receiver_id", "=", $user->id);
+            })
             ->where("dt.is_completed", "=", true)
             ->select(
                 "d.title as document_title",
@@ -355,12 +357,42 @@ class DocumentListController extends Controller
                 "dt.status",
                 "u_sender.name as sender_name",
                 "u_receiver.name as receiver_name"
-            )
-            ->get();
+            );
 
-        //        dd($dt);
+        // Adding filters
+        $filters = [
+            "filter" => $request->query("filter"),
+            "category" => $request->query("category", "document_title"),
+            "date" => $request->query("date"),
+        ];
+
+        // filtering categories
+        $categoryMapping = [
+            "tracking_code" => "d.tracking_code",
+            "document_title" => "d.title",
+            "receiver" => "u_receiver.name",
+            "sender" => "u_sender.name",
+        ];
+
+        if (isset($filters["category"], $filters["filter"])) {
+            $dt = $dt->where(
+                $categoryMapping[$filters["category"]],
+                "like",
+                "%" . $filters["filter"] . "%"
+            );
+        }
+
+        if (isset($filters["date"]["from"]) && isset($filters["date"]["to"])) {
+            $dt = $dt->whereBetween("dt.completed_at", [
+                $filters["date"]["from"],
+                $filters["date"]["to"],
+            ]);
+        }
+
+        $dt = $dt->paginate()->withQueryString();
         return Inertia::render("Document/Lists/TransferLogs", [
-            "documentTransfers" => $dt,
+            "paginatedDocumentTransfers" => $dt,
+            "filters" => $filters,
         ]);
     }
 }

@@ -27,3 +27,22 @@ export const finalizedCategories = [
         label: "Tracking Code",
     },
 ];
+
+export const transferLogCategories = [
+    {
+        value: "document_title",
+        label: "Document Title",
+    },
+    {
+        value: "tracking_code",
+        label: "Tracking Code",
+    },
+    {
+        value: "receiver",
+        label: "Receiver",
+    },
+    {
+        value: "sender",
+        label: "Sender",
+    },
+];
