@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class DocumentHistory extends Model
 {
     use HasFactory;
+
+    protected $fillable = ["action", "details", "actor_id"];
 }

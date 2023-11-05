@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\DocumentActionEvent;
 use App\Models\Document;
 use App\Models\DocumentTransfer;
 use Illuminate\Http\Request;
@@ -86,6 +87,22 @@ class DocumentTransferController extends Controller
                 "status" => "error",
             ]);
         }
+
+        // dispatching the event
+        $receiver = DB::table("users")
+            ->where("id", "=", $validated["receiver_id"])
+            ->select("name")
+            ->first();
+
+        $action_details = "Released to " . $receiver->name;
+        event(
+            new DocumentActionEvent(
+                "released",
+                $action_details,
+                $document,
+                $user
+            )
+        );
 
         return to_route("documents.lists.actionable")->with([
             "message" => "Document released successfully.",
@@ -187,6 +204,16 @@ class DocumentTransferController extends Controller
             ]);
         }
 
+        // dispatching the event
+        $action_details = "";
+        event(
+            new DocumentActionEvent(
+                "accepted",
+                $action_details,
+                $document,
+                $user
+            )
+        );
         return back()->with([
             "message" => "Document transfer successful.",
             "status" => "success",
@@ -220,10 +247,13 @@ class DocumentTransferController extends Controller
 
         DB::beginTransaction(); // Start a database transaction
 
+        $action_taken = "";
         try {
             if ($action === "reject") {
+                $action_taken = "rejected";
                 $documentTransfer->status = "rejected";
             } elseif ($action === "cancel") {
+                $action_taken = "cancelled";
                 $documentTransfer->status = "cancelled";
             }
 
@@ -245,6 +275,17 @@ class DocumentTransferController extends Controller
                 "status" => "error",
             ]);
         }
+
+        // dispatching the event
+        $action_details = "";
+        event(
+            new DocumentActionEvent(
+                $action_taken,
+                $action_details,
+                $document,
+                $user
+            )
+        );
 
         return back()->with([
             "message" => "Document transfer $action successful.",

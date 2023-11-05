@@ -1,9 +1,9 @@
 export const dashboardConfig = {
     mainNav: [
-        {
+        /*  {
             title: "Track Document",
             href: "/docs",
-        },
+        },*/
     ],
     // Give a nav-item an id if it expects a badge
     sidebarNav: [

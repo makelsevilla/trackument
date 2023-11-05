@@ -67,6 +67,15 @@ Route::middleware(["auth"])->group(function () {
         "download",
     ])->name("file.download");
 
+    Route::get("/track", [
+        \App\Http\Controllers\TrackingController::class,
+        "track",
+    ])->name("track");
+    Route::get("/history/{tracking_code}", [
+        \App\Http\Controllers\TrackingController::class,
+        "history",
+    ])->name("history");
+
     require __DIR__ . "/document/terminate.php";
     require __DIR__ . "/document/transfer.php";
     require __DIR__ . "/documentslists.php";

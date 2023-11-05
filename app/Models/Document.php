@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
@@ -24,6 +25,11 @@ class Document extends Model
     protected $casts = [
         "purpose" => "array",
     ];
+
+    public function histories(): HasMany
+    {
+        return $this->hasMany(DocumentHistory::class, "document_id", "id");
+    }
 
     public function generateTrackingCode($doc_type_abbr = "NO-TYPE"): string
     {

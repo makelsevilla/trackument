@@ -20,10 +20,7 @@ return new class extends Migration {
                 ->foreignId("document_id")
                 ->constrained("documents")
                 ->onDelete("cascade");
-            $table
-                ->foreignId("actor_id")
-                ->constrained("users")
-                ->onDelete("cascade");
+            $table->foreignId("actor_id")->constrained("users");
         });
     }
 

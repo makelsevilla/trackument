@@ -6,6 +6,9 @@ import DashboardNav from "@/Components/DashboardNav.jsx";
 import { Toaster } from "@/Components/ui/toaster.jsx";
 import { usePage } from "@inertiajs/react";
 import { useToast } from "@/Components/ui/use-toast.js";
+import { Input } from "@/Components/ui/input.jsx";
+import { Button } from "@/Components/ui/button.jsx";
+import NavTrackingForm from "@/Components/NavTrackingForm.jsx";
 
 export default function Authenticated({
     user,
@@ -31,7 +34,10 @@ export default function Authenticated({
         <div className="flex min-h-screen flex-col space-y-6">
             <header className="sticky top-0 z-40 border-b bg-background">
                 <div className="container flex h-16 items-center justify-between py-4">
-                    <MainNav items={dashboardConfig.mainNav} />
+                    <div className="flex items-center">
+                        <MainNav items={dashboardConfig.mainNav} />
+                        <NavTrackingForm className="flex items-center space-x-4 px-8" />
+                    </div>
                     <div>
                         <UserAccountNav
                             user={{
