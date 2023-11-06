@@ -9,6 +9,8 @@ import { useToast } from "@/Components/ui/use-toast.js";
 import { Input } from "@/Components/ui/input.jsx";
 import { Button } from "@/Components/ui/button.jsx";
 import NavTrackingForm from "@/Components/NavTrackingForm.jsx";
+import Icons from "@/Components/Icons.jsx";
+import MobileSidebar from "@/Pages/Admin/MobileSidebar.jsx";
 
 export default function Authenticated({
     user,
@@ -16,9 +18,11 @@ export default function Authenticated({
     children,
     withSidebar = true,
 }) {
-    const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { flash } = usePage().props;
     const { toast } = useToast();
+
+    const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
     useEffect(() => {
         if (flash?.message) {
@@ -35,8 +39,28 @@ export default function Authenticated({
             <header className="sticky top-0 z-40 border-b bg-background">
                 <div className="container flex h-16 items-center justify-between py-4">
                     <div className="flex items-center">
-                        <MainNav items={dashboardConfig.mainNav} />
-                        <NavTrackingForm className="flex items-center space-x-4 px-8" />
+                        {/*Sidebar*/}
+                        {withSidebar && (
+                            <div className="mr-2 lg:hidden">
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    onClick={toggleSidebar}
+                                >
+                                    <Icons.sidebarTrigger className="h-6 w-6" />
+                                </Button>
+                                <MobileSidebar
+                                    toggleSidebar={toggleSidebar}
+                                    isOpen={isSidebarOpen}
+                                >
+                                    <DashboardNav
+                                        items={dashboardConfig.sidebarNav}
+                                    />
+                                </MobileSidebar>
+                            </div>
+                        )}
+
+                        <MainNav items={[]} />
                     </div>
                     <div>
                         <UserAccountNav
@@ -49,9 +73,10 @@ export default function Authenticated({
                     </div>
                 </div>
             </header>
+
             {withSidebar ? (
-                <div className="container grid flex-1 gap-12 md:grid-cols-[250px_1fr]">
-                    <aside className="hidden w-[250px] flex-col md:flex">
+                <div className="container grid flex-1 gap-12 lg:grid-cols-[250px_1fr]">
+                    <aside className="hidden w-[250px] flex-col lg:flex">
                         <DashboardNav items={dashboardConfig.sidebarNav} />
                     </aside>
                     <main className="flex w-full flex-1 flex-col overflow-hidden">

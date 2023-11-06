@@ -7,7 +7,7 @@ import DashboardHeader from "@/Components/DashboardHeader.jsx";
 
 export default function Edit({ auth, mustVerifyEmail, status }) {
     return (
-        <AuthenticatedLayout user={auth.user}>
+        <AuthenticatedLayout user={auth.user} withSidebar={false}>
             <Head title="Profile" />
             <DashboardHeader
                 heading="Settings"

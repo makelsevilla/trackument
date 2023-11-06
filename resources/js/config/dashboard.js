@@ -76,3 +76,26 @@ export const dashboardConfig = {
         },
     ],
 };
+
+export const adminDashboardConfig = {
+    mainNav: [
+        /*  {
+            title: "Track Document",
+            href: "/docs",
+        },*/
+    ],
+    // Give a nav-item an id if it expects a badge
+    sidebarNav: [
+        {
+            title: "Dashboard",
+            href: route("admin.dashboard"),
+            icon: "dashboard",
+        },
+        {
+            title: "User Management",
+            href: route("admin.users.index"),
+            icon: "userCog",
+            segment: "/admin/users",
+        },
+    ],
+};

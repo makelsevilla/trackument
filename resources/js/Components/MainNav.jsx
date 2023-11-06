@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils.js";
 import MobileNav from "@/Components/MobileNav.jsx";
 import { Link } from "@inertiajs/react";
 
-export default function MainNav({ items, children }) {
+export default function MainNav({ items, children, url = "/" }) {
     const [showMobileMenu, setShowMobileMenu] = useState(false);
 
     const { ziggy } = usePage().props;
@@ -15,7 +15,7 @@ export default function MainNav({ items, children }) {
 
     return (
         <div className="flex gap-6 md:gap-10">
-            <Link href="/" className="hidden items-center space-x-2 md:flex">
+            <Link href={url} className="hidden items-center space-x-2 md:flex">
                 <Icons.logo />
                 <span className="hidden text-lg font-bold sm:inline-block">
                     {siteConfig.name}

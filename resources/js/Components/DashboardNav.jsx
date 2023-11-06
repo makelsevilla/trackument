@@ -46,7 +46,10 @@ export default function DashboardNav({ items }) {
                                                     "group relative flex items-center rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground",
                                                     pathname === subItem.href ||
                                                         location ===
-                                                            subItem.href
+                                                            subItem.href ||
+                                                        pathname.startsWith(
+                                                            subItem?.segment,
+                                                        )
                                                         ? "bg-accent"
                                                         : "bg-transparent",
                                                     subItem.disabled &&
@@ -80,7 +83,8 @@ export default function DashboardNav({ items }) {
                                 className={cn(
                                     "group relative flex items-center rounded-md px-3 py-2 text-lg font-medium hover:bg-accent hover:text-accent-foreground",
                                     pathname === item.href ||
-                                        location === item.href
+                                        location === item.href ||
+                                        pathname.startsWith(item?.segment)
                                         ? "bg-accent"
                                         : "bg-transparent",
                                     item.disabled &&
