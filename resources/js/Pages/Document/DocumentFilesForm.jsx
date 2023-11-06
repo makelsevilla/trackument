@@ -29,13 +29,23 @@ import {
     TableRow,
 } from "@/Components/ui/table.jsx";
 import { hyphen_uc_words } from "@/lib/utils.js";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select.jsx";
+import dayjs from "dayjs";
+import DocumentFileCard from "@/Components/DocumentFileCard.jsx";
 
 function DocumentFilesForm({
-    role = "backup",
     documentId = null,
     withNameInput = false,
     ...props
 }) {
+    const [role, setRole] = useState("");
     const [documentFiles, setDocumentFiles] = useState([]);
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState("");
@@ -50,7 +60,6 @@ function DocumentFilesForm({
             .get(
                 route("document_files.index", {
                     document_id: documentId,
-                    role: role,
                 }),
             )
             .then((response) => setDocumentFiles(response.data))
@@ -132,11 +141,31 @@ function DocumentFilesForm({
 
     return (
         <div {...props}>
-            <div className="grid w-full gap-1.5">
+            <div className="grid w-full gap-2">
+                <div className="grid gap-1.5">
+                    <Label>File Role</Label>
+                    <Select
+                        value={role}
+                        onValueChange={(value) => setRole(value)}
+                    >
+                        <SelectTrigger className="w-[150px]">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="backup">Backup</SelectItem>
+                                <SelectItem value="attachment">
+                                    Attachment
+                                </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <InputError message={errors.role} />
+                </div>
                 {withNameInput && (
-                    <div className="space-y-1.5">
+                    <div className="grid gap-1.5">
+                        <Label>File Name</Label>
                         <Input
-                            placeholder="File Name"
                             onChange={(e) =>
                                 setFileName(hyphen_uc_words(e.target.value))
                             }
@@ -199,7 +228,7 @@ function DocumentFilesForm({
                 )}
 
                 {documentFiles.length > 0 ? (
-                    <Collapsible>
+                    <Collapsible defaultOpen>
                         <div className="flex items-center space-x-4">
                             <CollapsibleTrigger asChild>
                                 <Button variant="ghost" size="sm">
@@ -209,74 +238,53 @@ function DocumentFilesForm({
                             </CollapsibleTrigger>
                         </div>
 
-                        <CollapsibleContent className="mt-2 space-y-2 px-2">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Name</TableHead>
-                                        <TableHead>Uploaded By</TableHead>
-                                        <TableHead>Date</TableHead>
-                                        <TableHead>Action</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {documentFiles.map((file, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell>
-                                                {file.file_name}
-                                            </TableCell>
-                                            <TableCell>
-                                                {file.uploader_name}
-                                            </TableCell>
-                                            <TableCell>
-                                                {file.uploaded_at}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-2">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        asChild
-                                                    >
-                                                        <a
-                                                            href={
-                                                                file.file_type ===
-                                                                "file"
-                                                                    ? route(
-                                                                          "file.download",
-                                                                          {
-                                                                              document_file:
-                                                                                  file.id,
-                                                                          },
-                                                                      )
-                                                                    : file.file_path
-                                                            }
-                                                            target="_blank"
-                                                        >
-                                                            <Icons.download className="h-4 w-4" />
-                                                        </a>
-                                                    </Button>
-                                                    {user.id ===
-                                                        file.uploader_id && (
-                                                        <Button
-                                                            onClick={() =>
-                                                                handleFileDelete(
-                                                                    file.id,
-                                                                )
-                                                            }
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="hover:bg-destructive hover:text-destructive-foreground"
-                                                        >
-                                                            <Icons.trash className="h-4 w-4" />
-                                                        </Button>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                        <CollapsibleContent className="mt-2 space-y-8 px-2">
+                            {}
+                            <div className="space-y-2">
+                                <h1>Backup:</h1>
+                                <div className="mt-4 max-w-xl space-y-2">
+                                    {documentFiles
+                                        .filter(
+                                            (file) => file.role === "backup",
+                                        )
+                                        .map((file, index) => (
+                                            <DocumentFileCard
+                                                key={index}
+                                                file={file}
+                                                handleFileDelete={
+                                                    handleFileDelete
+                                                }
+                                                withDeleteButton={
+                                                    user.id === file.uploader_id
+                                                }
+                                            />
+                                        ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <h1>Attachment:</h1>
+
+                                <div className="mt-4 max-w-xl space-y-2">
+                                    {documentFiles
+                                        .filter(
+                                            (file) =>
+                                                file.role === "attachment",
+                                        )
+                                        .map((file, index) => (
+                                            <DocumentFileCard
+                                                key={index}
+                                                file={file}
+                                                handleFileDelete={
+                                                    handleFileDelete
+                                                }
+                                                withDeleteButton={
+                                                    user.id === file.uploader_id
+                                                }
+                                            />
+                                        ))}
+                                </div>
+                            </div>
                         </CollapsibleContent>
                     </Collapsible>
                 ) : (

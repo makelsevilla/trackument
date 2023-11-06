@@ -43,9 +43,12 @@ import {
     Unlock,
     User,
     X,
+    File,
+    MoreHorizontal,
 } from "lucide-react";
 
 const Icons = {
+    moreHorizontal: MoreHorizontal,
     filter: Filter,
     search: Search,
     folderOpen: FolderOpen,
@@ -89,6 +92,7 @@ const Icons = {
     check: Check,
     fileInput: FileInput,
     fileX2: FileX2,
+    file: File,
 };
 
 export default Icons;

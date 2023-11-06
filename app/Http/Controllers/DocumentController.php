@@ -103,10 +103,17 @@ class DocumentController extends Controller
                 ? $documentTransfer
                 : null;
 
+        $documentFiles = DB::table("document_files")
+            ->join("users", "document_files.uploader_id", "=", "users.id")
+            ->where("document_files.document_id", "=", $document->id)
+            ->select("document_files.*", "users.name as uploader_name")
+            ->orderBy("document_files.uploaded_at", "desc")
+            ->get();
         return Inertia::render("Document/ViewDocument", [
             "document" => $document,
             "withActionButtons" => $with_action_buttons,
             "documentTransfer" => $documentTransfer,
+            "documentFiles" => $documentFiles,
         ]);
     }
 

@@ -186,8 +186,10 @@ export default function ReleaseDocument({
                             </div>
 
                             {/* Document Files */}
-                            <div className="mt-4 grid w-full gap-1.5">
-                                <Label>Attachments</Label>
+                            <div className="mt-8 grid w-full gap-4">
+                                <Label className="text-xl">
+                                    Document Files
+                                </Label>
                                 <DocumentFilesForm
                                     documentId={document.id}
                                     withNameInput

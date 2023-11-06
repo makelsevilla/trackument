@@ -27,14 +27,26 @@ import {
     DialogTrigger,
 } from "@/Components/ui/dialog.jsx";
 import TrackingSlip from "@/Components/TrackingSlip.jsx";
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from "@/Components/ui/collapsible.jsx";
+import { Label } from "@/Components/ui/label.jsx";
+import DocumentFileCard from "@/Components/DocumentFileCard.jsx";
 
 export default function ViewDocument({
     auth,
     document,
     withActionButtons = false,
-    withFiles = false,
     documentTransfer,
+    documentFiles,
 }) {
+    const backupFiles = documentFiles.filter((file) => file.role === "backup");
+    const attachmentFiles = documentFiles.filter(
+        (file) => file.role === "attachment",
+    );
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Pending Documents" />
@@ -263,12 +275,68 @@ export default function ViewDocument({
                         </TableBody>
                     </Table>
 
-                    {withFiles && (
-                        <>
-                            <Separator className="my-8" />
-                            <DashboardHeader heading="Files" />
-                        </>
-                    )}
+                    {/*Document Files*/}
+                    <div className="mt-8">
+                        <div className="text-xl font-medium">
+                            Document Files
+                        </div>
+                        <div className="mt-4 space-y-4">
+                            <div>
+                                <Collapsible>
+                                    <div className="flex items-center gap-4">
+                                        <p>Backup Files</p>
+                                        <CollapsibleTrigger asChild>
+                                            <Button size="icon" variant="ghost">
+                                                <Icons.chevronsUpDown className="h-4 w-4" />
+                                            </Button>
+                                        </CollapsibleTrigger>
+                                    </div>
+                                    <CollapsibleContent className="space-y-2">
+                                        {backupFiles.length > 0 ? (
+                                            backupFiles.map((file, index) => (
+                                                <DocumentFileCard
+                                                    file={file}
+                                                    key={index}
+                                                />
+                                            ))
+                                        ) : (
+                                            <p className="text-muted-foreground">
+                                                No files.
+                                            </p>
+                                        )}
+                                    </CollapsibleContent>
+                                </Collapsible>
+                            </div>
+                            <div>
+                                <Collapsible>
+                                    <div className="flex items-center gap-4">
+                                        <p>Attachment Files</p>
+                                        <CollapsibleTrigger asChild>
+                                            <Button size="icon" variant="ghost">
+                                                <Icons.chevronsUpDown className="h-4 w-4" />
+                                            </Button>
+                                        </CollapsibleTrigger>
+                                    </div>
+                                    <CollapsibleContent className="space-y-2">
+                                        {attachmentFiles.length > 0 ? (
+                                            attachmentFiles.map(
+                                                (file, index) => (
+                                                    <DocumentFileCard
+                                                        file={file}
+                                                        key={index}
+                                                    />
+                                                ),
+                                            )
+                                        ) : (
+                                            <p className="text-muted-foreground">
+                                                No files.
+                                            </p>
+                                        )}
+                                    </CollapsibleContent>
+                                </Collapsible>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>

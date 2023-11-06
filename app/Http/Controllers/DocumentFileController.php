@@ -15,10 +15,14 @@ class DocumentFileController extends Controller
      */
     public function index(Request $request)
     {
-        $document_id = $request->query('document_id');
-        $role = $request->query('role');
+        $document_id = $request->query("document_id");
 
-        $document_files = DB::table('document_files')->join('users', 'document_files.uploader_id', '=', 'users.id')->where('document_files.document_id', '=', $document_id)->where('document_files.role', '=', $role)->select('document_files.*', 'users.name as uploader_name')->get();
+        $document_files = DB::table("document_files")
+            ->join("users", "document_files.uploader_id", "=", "users.id")
+            ->where("document_files.document_id", "=", $document_id)
+            ->select("document_files.*", "users.name as uploader_name")
+            ->orderBy("document_files.uploaded_at", "desc")
+            ->get();
         return response()->json($document_files);
     }
 
@@ -29,37 +33,43 @@ class DocumentFileController extends Controller
     {
         $user = $request->user();
         $validated = $request->validate([
-            'type' => 'required|in:file,link',
-            'role' => 'required|in:backup,attachment',
-            'fileName' => 'required|string|max:255',
-            'documentId' => 'required|exists:documents,id',
-            'file' => ['required_if:type,file', File::types(['pdf', 'jpg', 'png', 'docx', 'doc'])->max(10 * 1024)],
-            'link' => ['required_if:type,link', 'url']
+            "type" => "required|in:file,link",
+            "role" => "required|in:backup,attachment",
+            "fileName" => "required|string|max:255",
+            "documentId" => "required|exists:documents,id",
+            "file" => [
+                "required_if:type,file",
+                File::types(["pdf", "jpg", "png", "docx", "doc"])->max(
+                    10 * 1024
+                ),
+            ],
+            "link" => ["required_if:type,link", "url"],
         ]);
 
         $file_path = "";
-        if ($validated['type'] == 'file') {
-            $file_path = $request->file('file')->store('documents/files/');
-
+        if ($validated["type"] == "file") {
+            $file_path = $request->file("file")->store("documents/files/");
         } else {
-            $file_path = $validated['link'];
+            $file_path = $validated["link"];
         }
 
         $file = new DocumentFile();
-        $file['document_id'] = $validated['documentId'];
-        $file['file_name'] = $validated['fileName'] ?? "";
-        $file['role'] = $validated['role'];
-        $file['file_type'] = $validated['type'];
-        $file['uploader_id'] = $user->id;
-        $file['file_path'] = $file_path;
+        $file["document_id"] = $validated["documentId"];
+        $file["file_name"] = $validated["fileName"] ?? "";
+        $file["role"] = $validated["role"];
+        $file["file_type"] = $validated["type"];
+        $file["uploader_id"] = $user->id;
+        $file["file_path"] = $file_path;
 
         if (!$file->save()) {
-            return response()->json(["message" => "Error saving to database."], 500);
+            return response()->json(
+                ["message" => "Error saving to database."],
+                500
+            );
         }
 
         return response()->json(["message" => "File added successfully."]);
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -67,22 +77,32 @@ class DocumentFileController extends Controller
     public function destroy(DocumentFile $document_file)
     {
         // Ensure the file_type and file_path are available
-        if ($document_file->file_type === 'file' && $document_file->file_path) {
+        if ($document_file->file_type === "file" && $document_file->file_path) {
             // Attempt to delete the file from storage
             if (Storage::delete($document_file->file_path)) {
                 // File deleted successfully, continue with record deletion
                 $document_file->delete();
-                return response()->json(["message" => "File deleted successfully"]);
+                return response()->json([
+                    "message" => "File deleted successfully",
+                ]);
             } else {
                 // Error deleting the file
-                return response()->json(["message" => "Error deleting file."], 500);
+                return response()->json(
+                    ["message" => "Error deleting file."],
+                    500
+                );
             }
         } else {
             // If the file type is not 'file' or file_path is missing, just delete the record
             if ($document_file->delete()) {
-                return response()->json(["message" => "File deleted successfully"]);
+                return response()->json([
+                    "message" => "File deleted successfully",
+                ]);
             } else {
-                return response()->json(["message" => "Error deleting file."], 500);
+                return response()->json(
+                    ["message" => "Error deleting file."],
+                    500
+                );
             }
         }
     }
