@@ -13,7 +13,13 @@ class DocumentReleaseActionSeeder extends Seeder
      */
     public function run(): void
     {
-        $actions = ["approved", "disapproved", "endorse", "return to sender"];
+        $actions = [
+            "approved",
+            "disapproved",
+            "endorse",
+            "return to sender",
+            "no action",
+        ];
 
         foreach ($actions as $action) {
             DB::table("document_release_actions")->insert([

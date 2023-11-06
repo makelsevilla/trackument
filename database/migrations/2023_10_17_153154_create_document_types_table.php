@@ -4,19 +4,21 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('document_types', function (Blueprint $table) {
+        Schema::create("document_types", function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('abbreviation');
-            $table->text('description')->nullable();
-            $table->integer('life_time')->nullable()->comment("In days");
+            $table->string("name");
+            $table->string("abbreviation");
+            $table->text("description")->nullable();
+            $table
+                ->integer("life_time")
+                ->default(365)
+                ->comment("In days. default is 1 year");
             // compliance requirements
             $table->timestamps();
         });
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('document_types');
+        Schema::dropIfExists("document_types");
     }
 };

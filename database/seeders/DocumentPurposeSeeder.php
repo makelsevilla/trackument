@@ -13,24 +13,21 @@ class DocumentPurposeSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('document_purposes')->insert([
-            'purpose' => 'for your information'
-        ]);
+        $purposes = [
+            "for your information",
+            "follow-up",
+            "endorsement/recommendation",
+            "draft of reply",
+            "dissemination of information",
+            "compliance/implementation",
+            "appropriate action",
+            "coding/deposit/preparation of receipt",
+        ];
 
-        DB::table('document_purposes')->insert([
-            'purpose' => 'for compliance'
-        ]);
-
-        DB::table('document_purposes')->insert([
-            'purpose' => 'for reference'
-        ]);
-
-        DB::table('document_purposes')->insert([
-            'purpose' => 'for action'
-        ]);
-
-        DB::table('document_purposes')->insert([
-            'purpose' => 'for approval'
-        ]);
+        foreach ($purposes as $purpose) {
+            DB::table("document_purposes")->insert([
+                "purpose" => $purpose,
+            ]);
+        }
     }
 }
