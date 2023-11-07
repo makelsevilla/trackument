@@ -47,9 +47,13 @@ import {
     UserCog2,
     Plus,
     MoreVertical,
+    ChevronLast,
+    ChevronFirst,
 } from "lucide-react";
 
 const Icons = {
+    chevronFirst: ChevronFirst,
+    chevronLast: ChevronLast,
     plus: Plus,
     userCog: UserCog2,
     moreHorizontal: MoreHorizontal,

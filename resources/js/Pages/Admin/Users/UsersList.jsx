@@ -11,17 +11,26 @@ import {
     TableCell,
 } from "@/Components/ui/table.jsx";
 import dayjs from "dayjs";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu.jsx";
+
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import { Link } from "@inertiajs/react";
 import UserOperations from "@/Pages/Admin/Users/Components/UserOperations.jsx";
+import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
+import { Input } from "@/Components/ui/input.jsx";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select.jsx";
+import TableFilter from "@/Components/TableFilter.jsx";
+import UsersListTableFilter from "@/Pages/Admin/Users/Components/UsersListTableFilter.jsx";
 
-export default function UsersList({ auth, users }) {
+export default function UsersList({
+    auth,
+    paginatedUsers: { data: users, ...paginate },
+}) {
     return (
         <AdminLayout user={auth.user}>
             <div className="flex flex-col justify-start gap-8">
@@ -46,8 +55,10 @@ export default function UsersList({ auth, users }) {
                 </DashboardHeader>
 
                 {/*Content*/}
-                <div className="flex flex-col gap-4">
-                    <div>Filters goes here</div>
+                <div className="flex flex-col gap-4 p-2">
+                    {/*Table Filters*/}
+                    <UsersListTableFilter />
+                    {/*Table Dat*/}
                     <div>
                         <Table>
                             <TableHeader>
@@ -83,9 +94,13 @@ export default function UsersList({ auth, users }) {
                                 No Data Found
                             </div>
                         )}
-                        <div className="flex justify-end">
-                            Pagination Buttons
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <div className="text-sm text-muted-foreground">
+                            Showing {paginate.from} to {paginate.to} of{" "}
+                            {paginate.total} results
                         </div>
+                        <TablePaginationButtons paginate={paginate} />
                     </div>
                 </div>
             </div>
