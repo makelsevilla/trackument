@@ -99,6 +99,12 @@ export const adminDashboardConfig = {
         },
         {
             title: "Documents",
+            href: route("admin.documents.index"),
+            icon: "documents",
+            segment: "/admin/documents",
+        },
+        {
+            title: "Configurations",
             icon: "folderCog",
             subMenu: [
                 {

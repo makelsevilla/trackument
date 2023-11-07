@@ -21,6 +21,11 @@ Route::prefix("/admin")
         );
 
         Route::resource(
+            "/documents",
+            App\Http\Controllers\Admin\DocumentController::class
+        );
+
+        Route::resource(
             "/document-types",
             App\Http\Controllers\Admin\DocumentTypeController::class
         )->parameter("document-types", "documentType");

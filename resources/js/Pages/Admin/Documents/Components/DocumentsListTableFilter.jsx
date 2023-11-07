@@ -22,40 +22,32 @@ import { usePage } from "@inertiajs/react";
 
 const categories = [
     {
-        value: "name",
-        label: "Name",
+        value: "tracking_code",
+        label: "Tracking Code",
     },
     {
-        value: "email",
-        label: "Email",
+        value: "title",
+        label: "Title",
     },
 ];
 
 const sortColumns = [
     {
-        value: "name",
-        label: "Name",
-    },
-    {
-        value: "email",
-        label: "Email",
-    },
-    {
         value: "created_at",
         label: "Date Created",
     },
     {
-        value: "role",
-        label: "Role",
+        value: "title",
+        label: "Title",
     },
 ];
 
-export default function UsersListTableFilter({ ...props }) {
+export default function DocumentsListTableFilter({ ...props }) {
     const {
-        props: { filters },
+        props: { filters, documentTypes },
     } = usePage();
     const [params, setParams] = useState({
-        role: filters?.role || "",
+        document_type_id: filters?.document_type_id || "",
         created_at: {
             from: filters?.created_at?.from
                 ? new Date(filters?.created_at?.from)
@@ -71,22 +63,25 @@ export default function UsersListTableFilter({ ...props }) {
             childParams={params}
             sortColumns={sortColumns}
             categories={categories}
-            url={route("admin.users.index")}
+            url={route("admin.documents.index")}
         >
             <div className="w-44">
-                <Label className="text-xs">Role</Label>
+                <Label className="text-xs">Type</Label>
                 <Select
-                    value={params.role}
+                    value={params.document_type_id}
                     onValueChange={(value) =>
-                        setParams({ ...params, role: value })
+                        setParams({ ...params, document_type_id: value })
                     }
                 >
                     <SelectTrigger>
-                        <SelectValue placeholder="Select Role" />
+                        <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="user">User</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
+                        {documentTypes.map((type, idx) => (
+                            <SelectItem key={idx} value={type.id.toString()}>
+                                {type.name}
+                            </SelectItem>
+                        ))}
                     </SelectContent>
                 </Select>
             </div>

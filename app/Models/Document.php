@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +26,15 @@ class Document extends Model
     protected $casts = [
         "purpose" => "array",
     ];
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(DocumentType::class, "document_type_id", "id");
+    }
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, "owner_id", "id");
+    }
 
     public function histories(): HasMany
     {
