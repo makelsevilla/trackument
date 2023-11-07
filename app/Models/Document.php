@@ -36,6 +36,16 @@ class Document extends Model
         return $this->belongsTo(User::class, "owner_id", "id");
     }
 
+    public function currentOwner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, "current_owner_id", "id");
+    }
+
+    public function previousOwner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, "previous_owner_id", "id");
+    }
+
     public function histories(): HasMany
     {
         return $this->hasMany(DocumentHistory::class, "document_id", "id");

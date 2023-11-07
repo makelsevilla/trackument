@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateDocumentRequest;
 use App\Models\Document;
 use App\Models\DocumentType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class DocumentController extends Controller
@@ -83,7 +85,24 @@ class DocumentController extends Controller
      */
     public function show(Document $document)
     {
-        //
+        $document->load(["owner", "type", "currentOwner"]);
+
+        $documentFiles = DB::table("document_files")
+            ->join("users", "document_files.uploader_id", "=", "users.id")
+            ->where("document_files.document_id", "=", $document->id)
+            ->select("document_files.*", "users.name as uploader_name")
+            ->orderBy("document_files.uploaded_at", "desc")
+            ->get();
+
+        // getting the related documents code
+        $document["related_documents"] = DB::table("related_documents")
+            ->where("document_id", "=", $document->id)
+            ->get();
+
+        return Inertia::render("Admin/Documents/ViewDocument", [
+            "document" => $document,
+            "documentFiles" => $documentFiles,
+        ]);
     }
 
     /**
@@ -91,15 +110,51 @@ class DocumentController extends Controller
      */
     public function edit(Document $document)
     {
-        //
+        $document_types = DB::table("document_types")
+            ->select("id", "name", "description")
+            ->get();
+        $document_purposes = DB::table("document_purposes")->get();
+
+        $related_documents = DB::table("related_documents")
+            ->where("document_id", $document->id)
+            ->select("related_document_code")
+            ->get()
+            ->toArray();
+        $related_documents = array_column(
+            $related_documents,
+            "related_document_code"
+        );
+
+        return Inertia::render("Admin/Documents/EditDocument", [
+            "document" => array_merge($document->toArray(), [
+                "related_documents" => $related_documents,
+            ]),
+            "documentTypes" => $document_types,
+            "documentPurposes" => $document_purposes,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Document $document)
+    public function update(UpdateDocumentRequest $request, Document $document)
     {
-        //
+        $validated = $request->validated();
+        $validated["title"] = ucwords(strtolower($validated["title"]));
+        $document->update($validated);
+
+        // handling related documents
+        if (isset($validated["related_documents"])) {
+            $document->saveRelatedDocuments(
+                $document->id,
+                $validated["related_documents"]
+            );
+        }
+
+        return to_route("admin.documents.index")->with([
+            "message" => "Document saved successfully.",
+            "status" => "success",
+        ]);
     }
 
     /**
@@ -107,6 +162,16 @@ class DocumentController extends Controller
      */
     public function destroy(Document $document)
     {
-        //
+        if ($document->delete()) {
+            return to_route("admin.documents.index")->with([
+                "message" => "Document deleted successfully.",
+                "status" => "success",
+            ]);
+        } else {
+            return to_route("admin.documents.index")->with([
+                "message" => "Document deletion failed.",
+                "status" => "error",
+            ]);
+        }
     }
 }

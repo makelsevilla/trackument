@@ -37,14 +37,7 @@ export default function DocumentsList({
                         },
                     ]}
                 />
-                <DashboardHeader heading="Manage Documents">
-                    <Button size="sm" asChild>
-                        <Link href={route("admin.users.create")}>
-                            <Icons.plus className="mr-2 h-4 w-4" />
-                            Add Document
-                        </Link>
-                    </Button>
-                </DashboardHeader>
+                <DashboardHeader heading="Manage Documents" />
 
                 {/*Content*/}
                 <div className="flex flex-col gap-4 p-2">
