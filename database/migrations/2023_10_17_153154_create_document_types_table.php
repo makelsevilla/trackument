@@ -14,11 +14,11 @@ return new class extends Migration {
             $table->id();
             $table->string("name");
             $table->string("abbreviation");
-            $table->text("description")->nullable();
-            $table
+            $table->string("description")->nullable();
+            /*            $table
                 ->integer("life_time")
                 ->default(365)
-                ->comment("In days. default is 1 year");
+                ->comment("In days. default is 1 year");*/
             // compliance requirements
             $table->timestamps();
         });

@@ -1,6 +1,5 @@
-import { Link, router } from "@inertiajs/react";
-import { format } from "date-fns";
-import { Label } from "@/Components/ui/label.jsx";
+import { router, usePage } from "@inertiajs/react";
+
 import { Input } from "@/Components/ui/input.jsx";
 import {
     Select,
@@ -11,15 +10,8 @@ import {
 } from "@/Components/ui/select.jsx";
 import { Button } from "@/Components/ui/button.jsx";
 import Icons from "@/Components/Icons.jsx";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/Components/ui/popover.jsx";
-import { cn } from "@/lib/utils.js";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { Calendar } from "@/Components/ui/calendar.jsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Label } from "@/Components/ui/label.jsx";
 
 /**
  * @typedef {Object} Categories
@@ -40,15 +32,20 @@ import { useEffect, useState } from "react";
  */
 export default function TableFilter({
     categories,
+    sortColumns,
     url,
     childParams,
     children,
     ...props
 }) {
-    const { searchParams } = new URL(location.href);
+    const {
+        props: { filters },
+    } = usePage();
     const [params, setParams] = useState({
-        category: searchParams.get("category") || "",
-        search: searchParams.get("search") || "",
+        category: filters?.category || "",
+        search: filters?.search || "",
+        sortBy: filters?.sortBy || "",
+        order: filters?.order || "",
     });
 
     function handleFilterApply(e) {
@@ -62,7 +59,10 @@ export default function TableFilter({
     }
 
     return (
-        <form onSubmit={handleFilterApply} className="flex flex-wrap gap-4">
+        <form
+            onSubmit={handleFilterApply}
+            className="flex flex-wrap items-end gap-4"
+        >
             <div className="w-44">
                 <Input
                     value={params.search}
@@ -73,6 +73,7 @@ export default function TableFilter({
                 />
             </div>
             <div className="w-44">
+                <Label className="text-xs">Search By:</Label>
                 <Select
                     value={params.category}
                     onValueChange={(value) =>
@@ -80,7 +81,7 @@ export default function TableFilter({
                     }
                 >
                     <SelectTrigger>
-                        <SelectValue placeholder="Search Category" />
+                        <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                         {categories.map((category, index) => (
@@ -91,6 +92,51 @@ export default function TableFilter({
                     </SelectContent>
                 </Select>
             </div>
+            {sortColumns && (
+                <>
+                    <div className="w-44">
+                        <Label className="text-xs">Sort By:</Label>
+                        <Select
+                            value={params.sortBy}
+                            onValueChange={(value) =>
+                                setParams({ ...params, sortBy: value })
+                            }
+                        >
+                            <SelectTrigger>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {sortColumns.map((column, index) => (
+                                    <SelectItem
+                                        key={index}
+                                        value={column.value}
+                                    >
+                                        {column.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="w-44">
+                        <Label className="text-xs">Order:</Label>
+                        <Select
+                            value={params.order}
+                            onValueChange={(value) =>
+                                setParams({ ...params, order: value })
+                            }
+                        >
+                            <SelectTrigger>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="desc">Descending</SelectItem>
+                                <SelectItem value="asc">Ascending</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </>
+            )}
+
             {/*Additional Filter From Child Component*/}
             {children}
 

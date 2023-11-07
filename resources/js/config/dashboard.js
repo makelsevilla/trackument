@@ -97,5 +97,17 @@ export const adminDashboardConfig = {
             icon: "userCog",
             segment: "/admin/users",
         },
+        {
+            title: "Document Management",
+            icon: "userCog",
+            subMenu: [
+                {
+                    title: "Document Types",
+                    href: route("admin.document-types.index"),
+                    icon: "myDocuments",
+                    segment: "/admin/document-types",
+                },
+            ],
+        },
     ],
 };

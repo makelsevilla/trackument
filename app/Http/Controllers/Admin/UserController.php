@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Illuminate\Validation\Rules;
@@ -23,8 +24,10 @@ class UserController extends Controller
         $filters = [
             "search" => $request->query("search"),
             "role" => $request->query("role"),
-            "category" => $request->query("category"),
+            "category" => $request->query("category", "name"),
             "created_at" => $request->query("created_at"),
+            "sortBy" => $request->query("sortBy", "created_at"),
+            "order" => $request->query("order", "desc"),
         ];
 
         $users = User::whereNot("id", "=", Auth::id());
@@ -51,10 +54,15 @@ class UserController extends Controller
             ]);
         }
 
+        if (isset($filters["sortBy"], $filters["order"])) {
+            $users->orderBy($filters["sortBy"], $filters["order"]);
+        }
+
         $paginatedUsers = $users->paginate(10)->withQueryString();
 
         return Inertia::render("Admin/Users/UsersList", [
             "paginatedUsers" => $paginatedUsers,
+            "filters" => $filters,
         ]);
     }
 

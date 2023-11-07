@@ -19,4 +19,9 @@ Route::prefix("/admin")
             "/users",
             App\Http\Controllers\Admin\UserController::class
         );
+
+        Route::resource(
+            "/document-types",
+            App\Http\Controllers\Admin\DocumentTypeController::class
+        )->parameter("document-types", "documentType");
     });

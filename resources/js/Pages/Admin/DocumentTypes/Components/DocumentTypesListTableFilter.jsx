@@ -22,40 +22,39 @@ import { usePage } from "@inertiajs/react";
 
 const categories = [
     {
+        value: "abbreviation",
+        label: "Abbreviation",
+    },
+    {
         value: "name",
         label: "Name",
     },
     {
-        value: "email",
-        label: "Email",
+        value: "description",
+        label: "Description",
     },
 ];
 
 const sortColumns = [
     {
-        value: "name",
-        label: "Name",
+        value: "abbreviation",
+        label: "Abbreviation",
     },
     {
-        value: "email",
-        label: "Email",
+        value: "name",
+        label: "Name",
     },
     {
         value: "created_at",
         label: "Date Created",
     },
-    {
-        value: "role",
-        label: "Role",
-    },
 ];
 
-export default function UsersListTableFilter({ ...props }) {
+export default function DocumentTypesListTableFilter({ ...props }) {
     const {
         props: { filters },
     } = usePage();
     const [params, setParams] = useState({
-        role: filters?.role || "",
         created_at: {
             from: filters?.created_at?.from
                 ? new Date(filters?.created_at?.from)
@@ -71,27 +70,10 @@ export default function UsersListTableFilter({ ...props }) {
             childParams={params}
             sortColumns={sortColumns}
             categories={categories}
-            url={route("admin.users.index")}
+            url={route("admin.document-types.index")}
         >
-            <div className="w-44">
-                <Label className="text-xs">Role</Label>
-                <Select
-                    value={params.role}
-                    onValueChange={(value) =>
-                        setParams({ ...params, role: value })
-                    }
-                >
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select Role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="user">User</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-            <div className="flex items-center space-x-2">
-                <Label>Date Created:</Label>
+            <div className="flex flex-col">
+                <Label className="text-xs">Date Created:</Label>
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button
