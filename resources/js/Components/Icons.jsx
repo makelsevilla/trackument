@@ -49,12 +49,16 @@ import {
     MoreVertical,
     ChevronLast,
     ChevronFirst,
+    FolderCog,
+    FileType,
 } from "lucide-react";
 
 const Icons = {
+    fileType: FileType,
     chevronFirst: ChevronFirst,
     chevronLast: ChevronLast,
     plus: Plus,
+    folderCog: FolderCog,
     userCog: UserCog2,
     moreHorizontal: MoreHorizontal,
     moreVertical: MoreVertical,

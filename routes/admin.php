@@ -24,4 +24,9 @@ Route::prefix("/admin")
             "/document-types",
             App\Http\Controllers\Admin\DocumentTypeController::class
         )->parameter("document-types", "documentType");
+
+        Route::resource(
+            "/document-purposes",
+            App\Http\Controllers\Admin\DocumentPurposeController::class
+        )->parameter("document-purposes", "id");
     });
