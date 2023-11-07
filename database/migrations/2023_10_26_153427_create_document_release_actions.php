@@ -11,7 +11,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create("document_release_actions", function (Blueprint $table) {
-            $table->string("action_name")->primary();
+            $table->id();
+            $table->string("action_name")->unique();
         });
     }
 

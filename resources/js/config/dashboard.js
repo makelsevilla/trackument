@@ -92,26 +92,30 @@ export const adminDashboardConfig = {
             icon: "dashboard",
         },
         {
-            title: "User Management",
+            title: "Users",
             href: route("admin.users.index"),
             icon: "userCog",
             segment: "/admin/users",
         },
         {
-            title: "Document Management",
+            title: "Documents",
             icon: "folderCog",
             subMenu: [
                 {
-                    title: "Document Type",
+                    title: "Types",
                     href: route("admin.document-types.index"),
                     icon: "fileType",
                     segment: "/admin/document-types",
                 },
                 {
-                    title: "Document Purpose",
+                    title: "Purposes",
                     href: route("admin.document-purposes.index"),
-                    icon: "fileType",
                     segment: "/admin/document-purposes",
+                },
+                {
+                    title: "Release Actions",
+                    href: route("admin.document-release-actions.index"),
+                    segment: "/admin/document-release-actions",
                 },
             ],
         },

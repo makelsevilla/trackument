@@ -29,4 +29,9 @@ Route::prefix("/admin")
             "/document-purposes",
             App\Http\Controllers\Admin\DocumentPurposeController::class
         )->parameter("document-purposes", "id");
+
+        Route::resource(
+            "/document-release-actions",
+            App\Http\Controllers\Admin\DocumentReleaseActionController::class
+        )->parameter("document-release-actions", "id");
     });

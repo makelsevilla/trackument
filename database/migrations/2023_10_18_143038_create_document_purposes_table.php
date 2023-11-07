@@ -10,9 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('document_purposes', function (Blueprint $table) {
+        Schema::create("document_purposes", function (Blueprint $table) {
             $table->id();
-            $table->string('purpose');
+            $table->string("purpose")->unique();
         });
     }
 
@@ -21,6 +21,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('document_purposes');
+        Schema::dropIfExists("document_purposes");
     }
 };
