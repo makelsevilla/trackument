@@ -74,7 +74,7 @@ export default function TableFilter({
                         placeholder="Search..."
                     />
                 </div>
-                <div className="w-44">
+                <div>
                     <Label className="text-xs">Search By:</Label>
                     <Select
                         value={params.category}
@@ -98,7 +98,7 @@ export default function TableFilter({
 
             {sortColumns && (
                 <div className="flex gap-1.5">
-                    <div className="w-44">
+                    <div>
                         <Label className="text-xs">Sort By:</Label>
                         <Select
                             value={params.sortBy}
@@ -121,7 +121,7 @@ export default function TableFilter({
                             </SelectContent>
                         </Select>
                     </div>
-                    <div className="w-44">
+                    <div>
                         <Label className="text-xs">Order:</Label>
                         <Select
                             value={params.order}
@@ -144,7 +144,7 @@ export default function TableFilter({
             {/*Additional Filter From Child Component*/}
             {children}
 
-            <div className="w-20">
+            <div>
                 <Label className="text-xs">Per page:</Label>
                 <Select
                     value={params.perPage}
