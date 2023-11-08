@@ -17,6 +17,8 @@ class DocumentPurposeController extends Controller
         $filters = [
             "search" => $request->query("search"),
             "category" => $request->query("category", "purpose"),
+            "sortBy" => $request->query("sortBy", "purpose"),
+            "order" => $request->query("order", "desc"),
             "perPage" => $request->query("perPage", "10"),
         ];
 
@@ -28,6 +30,10 @@ class DocumentPurposeController extends Controller
                 "LIKE",
                 "%{$filters["search"]}%"
             );
+        }
+
+        if (isset($filters["sortBy"], $filters["order"])) {
+            $documentPurposes->orderBy($filters["sortBy"], $filters["order"]);
         }
 
         $documentPurposes = $documentPurposes

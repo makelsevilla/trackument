@@ -12,6 +12,15 @@ import { Button } from "@/Components/ui/button.jsx";
 import Icons from "@/Components/Icons.jsx";
 import { useState } from "react";
 import { Label } from "@/Components/ui/label.jsx";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/Components/ui/popover.jsx";
+import { cn } from "@/lib/utils.js";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { addDays, format } from "date-fns";
+import { Calendar } from "@/Components/ui/calendar.jsx";
 
 /**
  * @typedef {Object} Categories
@@ -33,6 +42,7 @@ import { Label } from "@/Components/ui/label.jsx";
 export default function TableFilter({
     categories,
     sortColumns,
+    dateNames,
     url,
     childParams,
     children,
@@ -47,6 +57,9 @@ export default function TableFilter({
         sortBy: filters?.sortBy || "",
         order: filters?.order || "",
         perPage: filters?.perPage || "",
+        date_name: filters?.date_name || "",
+        date_from: filters?.date_from ? new Date(filters?.date_from) : "",
+        date_to: filters?.date_to ? new Date(filters?.date_to) : "",
     });
 
     function handleFilterApply(e) {
@@ -62,7 +75,7 @@ export default function TableFilter({
     return (
         <form
             onSubmit={handleFilterApply}
-            className="flex flex-wrap items-end gap-4"
+            className="flex flex-wrap items-end gap-6"
         >
             <div className="flex items-end gap-1.5">
                 <div className="w-44">
@@ -83,7 +96,7 @@ export default function TableFilter({
                         }
                     >
                         <SelectTrigger>
-                            <SelectValue />
+                            <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
                         <SelectContent>
                             {categories.map((category, index) => (
@@ -107,7 +120,7 @@ export default function TableFilter({
                             }
                         >
                             <SelectTrigger>
-                                <SelectValue />
+                                <SelectValue placeholder="Select Sort" />
                             </SelectTrigger>
                             <SelectContent>
                                 {sortColumns.map((column, index) => (
@@ -130,7 +143,7 @@ export default function TableFilter({
                             }
                         >
                             <SelectTrigger>
-                                <SelectValue />
+                                <SelectValue placeholder="Select Order" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="desc">Descending</SelectItem>
@@ -153,7 +166,7 @@ export default function TableFilter({
                     }
                 >
                     <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder="Select Per Page" />
                     </SelectTrigger>
                     <SelectContent>
                         {[5, 10, 15, 20, 25, 50].map((item, index) => (
@@ -164,7 +177,162 @@ export default function TableFilter({
                     </SelectContent>
                 </Select>
             </div>
-            <div className="space-x-2">
+
+            {dateNames && (
+                <div className="flex items-end gap-1.5">
+                    <div>
+                        <Label className="text-xs">Date:</Label>
+                        <Select
+                            value={params.date_name}
+                            onValueChange={(value) =>
+                                setParams({ ...params, date_name: value })
+                            }
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select Date" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {dateNames.map((dateName, index) => (
+                                    <SelectItem
+                                        key={index}
+                                        value={dateName.value}
+                                    >
+                                        {dateName.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="flex flex-col">
+                        <Label className="text-xs">From:</Label>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                        "justify-start text-left font-normal",
+                                        !params.date_from &&
+                                            "text-muted-foreground",
+                                    )}
+                                >
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {params.date_from ? (
+                                        format(params.date_from, "PPP")
+                                    ) : (
+                                        <span>From</span>
+                                    )}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="flex w-auto flex-col space-y-2 p-2">
+                                <Select
+                                    onValueChange={(value) =>
+                                        setParams({
+                                            ...params,
+                                            date_from: addDays(
+                                                new Date(),
+                                                parseInt(value),
+                                            ),
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select" />
+                                    </SelectTrigger>
+                                    <SelectContent position="popper">
+                                        <SelectItem value="0">Today</SelectItem>
+                                        <SelectItem value="1">
+                                            Tomorrow
+                                        </SelectItem>
+                                        <SelectItem value="3">
+                                            In 3 days
+                                        </SelectItem>
+                                        <SelectItem value="7">
+                                            In a week
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <div className="rounded-md border">
+                                    <Calendar
+                                        mode="single"
+                                        selected={params.date_from}
+                                        onSelect={(value) =>
+                                            setParams({
+                                                ...params,
+                                                date_from: value,
+                                            })
+                                        }
+                                    />
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                    <div className="flex flex-col">
+                        <Label className="text-xs">To:</Label>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                        "justify-start text-left font-normal",
+                                        !params.date_to &&
+                                            "text-muted-foreground",
+                                    )}
+                                >
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {params.date_to ? (
+                                        format(params.date_to, "PPP")
+                                    ) : (
+                                        <span>To</span>
+                                    )}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="flex w-auto flex-col space-y-2 p-2">
+                                <Select
+                                    onValueChange={(value) =>
+                                        setParams({
+                                            ...params,
+                                            date_to: addDays(
+                                                new Date(),
+                                                parseInt(value),
+                                            ),
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select" />
+                                    </SelectTrigger>
+                                    <SelectContent position="popper">
+                                        <SelectItem value="0">Today</SelectItem>
+                                        <SelectItem value="1">
+                                            Tomorrow
+                                        </SelectItem>
+                                        <SelectItem value="3">
+                                            In 3 days
+                                        </SelectItem>
+                                        <SelectItem value="7">
+                                            In a week
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <div className="rounded-md border">
+                                    <Calendar
+                                        mode="single"
+                                        selected={params.date_to}
+                                        onSelect={(value) =>
+                                            setParams({
+                                                ...params,
+                                                date_to: value,
+                                            })
+                                        }
+                                    />
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                </div>
+            )}
+
+            <div className="ml-auto space-x-2">
                 <Button
                     type="submit"
                     className="hover:bg-primary hover:text-primary-foreground"

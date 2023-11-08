@@ -17,6 +17,8 @@ class DocumentReleaseActionController extends Controller
         $filters = [
             "search" => $request->query("search"),
             "category" => $request->query("category", "action_name"),
+            "sortBy" => $request->query("sortBy", "action_name"),
+            "order" => $request->query("order", "desc"),
             "perPage" => $request->query("perPage", "10"),
         ];
 
@@ -28,6 +30,10 @@ class DocumentReleaseActionController extends Controller
                 "LIKE",
                 "%{$filters["search"]}%"
             );
+        }
+
+        if (isset($filters["sortBy"], $filters["order"])) {
+            $releaseActions->orderBy($filters["sortBy"], $filters["order"]);
         }
 
         $releaseActions = $releaseActions

@@ -19,12 +19,16 @@ import {
 import dayjs from "dayjs";
 import { Head } from "@inertiajs/react";
 
+const filtersKeyMapping = {
+    category: "Search by",
+};
+
 const filtersValueMapping = {
     status: {
         pending: "Pending",
         completed: "Completed",
     },
-    date_range_by: {
+    date_name: {
         transferred_at: "Date Transferred",
         completed_at: "Date Completed",
     },
@@ -70,7 +74,11 @@ export default function TransferLogs({ transfers, filters }) {
                             .map(([key, value]) => {
                                 return (
                                     <div className=" p-2">
-                                        <div className="uppercase">{key}:</div>
+                                        <div className="uppercase">
+                                            {filtersKeyMapping?.[key] ||
+                                                key ||
+                                                "Not specified"}
+                                        </div>
                                         <div>
                                             {filtersValueMapping?.[key]?.[
                                                 value

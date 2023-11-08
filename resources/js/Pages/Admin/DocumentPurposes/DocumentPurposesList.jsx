@@ -115,6 +115,7 @@ export default function DocumentPurposesList({
                     <TableFilter
                         url={route("admin.document-purposes.index")}
                         categories={[{ value: "purpose", label: "Purpose" }]}
+                        sortColumns={[{ value: "purpose", label: "Purpose" }]}
                     />
 
                     {/*Table Data*/}

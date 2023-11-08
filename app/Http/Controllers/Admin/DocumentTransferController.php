@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Controller;
 use App\Models\DocumentTransfer;
 use Illuminate\Http\Request;
@@ -19,20 +20,19 @@ class DocumentTransferController extends Controller
             "category" => $request->query("category", "tracking_code"),
             "sortBy" => $request->query("sortBy", "transferred_at"),
             "order" => $request->query("order", "desc"),
-            "date_range_by" => $request->query(
-                "date_range_by",
-                "transferred_at"
-            ),
-            "date" => $request->query("date"),
-            "status" => $request->query("status"),
             "perPage" => $request->query("perPage", "10"),
+            "date_name" => $request->query("date_name", "transferred_at"),
+            "date_from" => $request->query("date_from"),
+            "date_to" => $request->query("date_to", now()),
+            "status" => $request->query("status"),
         ];
 
-        $transfers = DocumentTransfer::query()->with(
+        //        dd($filters["date_from"], $filters["date_to"]);
+        $transfers = DocumentTransfer::query()->with([
             "document",
             "sender",
-            "receiver"
-        );
+            "receiver",
+        ]);
 
         if (isset($filters["search"], $filters["category"])) {
             $relationMapping = [
@@ -57,17 +57,19 @@ class DocumentTransferController extends Controller
             $transfers->orderBy($filters["sortBy"], $filters["order"]);
         }
 
-        if (
-            isset(
-                $filters["date_range_by"],
-                $filters["date"]["from"],
-                $filters["date"]["to"]
-            )
-        ) {
-            $transfers->whereBetween($filters["date_range_by"], [
-                $filters["date"]["from"],
-                $filters["date"]["to"],
-            ]);
+        if (isset($filters["date_to"], $filters["date_name"])) {
+            $transfers->whereDate(
+                $filters["date_name"],
+                "<=",
+                $filters["date_to"]
+            );
+            if (isset($filters["date_from"])) {
+                $transfers->whereDate(
+                    $filters["date_name"],
+                    ">=",
+                    $filters["date_from"]
+                );
+            }
         }
 
         if (isset($filters["status"])) {
@@ -76,19 +78,19 @@ class DocumentTransferController extends Controller
 
         // check if report is present in the request
         if ($request->query("report")) {
-            // convert the date into a readable format
-            $date = "";
-            if (isset($filters["date"]["from"], $filters["date"]["to"])) {
-                $dateFrom = date("F j, Y", strtotime($filters["date"]["from"]));
-                $dateTo = date("F j, Y", strtotime($filters["date"]["to"]));
+            // transfer dates into readable format
+            $filters["date_from"] = isset($filters["date_from"])
+                ? \Date::create($filters["date_from"])->format("M-d-Y")
+                : null;
 
-                $date = "From {$dateFrom} to {$dateTo}";
-            }
+            $filters["date_to"] = isset($filters["date_to"])
+                ? \Date::create($filters["date_to"])->format("M-d-Y")
+                : null;
 
             // if report is present, then return the report page
             return Inertia::render("Report/TransferLogs", [
                 "transfers" => $transfers->get(),
-                "filters" => [...$filters, "date" => $date],
+                "filters" => [...$filters],
             ]);
         }
 

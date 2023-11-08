@@ -115,6 +115,9 @@ export default function ReleaseActionsList({
                         categories={[
                             { value: "action_name", label: "Action Name" },
                         ]}
+                        sortColumns={[
+                            { value: "action_name", label: "Action Name" },
+                        ]}
                     />
 
                     {/*Table Data*/}

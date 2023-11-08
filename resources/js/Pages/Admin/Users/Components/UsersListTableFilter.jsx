@@ -50,20 +50,19 @@ const sortColumns = [
     },
 ];
 
+const dateNames = [
+    {
+        value: "created_at",
+        label: "Date Created",
+    },
+];
+
 export default function UsersListTableFilter({ ...props }) {
     const {
         props: { filters },
     } = usePage();
     const [params, setParams] = useState({
         role: filters?.role || "",
-        created_at: {
-            from: filters?.created_at?.from
-                ? new Date(filters?.created_at?.from)
-                : null,
-            to: filters?.created_at?.to
-                ? new Date(filters?.created_at?.to)
-                : null,
-        },
     });
 
     return (
@@ -71,9 +70,10 @@ export default function UsersListTableFilter({ ...props }) {
             childParams={params}
             sortColumns={sortColumns}
             categories={categories}
+            dateNames={dateNames}
             url={route("admin.users.index")}
         >
-            <div className="w-44">
+            <div>
                 <Label className="text-xs">Role</Label>
                 <Select
                     value={params.role}
@@ -89,54 +89,6 @@ export default function UsersListTableFilter({ ...props }) {
                         <SelectItem value="admin">Admin</SelectItem>
                     </SelectContent>
                 </Select>
-            </div>
-            <div className="flex flex-col">
-                <Label className="text-xs">Date Created:</Label>
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button
-                            id="date"
-                            variant={"outline"}
-                            className={cn(
-                                " justify-start text-left font-normal",
-                                !params.created_at && "text-muted-foreground",
-                            )}
-                        >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {params.created_at?.from ? (
-                                params.created_at.to ? (
-                                    <>
-                                        {format(
-                                            params.created_at.from,
-                                            "LLL dd, y",
-                                        )}{" "}
-                                        -{" "}
-                                        {format(
-                                            params.created_at.to,
-                                            "LLL dd, y",
-                                        )}
-                                    </>
-                                ) : (
-                                    format(params.created_at.from, "LLL dd, y")
-                                )
-                            ) : (
-                                <span>Date Range</span>
-                            )}
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="center">
-                        <Calendar
-                            initialFocus
-                            mode="range"
-                            defaultMonth={params.created_at?.from}
-                            selected={params.created_at}
-                            onSelect={(val) =>
-                                setParams({ ...params, created_at: val })
-                            }
-                            numberOfMonths={2}
-                        />
-                    </PopoverContent>
-                </Popover>
             </div>
         </TableFilter>
     );

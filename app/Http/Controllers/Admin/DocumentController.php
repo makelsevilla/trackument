@@ -19,12 +19,14 @@ class DocumentController extends Controller
     {
         $filters = [
             "search" => $request->query("search"),
-            "document_type_id" => $request->query("document_type_id"),
             "category" => $request->query("category", "title"),
-            "created_at" => $request->query("created_at"),
             "sortBy" => $request->query("sortBy", "created_at"),
             "order" => $request->query("order", "desc"),
             "perPage" => $request->query("perPage", "10"),
+            "date_name" => $request->query("date_name", "created_at"),
+            "date_from" => $request->query("date_from"),
+            "date_to" => $request->query("date_to", now()),
+            "document_type_id" => $request->query("document_type_id"),
         ];
 
         $documents = Document::query()
@@ -39,22 +41,27 @@ class DocumentController extends Controller
             );
         }
 
-        if (isset($filters["document_type_id"])) {
-            $documents->where("document_type_id", $filters["document_type_id"]);
-        }
-
-        if (
-            isset($filters["created_at"]["from"]) &&
-            isset($filters["created_at"]["to"])
-        ) {
-            $documents->whereBetween("created_at", [
-                $filters["created_at"]["from"],
-                $filters["created_at"]["to"],
-            ]);
-        }
-
         if (isset($filters["sortBy"], $filters["order"])) {
             $documents->orderBy($filters["sortBy"], $filters["order"]);
+        }
+
+        if (isset($filters["date_to"], $filters["date_name"])) {
+            $documents->whereDate(
+                $filters["date_name"],
+                "<=",
+                $filters["date_to"]
+            );
+            if (isset($filters["date_from"])) {
+                $documents->whereDate(
+                    $filters["date_name"],
+                    ">=",
+                    $filters["date_from"]
+                );
+            }
+        }
+
+        if (isset($filters["document_type_id"])) {
+            $documents->where("document_type_id", $filters["document_type_id"]);
         }
 
         $paginatedDocuments = $documents

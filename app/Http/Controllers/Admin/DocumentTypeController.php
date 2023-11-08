@@ -18,10 +18,12 @@ class DocumentTypeController extends Controller
         $filters = [
             "search" => $request->query("search"),
             "category" => $request->query("category", "name"),
-            "created_at" => $request->query("created_at"),
             "sortBy" => $request->query("sortBy", "created_at"),
             "order" => $request->query("order", "desc"),
             "perPage" => $request->query("perPage", "10"),
+            "date_name" => $request->query("date_name", "created_at"),
+            "date_from" => $request->query("date_from"),
+            "date_to" => $request->query("date_to", now()),
         ];
 
         $documentType = DocumentType::query();
@@ -46,6 +48,21 @@ class DocumentTypeController extends Controller
 
         if (isset($filters["sortBy"], $filters["order"])) {
             $documentType->orderBy($filters["sortBy"], $filters["order"]);
+        }
+
+        if (isset($filters["date_to"], $filters["date_name"])) {
+            $documentType->whereDate(
+                $filters["date_name"],
+                "<=",
+                $filters["date_to"]
+            );
+            if (isset($filters["date_from"])) {
+                $documentType->whereDate(
+                    $filters["date_name"],
+                    ">=",
+                    $filters["date_from"]
+                );
+            }
         }
 
         $documentType = $documentType
