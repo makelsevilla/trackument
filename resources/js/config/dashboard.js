@@ -92,6 +92,12 @@ export const adminDashboardConfig = {
             icon: "dashboard",
         },
         {
+            title: "Transfers",
+            href: route("admin.document-transfers.index"),
+            icon: "transfer",
+            segment: "/admin/document-transfers",
+        },
+        {
             title: "Users",
             href: route("admin.users.index"),
             icon: "userCog",

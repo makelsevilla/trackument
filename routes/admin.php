@@ -16,6 +16,11 @@ Route::prefix("/admin")
         })->name("dashboard");
 
         Route::resource(
+            "/document-transfers",
+            App\Http\Controllers\Admin\DocumentTransferController::class
+        )->parameter("document-transfers", "documentTransfer");
+
+        Route::resource(
             "/users",
             App\Http\Controllers\Admin\UserController::class
         );

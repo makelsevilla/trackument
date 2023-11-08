@@ -46,6 +46,7 @@ export default function TableFilter({
         search: filters?.search || "",
         sortBy: filters?.sortBy || "",
         order: filters?.order || "",
+        perPage: filters?.perPage || "",
     });
 
     function handleFilterApply(e) {
@@ -63,37 +64,40 @@ export default function TableFilter({
             onSubmit={handleFilterApply}
             className="flex flex-wrap items-end gap-4"
         >
-            <div className="w-44">
-                <Input
-                    value={params.search}
-                    onChange={(e) =>
-                        setParams({ ...params, search: e.target.value })
-                    }
-                    placeholder="Search..."
-                />
+            <div className="flex items-end gap-1.5">
+                <div className="w-44">
+                    <Input
+                        value={params.search}
+                        onChange={(e) =>
+                            setParams({ ...params, search: e.target.value })
+                        }
+                        placeholder="Search..."
+                    />
+                </div>
+                <div className="w-44">
+                    <Label className="text-xs">Search By:</Label>
+                    <Select
+                        value={params.category}
+                        onValueChange={(value) =>
+                            setParams({ ...params, category: value })
+                        }
+                    >
+                        <SelectTrigger>
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {categories.map((category, index) => (
+                                <SelectItem key={index} value={category.value}>
+                                    {category.label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
-            <div className="w-44">
-                <Label className="text-xs">Search By:</Label>
-                <Select
-                    value={params.category}
-                    onValueChange={(value) =>
-                        setParams({ ...params, category: value })
-                    }
-                >
-                    <SelectTrigger>
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {categories.map((category, index) => (
-                            <SelectItem key={index} value={category.value}>
-                                {category.label}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
+
             {sortColumns && (
-                <>
+                <div className="flex gap-1.5">
                     <div className="w-44">
                         <Label className="text-xs">Sort By:</Label>
                         <Select
@@ -134,12 +138,32 @@ export default function TableFilter({
                             </SelectContent>
                         </Select>
                     </div>
-                </>
+                </div>
             )}
 
             {/*Additional Filter From Child Component*/}
             {children}
 
+            <div className="w-20">
+                <Label className="text-xs">Per page:</Label>
+                <Select
+                    value={params.perPage}
+                    onValueChange={(value) =>
+                        setParams({ ...params, perPage: value })
+                    }
+                >
+                    <SelectTrigger>
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {[5, 10, 15, 20, 25, 50].map((item, index) => (
+                            <SelectItem key={index} value={item.toString()}>
+                                {item}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
             <div className="space-x-2">
                 <Button
                     type="submit"
