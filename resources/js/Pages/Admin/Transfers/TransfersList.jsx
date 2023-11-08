@@ -55,8 +55,10 @@ export default function TransfersList({
                 <div className="flex flex-col gap-4 p-2">
                     {/*Table Filter*/}
                     <TransfersListTableFilter />
+
                     {/*Table Data*/}
                     <TransfersTable transfers={transfers} />
+
                     <div>
                         {transfers.length === 0 && (
                             <div className="text-center text-muted-foreground">

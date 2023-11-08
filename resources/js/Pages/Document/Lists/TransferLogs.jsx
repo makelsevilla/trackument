@@ -12,126 +12,128 @@ import {
 import dayjs from "dayjs";
 import { Button } from "@/Components/ui/button.jsx";
 import Icons from "@/Components/Icons.jsx";
-import { Badge } from "@/Components/ui/badge.jsx";
-import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButtons.jsx";
-import TableFilter from "@/Pages/Document/Lists/Components/TableFilter.jsx";
-import { transferLogCategories } from "@/Pages/Document/Lists/Components/pageFilterCategories.js";
+import Breadcrumb from "@/Components/Breadcrumb.jsx";
+import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
+import TransfersListTableFilter from "@/Pages/Document/Lists/Components/TransfersListsTableFilter.jsx";
 
 export default function TransferLogs({
     auth,
-    paginatedDocumentTransfers,
+    paginatedTransfers: { data: transfers, ...paginate },
     filters,
 }) {
-    const documentTransfers = paginatedDocumentTransfers.data;
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="Incoming" />
-            <div className="grid items-start gap-8">
+            <Head title="Transfer Logs" />
+            <div className="flex flex-col justify-start gap-8">
+                <Breadcrumb
+                    items={[
+                        {
+                            label: "Home",
+                            href: route("admin.dashboard"),
+                        },
+                        {
+                            label: "Transfers",
+                        },
+                    ]}
+                />
                 <DashboardHeader
                     heading="Transfer Logs"
-                    text="Released and received documents."
-                />
-                <div className="px-2">
+                    text="Generate the results of your filtered query by clicking the Generate Report button."
+                >
+                    <Button asChild>
+                        <a
+                            target="_blank"
+                            href={route("admin.document-transfers.index", {
+                                ...filters,
+                                report: true,
+                            })}
+                        >
+                            Generate Report
+                        </a>
+                    </Button>
+                </DashboardHeader>
+
+                {/*Content*/}
+                <div className="flex flex-col gap-4 p-2">
                     {/*Table Filter*/}
-                    <TableFilter
-                        filters={filters}
-                        categories={transferLogCategories}
-                        url={route("documents.lists.transfers")}
-                    />
+                    <TransfersListTableFilter />
 
                     {/*Data Table*/}
-                    <Table>
-                        <TableHeader className="bg-secondary">
-                            <TableRow>
-                                <TableHead>Document</TableHead>
-                                <TableHead>Sender</TableHead>
-                                <TableHead>Receiver</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Date Completed</TableHead>
-                                <TableHead></TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {documentTransfers.length === 0 && (
-                                <TableRow>
-                                    <TableCell colSpan="5">
-                                        <div className="flex items-center justify-center space-x-2">
-                                            <span className="py-8 font-medium text-gray-500">
-                                                No transfer logs.
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                            {documentTransfers.map((dt, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>
-                                        <div className="text-sm text-muted-foreground">
-                                            {dt.document_tracking_code}
-                                        </div>
-                                        <div className="font-medium">
-                                            {dt.document_title}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="font-bold">
-                                        {dt.sender_name}
-                                    </TableCell>
-                                    <TableCell className="font-bold">
-                                        {dt.receiver_name}
-                                    </TableCell>
-                                    <TableCell className="capitalize">
-                                        {dt.status}
-                                    </TableCell>
-                                    <TableCell className="space-y-2">
-                                        <div>
-                                            {dt?.date_completed && (
-                                                <div>
-                                                    {dayjs(
-                                                        dt.date_received,
-                                                    ).format(
-                                                        "MMM D, YYYY h:mm a",
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </TableCell>
+                    <TransfersTable transfers={transfers} />
 
-                                    <TableCell>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            asChild
-                                        >
-                                            <Link
-                                                href={route(
-                                                    "documents.transfer.show",
-                                                    dt.id,
-                                                )}
-                                            >
-                                                <Icons.view className="h-5 w-5" />
-                                            </Link>
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                    <div>
+                        {transfers.length === 0 && (
+                            <div className="text-center text-muted-foreground">
+                                No Data Found
+                            </div>
+                        )}
+                    </div>
 
-                    {/*Pagination*/}
-                    {paginatedDocumentTransfers.last_page > 1 && (
-                        <div className="flex justify-end pt-4">
-                            <PaginationButtons
-                                next_page_url={
-                                    paginatedDocumentTransfers.next_page_url
-                                }
-                                prev_page_url={
-                                    paginatedDocumentTransfers.prev_page_url
-                                }
-                            />
+                    {/*Table Footer*/}
+                    <div className="flex items-center justify-between">
+                        <div className="text-sm text-muted-foreground">
+                            Showing {paginate.from} to {paginate.to} of{" "}
+                            {paginate.total} results
                         </div>
-                    )}
+                        <TablePaginationButtons paginate={paginate} />
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>
+    );
+}
+
+function TransfersTable({ transfers }) {
+    return (
+        <Table>
+            <TableHeader>
+                <TableRow className="bg-secondary">
+                    <TableHead>Document Code</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Date Transferred</TableHead>
+                    <TableHead>Date Completed</TableHead>
+                    <TableHead>Sender</TableHead>
+                    <TableHead>Receiver</TableHead>
+                    <TableHead></TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {transfers.map((transfer, idx) => (
+                    <TableRow key={idx}>
+                        <TableCell>
+                            {transfer?.document?.tracking_code}
+                        </TableCell>
+                        <TableCell>{transfer.status}</TableCell>
+                        <TableCell>
+                            {transfer?.transferred_at &&
+                                dayjs(transfer.transferred_at).format(
+                                    "MMM DD YYYY hh:mm A",
+                                )}
+                        </TableCell>
+                        <TableCell>
+                            {transfer?.completed_at
+                                ? dayjs(transfer.transferred_at).format(
+                                      "MMM DD YYYY hh:mm A",
+                                  )
+                                : "N/A"}
+                        </TableCell>
+                        <TableCell>{transfer?.sender?.name}</TableCell>
+                        <TableCell>{transfer?.receiver?.name}</TableCell>
+                        <TableCell>
+                            <Button variant="ghost" size="icon" asChild>
+                                <Link
+                                    href={route(
+                                        "documents.transfer.show",
+                                        transfer.id,
+                                    )}
+                                >
+                                    <Icons.view className="h-5 w-5" />
+                                </Link>
+                            </Button>
+                        </TableCell>
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
     );
 }

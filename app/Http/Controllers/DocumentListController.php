@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DocumentTransfer;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -331,67 +332,94 @@ class DocumentListController extends Controller
 
     public function transferLogs(Request $request)
     {
+        $filters = [
+            "search" => $request->query("search"),
+            "category" => $request->query("category", "tracking_code"),
+            "sortBy" => $request->query("sortBy", "transferred_at"),
+            "order" => $request->query("order", "desc"),
+            "perPage" => $request->query("perPage", "10"),
+            "date_name" => $request->query("date_name", "transferred_at"),
+            "date_from" => $request->query("date_from"),
+            "date_to" => $request->query("date_to", now()),
+            "status" => $request->query("status"),
+        ];
+
         // get the document transfers that are completed and that the sender_id or receiver_id is equal to the user id
         $user = auth()->user();
-        $dt = DB::table("document_transfers as dt")
-            ->join("documents as d", "dt.document_id", "=", "d.id")
-            ->join("users as u_sender", "dt.sender_id", "=", "u_sender.id")
-            ->join(
-                "users as u_receiver",
-                "dt.receiver_id",
-                "=",
-                "u_receiver.id"
-            )
-            ->where(function ($query) use ($user) {
-                $query
-                    ->where("dt.sender_id", "=", $user->id)
-                    ->orWhere("dt.receiver_id", "=", $user->id);
+        $transfers = DocumentTransfer::query()
+            ->with(["document", "sender", "receiver"])
+            ->whereHas("receiver", function ($query) use ($user) {
+                $query->where("id", "=", $user->id);
             })
-            ->where("dt.is_completed", "=", true)
-            ->select(
-                "d.title as document_title",
-                "d.tracking_code as document_tracking_code",
-                "dt.id",
-                "dt.transferred_at as date_released",
-                "dt.completed_at as date_completed",
-                "dt.status",
-                "u_sender.name as sender_name",
-                "u_receiver.name as receiver_name"
-            );
+            ->orWhereHas("sender", function ($query) use ($user) {
+                $query->where("id", "=", $user->id);
+            });
 
-        // Adding filters
-        $filters = [
-            "filter" => $request->query("filter"),
-            "category" => $request->query("category", "document_title"),
-            "date" => $request->query("date"),
-        ];
+        if (isset($filters["search"], $filters["category"])) {
+            $relationMapping = [
+                "tracking_code" => "document",
+                "sender" => "sender",
+                "receiver" => "receiver",
+            ];
 
-        // filtering categories
-        $categoryMapping = [
-            "tracking_code" => "d.tracking_code",
-            "document_title" => "d.title",
-            "receiver" => "u_receiver.name",
-            "sender" => "u_sender.name",
-        ];
-
-        if (isset($filters["category"], $filters["filter"])) {
-            $dt = $dt->where(
-                $categoryMapping[$filters["category"]],
-                "like",
-                "%" . $filters["filter"] . "%"
+            $transfers->whereHas(
+                $relationMapping[$filters["category"]],
+                function ($query) use ($filters) {
+                    $query->where(
+                        $filters["category"],
+                        "LIKE",
+                        "%{$filters["search"]}%"
+                    );
+                }
             );
         }
 
-        if (isset($filters["date"]["from"]) && isset($filters["date"]["to"])) {
-            $dt = $dt->whereBetween("dt.completed_at", [
-                $filters["date"]["from"],
-                $filters["date"]["to"],
+        if (isset($filters["sortBy"], $filters["order"])) {
+            $transfers->orderBy($filters["sortBy"], $filters["order"]);
+        }
+
+        if (isset($filters["date_to"], $filters["date_name"])) {
+            $transfers->whereDate(
+                $filters["date_name"],
+                "<=",
+                $filters["date_to"]
+            );
+            if (isset($filters["date_from"])) {
+                $transfers->whereDate(
+                    $filters["date_name"],
+                    ">=",
+                    $filters["date_from"]
+                );
+            }
+        }
+
+        if (isset($filters["status"])) {
+            $transfers->where("status", $filters["status"]);
+        }
+
+        // check if report is present in the request
+        if ($request->query("report")) {
+            // transfer dates into readable format
+            $filters["date_from"] = isset($filters["date_from"])
+                ? \Date::create($filters["date_from"])->format("M-d-Y")
+                : null;
+
+            $filters["date_to"] = isset($filters["date_to"])
+                ? \Date::create($filters["date_to"])->format("M-d-Y")
+                : null;
+
+            // if report is present, then return the report page
+            return Inertia::render("Report/TransferLogs", [
+                "transfers" => $transfers->get(),
+                "filters" => [...$filters],
             ]);
         }
 
-        $dt = $dt->paginate()->withQueryString();
+        $paginatedTransfers = $transfers
+            ->paginate($filters["perPage"])
+            ->withQueryString();
         return Inertia::render("Document/Lists/TransferLogs", [
-            "paginatedDocumentTransfers" => $dt,
+            "paginatedTransfers" => $paginatedTransfers,
             "filters" => $filters,
         ]);
     }
