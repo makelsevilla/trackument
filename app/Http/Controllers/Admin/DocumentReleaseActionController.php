@@ -17,6 +17,7 @@ class DocumentReleaseActionController extends Controller
         $filters = [
             "search" => $request->query("search"),
             "category" => $request->query("category", "action_name"),
+            "perPage" => $request->query("perPage", "10"),
         ];
 
         $releaseActions = DB::table("document_release_actions");
@@ -29,7 +30,9 @@ class DocumentReleaseActionController extends Controller
             );
         }
 
-        $releaseActions = $releaseActions->paginate()->withQueryString();
+        $releaseActions = $releaseActions
+            ->paginate($filters["perPage"])
+            ->withQueryString();
 
         return Inertia::render(
             "Admin/DocumentReleaseActions/ReleaseActionsList",

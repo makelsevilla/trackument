@@ -17,6 +17,7 @@ class DocumentPurposeController extends Controller
         $filters = [
             "search" => $request->query("search"),
             "category" => $request->query("category", "purpose"),
+            "perPage" => $request->query("perPage", "10"),
         ];
 
         $documentPurposes = DB::table("document_purposes");
@@ -29,7 +30,9 @@ class DocumentPurposeController extends Controller
             );
         }
 
-        $documentPurposes = $documentPurposes->paginate()->withQueryString();
+        $documentPurposes = $documentPurposes
+            ->paginate($filters["perPage"])
+            ->withQueryString();
 
         return Inertia::render("Admin/DocumentPurposes/DocumentPurposesList", [
             "paginate" => $documentPurposes,

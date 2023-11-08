@@ -24,6 +24,7 @@ class DocumentController extends Controller
             "created_at" => $request->query("created_at"),
             "sortBy" => $request->query("sortBy", "created_at"),
             "order" => $request->query("order", "desc"),
+            "perPage" => $request->query("perPage", "10"),
         ];
 
         $documents = Document::query()
@@ -56,7 +57,9 @@ class DocumentController extends Controller
             $documents->orderBy($filters["sortBy"], $filters["order"]);
         }
 
-        $paginatedDocuments = $documents->paginate(10)->withQueryString();
+        $paginatedDocuments = $documents
+            ->paginate($filters["perPage"])
+            ->withQueryString();
 
         $documentTypes = DocumentType::all();
         return Inertia::render("Admin/Documents/DocumentsList", [

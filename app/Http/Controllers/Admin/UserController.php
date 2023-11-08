@@ -28,6 +28,7 @@ class UserController extends Controller
             "created_at" => $request->query("created_at"),
             "sortBy" => $request->query("sortBy", "created_at"),
             "order" => $request->query("order", "desc"),
+            "perPage" => $request->query("perPage", "10"),
         ];
 
         $users = User::whereNot("id", "=", Auth::id());
@@ -58,7 +59,9 @@ class UserController extends Controller
             $users->orderBy($filters["sortBy"], $filters["order"]);
         }
 
-        $paginatedUsers = $users->paginate(10)->withQueryString();
+        $paginatedUsers = $users
+            ->paginate($filters["perPage"])
+            ->withQueryString();
 
         return Inertia::render("Admin/Users/UsersList", [
             "paginatedUsers" => $paginatedUsers,

@@ -21,6 +21,7 @@ class DocumentTypeController extends Controller
             "created_at" => $request->query("created_at"),
             "sortBy" => $request->query("sortBy", "created_at"),
             "order" => $request->query("order", "desc"),
+            "perPage" => $request->query("perPage", "10"),
         ];
 
         $documentType = DocumentType::query();
@@ -47,7 +48,9 @@ class DocumentTypeController extends Controller
             $documentType->orderBy($filters["sortBy"], $filters["order"]);
         }
 
-        $documentType = $documentType->paginate()->withQueryString();
+        $documentType = $documentType
+            ->paginate($filters["perPage"])
+            ->withQueryString();
         return Inertia::render("Admin/DocumentTypes/DocumentTypesList", [
             "paginate" => $documentType,
             "filters" => $filters,
