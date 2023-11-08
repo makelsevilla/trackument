@@ -26,7 +26,9 @@ class DocumentController extends Controller
             "order" => $request->query("order", "desc"),
         ];
 
-        $documents = Document::query()->with(["owner", "type"]);
+        $documents = Document::query()
+            ->with(["owner", "type"])
+            ->whereNot("is_draft", true);
 
         if (isset($filters["search"], $filters["category"])) {
             $documents->where(
