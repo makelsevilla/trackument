@@ -113,8 +113,14 @@ class DocumentListController extends Controller
                 $documents->whereHas(
                     $relationMapping[$filters["category"]],
                     function ($query) use ($filters) {
+                        $columnMap = ["owner" => "name"];
+
+                        $column =
+                            $columnMap[$filters["category"]] ??
+                            $filters["category"];
+
                         $query->where(
-                            $filters["category"],
+                            $column,
                             "LIKE",
                             "%{$filters["search"]}%"
                         );
@@ -288,17 +294,21 @@ class DocumentListController extends Controller
             $relationMapping = [
                 "tracking_code" => "document",
                 "title" => "document",
-                "receiver" => "receiver",
+                "sender" => "sender",
             ];
 
             $transfers->whereHas(
                 $relationMapping[$filters["category"]],
                 function ($query) use ($filters) {
-                    $query->where(
-                        $filters["category"],
-                        "LIKE",
-                        "%{$filters["search"]}%"
-                    );
+                    $columnMap = [
+                        "sender" => "name",
+                    ];
+
+                    $column =
+                        $columnMap[$filters["category"]] ??
+                        $filters["category"];
+
+                    $query->where($column, "LIKE", "%{$filters["search"]}%");
                 }
             );
         }

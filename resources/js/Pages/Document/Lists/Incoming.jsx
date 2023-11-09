@@ -18,6 +18,7 @@ import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import TableFilter from "@/Components/TableFilter.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import OutgoingTableFilter from "@/Pages/Document/Lists/Components/OutgoingTableFilter.jsx";
+import IncomingTableFilter from "@/Pages/Document/Lists/Components/IncomingTableFilter.jsx";
 
 export default function Incoming({
     auth,
@@ -45,7 +46,7 @@ export default function Incoming({
                 />
                 <div className="flex flex-col gap-4 p-2">
                     {/*Table Filter*/}
-                    <OutgoingTableFilter />
+                    <IncomingTableFilter />
 
                     {/*Data Table*/}
                     <IncomingTable transfers={transfers} />
