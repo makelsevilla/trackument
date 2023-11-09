@@ -1,5 +1,13 @@
 import TableFilter from "@/Components/TableFilter.jsx";
+import { Label } from "@/Components/ui/label.jsx";
 import { useState } from "react";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select.jsx";
 import { usePage } from "@inertiajs/react";
 
 const categories = [
@@ -12,26 +20,26 @@ const categories = [
         label: "Title",
     },
     {
-        value: "owner",
-        label: "Owner",
+        value: "receiver",
+        label: "Receiver",
     },
 ];
 
 const sortColumns = [
     {
-        value: "terminated_at",
-        label: "Date Tagged",
+        value: "transferred_at",
+        label: "Date Released",
     },
 ];
 
 const dateNames = [
     {
-        value: "terminated_at",
-        label: "Date Tagged",
+        value: "transferred_at",
+        label: "Date Released",
     },
 ];
 
-export default function TerminalTableFilter({ ...props }) {
+export default function OutgoingTableFilter({ ...props }) {
     const {
         props: { filters },
     } = usePage();
@@ -43,7 +51,7 @@ export default function TerminalTableFilter({ ...props }) {
             sortColumns={sortColumns}
             categories={categories}
             dateNames={dateNames}
-            url={route("documents.lists.terminal")}
+            url={route("documents.lists.outgoing")}
         ></TableFilter>
     );
 }

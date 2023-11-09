@@ -16,14 +16,29 @@ import FinalizedTableFilter from "@/Pages/Document/Lists/Components/FinalizedTab
 import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButtons.jsx";
 import TableFilter from "@/Pages/Document/Lists/Components/TableFilter.jsx";
 import { finalizedCategories } from "@/Pages/Document/Lists/Components/pageFilterCategories.js";
+import Breadcrumb from "@/Components/Breadcrumb.jsx";
+import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 
-export default function Finalized({ auth, paginatedDocuments, filters }) {
-    const documents = paginatedDocuments.data;
-
+export default function Finalized({
+    auth,
+    paginatedDocuments: { data: documents, ...paginate },
+    filters,
+}) {
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Finalized Documents" />
-            <div className="grid items-start gap-8">
+            <div className="flex flex-col justify-start gap-8">
+                <Breadcrumb
+                    items={[
+                        {
+                            label: "Home",
+                            href: route("dashboard"),
+                        },
+                        {
+                            label: "My Documents",
+                        },
+                    ]}
+                />
                 <DashboardHeader
                     heading="My Documents"
                     text="Finalized documents."
@@ -38,100 +53,76 @@ export default function Finalized({ auth, paginatedDocuments, filters }) {
                         </Link>
                     </Button>
                 </DashboardHeader>
-                <div className="px-2">
+                <div className="flex flex-col gap-4 p-2">
                     {/*Table Filter*/}
-                    <TableFilter
-                        url={route("documents.lists.finalized")}
-                        filters={filters}
-                        categories={finalizedCategories}
-                    />
+                    <FinalizedTableFilter />
 
                     {/*Data Table*/}
-                    <Table>
-                        <TableHeader className="bg-secondary">
-                            <TableRow>
-                                <TableHead>Code & Type</TableHead>
-                                <TableHead>Title</TableHead>
-                                <TableHead>Date Created</TableHead>
-                                <TableHead>Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {documents.length === 0 && (
-                                <TableRow>
-                                    <TableCell colSpan={4}>
-                                        <div className="flex flex-col items-center justify-center">
-                                            <span className="text-sm text-muted-foreground">
-                                                No documents found.
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                            {documents &&
-                                documents.map((document, index) => {
-                                    return (
-                                        <TableRow key={index}>
-                                            <TableCell>
-                                                <div className="font-bold">
-                                                    {document.tracking_code}
-                                                </div>
-                                                <div className="text-sm text-muted-foreground">
-                                                    {
-                                                        document.document_type_name
-                                                    }
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="font-medium">
-                                                    {document.title}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                {dayjs(
-                                                    document.created_at,
-                                                ).format(
-                                                    "MMMM DD, YYYY h:mm a ",
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Button
-                                                    size="sm"
-                                                    variant="ghost"
-                                                    asChild
-                                                >
-                                                    <Link
-                                                        href={route(
-                                                            "documents.show",
-                                                            {
-                                                                document:
-                                                                    document.id,
-                                                            },
-                                                        )}
-                                                        className="flex items-center space-x-2"
-                                                    >
-                                                        <Icons.view className="h-4 w-4" />
-                                                        <span>View</span>
-                                                    </Link>
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                        </TableBody>
-                    </Table>
+                    <FinalizedTable documents={documents} />
+                    {/*Table Footer*/}
+                    <div>
+                        {documents.length === 0 && (
+                            <div className="text-center text-muted-foreground">
+                                No Data Found
+                            </div>
+                        )}
+                    </div>
 
-                    {/*Pagination*/}
-                    {paginatedDocuments.last_page > 1 && (
-                        <div className="flex justify-end pt-4">
-                            <PaginationButtons
-                                next_page_url={paginatedDocuments.next_page_url}
-                                prev_page_url={paginatedDocuments.prev_page_url}
-                            />
+                    <div className="flex items-center justify-between">
+                        <div className="text-sm text-muted-foreground">
+                            Showing {paginate.from} to {paginate.to} of{" "}
+                            {paginate.total} results
                         </div>
-                    )}
+                        <TablePaginationButtons paginate={paginate} />
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>
+    );
+}
+
+function FinalizedTable({ documents }) {
+    return (
+        <Table>
+            <TableHeader className="bg-secondary">
+                <TableRow>
+                    <TableHead>Code & Type</TableHead>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Date Created</TableHead>
+                    <TableHead>Actions</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {documents.map((document, index) => {
+                    return (
+                        <TableRow key={index}>
+                            <TableCell>{document.tracking_code}</TableCell>
+                            <TableCell>
+                                <div>{document.title}</div>
+                            </TableCell>
+                            <TableCell>
+                                {document?.created_at &&
+                                    dayjs(document.created_at).format(
+                                        "MMMM DD, YYYY h:mm a ",
+                                    )}
+                            </TableCell>
+                            <TableCell>
+                                <Button size="sm" variant="ghost" asChild>
+                                    <Link
+                                        href={route("documents.show", {
+                                            document: document.id,
+                                        })}
+                                        className="flex items-center space-x-2"
+                                    >
+                                        <Icons.view className="h-4 w-4" />
+                                        <span>View</span>
+                                    </Link>
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    );
+                })}
+            </TableBody>
+        </Table>
     );
 }

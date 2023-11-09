@@ -29,10 +29,10 @@ export default function TransferLogs({
                     items={[
                         {
                             label: "Home",
-                            href: route("admin.dashboard"),
+                            href: route("dashboard"),
                         },
                         {
-                            label: "Transfers",
+                            label: "Transfer Logs",
                         },
                     ]}
                 />

@@ -1,24 +1,45 @@
-import TableFilter from "@/Pages/Document/Lists/Components/TableFilter.jsx";
+import TableFilter from "@/Components/TableFilter.jsx";
 import { useState } from "react";
-import { Label } from "@/Components/ui/label.jsx";
-import { Input } from "@/Components/ui/input.jsx";
+import { usePage } from "@inertiajs/react";
+
+const categories = [
+    {
+        value: "tracking_code",
+        label: "Document Code",
+    },
+    {
+        value: "title",
+        label: "Title",
+    },
+];
+
+const sortColumns = [
+    {
+        value: "created_at",
+        label: "Date Created",
+    },
+];
+
+const dateNames = [
+    {
+        value: "created_at",
+        label: "Date Created",
+    },
+];
 
 export default function FinalizedTableFilter({ ...props }) {
-    const [params, setParams] = useState({
-        another: "",
-    });
+    const {
+        props: { filters },
+    } = usePage();
+    const [params, setParams] = useState({});
 
     return (
-        <TableFilter childParams={params} {...props}>
-            <div className="grid gap-2">
-                <Label>Another</Label>
-                <Input
-                    value={params.another}
-                    onChange={(e) =>
-                        setParams({ ...params, another: e.target.value })
-                    }
-                />
-            </div>
-        </TableFilter>
+        <TableFilter
+            childParams={params}
+            sortColumns={sortColumns}
+            categories={categories}
+            dateNames={dateNames}
+            url={route("documents.lists.finalized")}
+        ></TableFilter>
     );
 }

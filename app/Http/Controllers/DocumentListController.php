@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Document;
 use App\Models\DocumentTransfer;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,121 +28,131 @@ class DocumentListController extends Controller
 
     public function finalized(Request $request)
     {
-        $user = auth()->user();
-        $documents = DB::table("documents")
-            ->join("users", "documents.current_owner_id", "=", "users.id")
-            ->join(
-                "document_types",
-                "documents.document_type_id",
-                "=",
-                "document_types.id"
-            )
-            ->where("documents.owner_id", "=", $user->id)
-            ->where("documents.is_draft", "=", false)
-            ->select(
-                "documents.id",
-                "documents.title",
-                "documents.tracking_code",
-                "users.name as current_owner_name",
-                "document_types.name as document_type_name",
-                "documents.created_at"
-            )
-            ->orderBy("documents.updated_at", "desc");
-
         $filters = [
-            "filter" => $request->query("filter"),
-            "category" => $request->query("category", "document_title"),
-            "date" => $request->query("date"),
+            "search" => $request->query("search"),
+            "category" => $request->query("category", "tracking_code"),
+            "sortBy" => $request->query("sortBy", "created_at"),
+            "order" => $request->query("order", "desc"),
+            "perPage" => $request->query("perPage", "10"),
+            "date_name" => $request->query("date_name", "created_at"),
+            "date_from" => $request->query("date_from"),
+            "date_to" => $request->query("date_to", now()),
         ];
 
-        // filtering categories
-        $categoryMapping = [
-            "document_title" => "documents.title",
-            "document_type" => "document_types.name",
-            "tracking_code" => "documents.tracking_code",
-        ];
+        $user = auth()->user();
 
-        if (isset($filters["category"], $filters["filter"])) {
-            $documents = $documents->where(
-                $categoryMapping[$filters["category"]],
-                "like",
-                "%" . $filters["filter"] . "%"
+        $documents = Document::where("owner_id", "=", $user->id)->whereNot(
+            "is_draft",
+            "=",
+            true
+        );
+
+        if (isset($filters["search"], $filters["category"])) {
+            $documents->where(
+                $filters["category"],
+                "LIKE",
+                "%{$filters["search"]}%"
             );
         }
 
-        if (isset($filters["date"]["from"]) && isset($filters["date"]["to"])) {
-            $documents = $documents->whereBetween("documents.created_at", [
-                $filters["date"]["from"],
-                $filters["date"]["to"],
-            ]);
+        if (isset($filters["sortBy"], $filters["order"])) {
+            $documents->orderBy($filters["sortBy"], $filters["order"]);
         }
 
-        $documents = $documents->paginate()->withQueryString();
+        if (isset($filters["date_to"], $filters["date_name"])) {
+            $documents->whereDate(
+                $filters["date_name"],
+                "<=",
+                $filters["date_to"]
+            );
+            if (isset($filters["date_from"])) {
+                $documents->whereDate(
+                    $filters["date_name"],
+                    ">=",
+                    $filters["date_from"]
+                );
+            }
+        }
+
+        $paginatedDocuments = $documents
+            ->paginate($filters["perPage"])
+            ->withQueryString();
+
         return Inertia::render("Document/Lists/MyDocuments/Finalized", [
-            "paginatedDocuments" => $documents,
+            "paginatedDocuments" => $paginatedDocuments,
             "filters" => $filters,
         ]);
     }
 
     public function terminalTagged(Request $request)
     {
+        $filters = [
+            "search" => $request->query("search"),
+            "category" => $request->query("category", "tracking_code"),
+            "sortBy" => $request->query("sortBy", "terminated_at"),
+            "order" => $request->query("order", "desc"),
+            "perPage" => $request->query("perPage", "10"),
+            "date_name" => $request->query("date_name", "terminated_at"),
+            "date_from" => $request->query("date_from"),
+            "date_to" => $request->query("date_to", now()),
+        ];
+
         // get the documents that are currently owned by the user
         $user = auth()->user();
-        $documents = DB::table("documents as d")
-            ->join("users as u_owner", "d.owner_id", "=", "u_owner.id")
-            ->join(
-                "document_types as type",
-                "d.document_type_id",
-                "=",
-                "type.id"
-            )
-            ->leftJoin(
-                "users as u_previous",
-                "d.previous_owner_id",
-                "=",
-                "u_previous.id"
-            )
-            ->where("d.current_owner_id", "=", $user->id)
-            ->where("d.status", "=", "terminal")
-            ->select(
-                "d.*",
-                "u_owner.name as owner_name",
-                "u_previous.name as previous_owner_name",
-                "type.name as document_type_name"
-            );
 
-        $filters = [
-            "filter" => $request->query("filter"),
-            "category" => $request->query("category", "document_title"),
-            "date" => $request->query("date"),
-        ];
+        $documents = Document::with(["owner"])
+            ->where("current_owner_id", "=", $user->id)
+            ->where("status", "=", "terminal");
 
-        // filtering categories
-        $categoryMapping = [
-            "owner" => "u_owner.name",
-            "document_title" => "d.title",
-            "document_type" => "type.name",
-            "tracking_code" => "d.tracking_code",
-        ];
+        if (isset($filters["search"], $filters["category"])) {
+            $relationMapping = [
+                "owner" => "owner",
+            ];
 
-        if (isset($filters["category"], $filters["filter"])) {
-            $documents = $documents->where(
-                $categoryMapping[$filters["category"]],
-                "like",
-                "%" . $filters["filter"] . "%"
-            );
+            if (isset($relationMapping[$filters["category"]])) {
+                $documents->whereHas(
+                    $relationMapping[$filters["category"]],
+                    function ($query) use ($filters) {
+                        $query->where(
+                            $filters["category"],
+                            "LIKE",
+                            "%{$filters["search"]}%"
+                        );
+                    }
+                );
+            } else {
+                $documents->where(
+                    $filters["category"],
+                    "LIKE",
+                    "%{$filters["search"]}%"
+                );
+            }
         }
 
-        if (isset($filters["date"]["from"]) && isset($filters["date"]["to"])) {
-            $documents = $documents->whereBetween("d.terminated_at", [
-                $filters["date"]["from"],
-                $filters["date"]["to"],
-            ]);
+        if (isset($filters["sortBy"], $filters["order"])) {
+            $documents->orderBy($filters["sortBy"], $filters["order"]);
         }
 
-        $documents = $documents->paginate()->withQueryString();
+        if (isset($filters["date_to"], $filters["date_name"])) {
+            $documents->whereDate(
+                $filters["date_name"],
+                "<=",
+                $filters["date_to"]
+            );
+            if (isset($filters["date_from"])) {
+                $documents->whereDate(
+                    $filters["date_name"],
+                    ">=",
+                    $filters["date_from"]
+                );
+            }
+        }
+
+        $paginatedDocuments = $documents
+            ->paginate($filters["perPage"])
+            ->withQueryString();
         return Inertia::render("Document/Lists/TerminalTagged", [
-            "paginatedDocuments" => $documents,
+            "paginatedDocuments" => $paginatedDocuments,
             "filters" => $filters,
         ]);
     }
@@ -148,131 +160,174 @@ class DocumentListController extends Controller
     public function actionable(Request $request)
     {
         // get the documents that are currently owned by the user
+        $filters = [
+            "search" => $request->query("search"),
+            "category" => $request->query("category", "tracking_code"),
+            "sortBy" => $request->query("sortBy", "completed_at"),
+            "order" => $request->query("order", "desc"),
+            "perPage" => $request->query("perPage", "10"),
+            "date_name" => $request->query("date_name", "completed_at"),
+            "date_from" => $request->query("date_from"),
+            "date_to" => $request->query("date_to", now()),
+        ];
+
         $user = auth()->user();
 
         // grouping the document transfer table by document_id and getting the latest document transfer
-        $latestDocumentsTransfer = DB::table("document_transfers as dt_a")
+        $latestTranfers = DB::table("document_transfers as dt_a")
             ->joinSub(
                 DB::table("document_transfers")
                     ->select(
                         "document_id",
-                        DB::raw("MAX(transferred_at) as transferred_at")
+                        DB::raw("MAX(completed_at) as completed_at")
                     )
                     ->groupBy("document_id"),
                 "dt_b",
                 function (JoinClause $join) {
                     $join->on("dt_a.document_id", "=", "dt_b.document_id");
-                    $join->on(
-                        "dt_a.transferred_at",
-                        "=",
-                        "dt_b.transferred_at"
-                    );
+                    $join->on("dt_a.completed_at", "=", "dt_b.completed_at");
                 }
             )
             ->select("dt_a.*");
 
-        $documents = DB::table("documents as d")
-            ->join("users as u", "d.previous_owner_id", "=", "u.id")
-            ->where("d.current_owner_id", "=", $user->id)
-            ->where("d.status", "=", "available")
-            ->joinSub($latestDocumentsTransfer, "dt", function (
+        $documents = DB::table("documents")
+            ->join("users as u", "documents.previous_owner_id", "=", "u.id")
+            ->where("documents.current_owner_id", "=", $user->id)
+            ->where("documents.status", "=", "available")
+            ->joinSub($latestTranfers, "document_transfers", function (
                 JoinClause $join
             ) {
-                $join->on("d.id", "=", "dt.document_id");
+                $join->on(
+                    "documents.id",
+                    "=",
+                    "document_transfers.document_id"
+                );
             })
             ->select(
-                "d.*",
+                "documents.*",
                 "u.name as previous_owner_name",
-                "dt.completed_at as date_received",
-                "dt.id as document_transfer_id"
+                "document_transfers.completed_at as document_transfers_completed_at",
+                "document_transfers.id as document_transfers_id"
             );
 
-        // Adding filters
-        $filters = [
-            "filter" => $request->query("filter"),
-            "category" => $request->query("category", "document_title"),
-            "date" => $request->query("date"),
-        ];
+        if (isset($filters["search"], $filters["category"])) {
+            $categoriesMapping = [
+                "tracking_code" => "documents.tracking_code",
+                "title" => "documents.title",
+                "sender" => "u.name",
+            ];
 
-        // filtering categories
-        $categoryMapping = [
-            "sender" => "u.name",
-            "document_title" => "d.title",
-            "tracking_code" => "d.tracking_code",
-        ];
-
-        if (isset($filters["category"], $filters["filter"])) {
-            $documents = $documents->where(
-                $categoryMapping[$filters["category"]],
-                "like",
-                "%" . $filters["filter"] . "%"
+            $documents->where(
+                $categoriesMapping[$filters["category"]],
+                "LIKE",
+                "%{$filters["search"]}%"
             );
         }
 
-        if (isset($filters["date"]["from"]) && isset($filters["date"]["to"])) {
-            $documents = $documents->whereBetween("dt.completed_at", [
-                $filters["date"]["from"],
-                $filters["date"]["to"],
-            ]);
+        if (isset($filters["sortBy"], $filters["order"])) {
+            $documents->orderBy(
+                "document_transfers.completed_at",
+                $filters["order"]
+            );
         }
 
-        $documents = $documents->paginate()->withQueryString();
+        if (isset($filters["date_to"], $filters["date_name"])) {
+            $dateNameMapping = [
+                "completed_at" => "document_transfers.completed_at",
+            ];
+
+            $documents->whereDate(
+                $dateNameMapping[$filters["date_name"]],
+                "<=",
+                $filters["date_to"]
+            );
+
+            if (isset($filters["date_from"])) {
+                $documents->whereDate(
+                    $dateNameMapping[$filters["date_name"]],
+                    ">=",
+                    $filters["date_from"]
+                );
+            }
+        }
+
+        $paginatedDocuments = $documents
+            ->paginate($filters["perPage"])
+            ->withQueryString();
+
         return Inertia::render("Document/Lists/Actionable", [
-            "paginatedDocuments" => $documents,
+            "paginatedDocuments" => $paginatedDocuments,
             "filters" => $filters,
         ]);
     }
 
     public function incoming(Request $request)
     {
-        // get the document transfers that are not yet completed and that the receiver_id is equal to the user id
-        $user = auth()->user();
-
-        $dt = DB::table("document_transfers as dt")
-            ->join("documents as d", "dt.document_id", "=", "d.id")
-            ->join("users as u", "dt.sender_id", "=", "u.id")
-            ->where("dt.receiver_id", "=", $user->id)
-            ->where("dt.is_completed", "=", false)
-            ->select(
-                "d.title",
-                "u.name as sender_name",
-                "d.purpose",
-                "dt.transferred_at as date_released",
-                "dt.id"
-            );
-
-        // Adding filters
+        // get the document transfers that are not yet completed and that the sender_id is equal to the user id
         $filters = [
-            "filter" => $request->query("filter"),
-            "category" => $request->query("category", "document_title"),
-            "date" => $request->query("date"),
+            "search" => $request->query("search"),
+            "category" => $request->query("category", "tracking_code"),
+            "sortBy" => $request->query("sortBy", "transferred_at"),
+            "order" => $request->query("order", "desc"),
+            "perPage" => $request->query("perPage", "10"),
+            "date_name" => $request->query("date_name", "transferred_at"),
+            "date_from" => $request->query("date_from"),
+            "date_to" => $request->query("date_to", now()),
         ];
 
-        // filtering categories
-        $categoryMapping = [
-            "sender" => "u.name",
-            "document_title" => "d.title",
-        ];
+        // get the document transfers that are completed and that the sender_id or receiver_id is equal to the user id
+        $user = auth()->user();
+        $transfers = DocumentTransfer::query()
+            ->with(["document", "sender", "receiver"])
+            ->whereHas("receiver", function ($query) use ($user) {
+                $query->where("id", "=", $user->id);
+            })
+            ->whereNot("is_completed", "=", true);
 
-        if (isset($filters["category"], $filters["filter"])) {
-            $dt = $dt->where(
-                $categoryMapping[$filters["category"]],
-                "like",
-                "%" . $filters["filter"] . "%"
+        if (isset($filters["search"], $filters["category"])) {
+            $relationMapping = [
+                "tracking_code" => "document",
+                "title" => "document",
+                "receiver" => "receiver",
+            ];
+
+            $transfers->whereHas(
+                $relationMapping[$filters["category"]],
+                function ($query) use ($filters) {
+                    $query->where(
+                        $filters["category"],
+                        "LIKE",
+                        "%{$filters["search"]}%"
+                    );
+                }
             );
         }
 
-        if (isset($filters["date"]["from"]) && isset($filters["date"]["to"])) {
-            $dt = $dt->whereBetween("dt.transferred_at", [
-                $filters["date"]["from"],
-                $filters["date"]["to"],
-            ]);
+        if (isset($filters["sortBy"], $filters["order"])) {
+            $transfers->orderBy($filters["sortBy"], $filters["order"]);
         }
 
-        $dt = $dt->paginate()->withQueryString();
+        if (isset($filters["date_to"], $filters["date_name"])) {
+            $transfers->whereDate(
+                $filters["date_name"],
+                "<=",
+                $filters["date_to"]
+            );
+            if (isset($filters["date_from"])) {
+                $transfers->whereDate(
+                    $filters["date_name"],
+                    ">=",
+                    $filters["date_from"]
+                );
+            }
+        }
+
+        $paginatedTransfers = $transfers
+            ->paginate($filters["perPage"])
+            ->withQueryString();
 
         return Inertia::render("Document/Lists/Incoming", [
-            "paginatedDocumentTransfers" => $dt,
+            "paginatedDocumentTransfers" => $paginatedTransfers,
             "filters" => $filters,
         ]);
     }
@@ -280,52 +335,69 @@ class DocumentListController extends Controller
     public function outgoing(Request $request)
     {
         // get the document transfers that are not yet completed and that the sender_id is equal to the user id
-        $user = auth()->user();
-        $dt = DB::table("document_transfers as dt")
-            ->join("documents as d", "dt.document_id", "=", "d.id")
-            ->join("users as u", "dt.receiver_id", "=", "u.id")
-            ->where("dt.sender_id", "=", $user->id)
-            ->where("dt.is_completed", "=", false)
-            ->select(
-                "d.tracking_code",
-                "d.title",
-                "u.name as receiver_name",
-                "dt.transferred_at as date_released",
-                "dt.id"
-            );
-
-        // Adding filters
         $filters = [
-            "filter" => $request->query("filter"),
-            "category" => $request->query("category", "document_title"),
-            "date" => $request->query("date"),
+            "search" => $request->query("search"),
+            "category" => $request->query("category", "tracking_code"),
+            "sortBy" => $request->query("sortBy", "transferred_at"),
+            "order" => $request->query("order", "desc"),
+            "perPage" => $request->query("perPage", "10"),
+            "date_name" => $request->query("date_name", "transferred_at"),
+            "date_from" => $request->query("date_from"),
+            "date_to" => $request->query("date_to", now()),
         ];
 
-        // filtering categories
-        $categoryMapping = [
-            "tracking_code" => "d.tracking_code",
-            "receiver" => "u.name",
-            "document_title" => "d.title",
-        ];
+        // get the document transfers that are completed and that the sender_id or receiver_id is equal to the user id
+        $user = auth()->user();
+        $transfers = DocumentTransfer::query()
+            ->with(["document", "sender", "receiver"])
+            ->whereHas("sender", function ($query) use ($user) {
+                $query->where("id", "=", $user->id);
+            })
+            ->whereNot("is_completed", "=", true);
 
-        if (isset($filters["category"], $filters["filter"])) {
-            $dt = $dt->where(
-                $categoryMapping[$filters["category"]],
-                "like",
-                "%" . $filters["filter"] . "%"
+        if (isset($filters["search"], $filters["category"])) {
+            $relationMapping = [
+                "tracking_code" => "document",
+                "title" => "document",
+                "receiver" => "receiver",
+            ];
+
+            $transfers->whereHas(
+                $relationMapping[$filters["category"]],
+                function ($query) use ($filters) {
+                    $query->where(
+                        $filters["category"],
+                        "LIKE",
+                        "%{$filters["search"]}%"
+                    );
+                }
             );
         }
 
-        if (isset($filters["date"]["from"]) && isset($filters["date"]["to"])) {
-            $dt = $dt->whereBetween("dt.transferred_at", [
-                $filters["date"]["from"],
-                $filters["date"]["to"],
-            ]);
+        if (isset($filters["sortBy"], $filters["order"])) {
+            $transfers->orderBy($filters["sortBy"], $filters["order"]);
         }
 
-        $dt = $dt->paginate()->withQueryString();
+        if (isset($filters["date_to"], $filters["date_name"])) {
+            $transfers->whereDate(
+                $filters["date_name"],
+                "<=",
+                $filters["date_to"]
+            );
+            if (isset($filters["date_from"])) {
+                $transfers->whereDate(
+                    $filters["date_name"],
+                    ">=",
+                    $filters["date_from"]
+                );
+            }
+        }
+
+        $paginatedTransfers = $transfers
+            ->paginate($filters["perPage"])
+            ->withQueryString();
         return Inertia::render("Document/Lists/Outgoing", [
-            "paginatedDocumentTransfers" => $dt,
+            "paginatedDocumentTransfers" => $paginatedTransfers,
             "filters" => $filters,
         ]);
     }

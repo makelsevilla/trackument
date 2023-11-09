@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
@@ -26,6 +27,18 @@ class Document extends Model
     protected $casts = [
         "purpose" => "array",
     ];
+
+    public function transfers(): HasMany
+    {
+        return $this->hasMany(DocumentTransfer::class, "document_id", "id");
+    }
+
+    public function latestTransfer(): HasOne
+    {
+        return $this->transfers()
+            ->one()
+            ->ofMany("completed_at", "max");
+    }
 
     public function type(): BelongsTo
     {

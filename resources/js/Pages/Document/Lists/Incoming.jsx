@@ -1,6 +1,6 @@
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import { Head, Link } from "@inertiajs/react";
 import DashboardHeader from "@/Components/DashboardHeader.jsx";
-import { Button } from "@/Components/ui/button.jsx";
 import {
     Table,
     TableBody,
@@ -10,115 +10,108 @@ import {
     TableRow,
 } from "@/Components/ui/table.jsx";
 import dayjs from "dayjs";
+import { Button } from "@/Components/ui/button.jsx";
 import Icons from "@/Components/Icons.jsx";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
-import IncomingTableFilter from "@/Pages/Document/Lists/Components/IncomingTableFilter.jsx";
+import { outgoingCategories } from "@/Pages/Document/Lists/Components/pageFilterCategories.js";
 import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButtons.jsx";
+import Breadcrumb from "@/Components/Breadcrumb.jsx";
+import TableFilter from "@/Components/TableFilter.jsx";
+import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
+import OutgoingTableFilter from "@/Pages/Document/Lists/Components/OutgoingTableFilter.jsx";
 
 export default function Incoming({
     auth,
-    paginatedDocumentTransfers,
+    paginatedDocumentTransfers: { data: transfers, ...paginate },
     filters,
 }) {
-    const documentTransfers = paginatedDocumentTransfers.data;
-
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Incoming" />
-            <div className="grid items-start gap-8">
+            <div className="flex flex-col justify-start gap-8">
+                <Breadcrumb
+                    items={[
+                        {
+                            label: "Home",
+                            href: route("dashboard"),
+                        },
+                        {
+                            label: "Incoming",
+                        },
+                    ]}
+                />
                 <DashboardHeader
                     heading="Incoming Documents"
-                    text="Documents released by other offices."
+                    text="Documents Released to your office."
                 />
-                <div className="px-2">
-                    {/*Table Filters*/}
-                    <IncomingTableFilter filters={filters} />
+                <div className="flex flex-col gap-4 p-2">
+                    {/*Table Filter*/}
+                    <OutgoingTableFilter />
 
                     {/*Data Table*/}
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="bg-secondary">
-                                <TableHead>Title</TableHead>
-                                <TableHead>Sender</TableHead>
-                                <TableHead>Date Released</TableHead>
-                                <TableHead>Purpose</TableHead>
-                                <TableHead>Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {documentTransfers.length === 0 && (
-                                <TableRow>
-                                    <TableCell colSpan="5">
-                                        <div className="flex items-center justify-center space-x-2">
-                                            <span className="py-8 font-medium text-gray-500">
-                                                No incoming documents.
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                            {documentTransfers.map((dt, index) => {
-                                const purposes = JSON.parse(dt.purpose);
+                    <IncomingTable transfers={transfers} />
+                    <div>
+                        {transfers.length === 0 && (
+                            <div className="text-center text-muted-foreground">
+                                No Data Found
+                            </div>
+                        )}
+                    </div>
 
-                                return (
-                                    <TableRow key={index}>
-                                        <TableCell>{dt.title}</TableCell>
-                                        <TableCell>{dt.sender_name}</TableCell>
-                                        <TableCell>
-                                            {dayjs(dt.date_released).format(
-                                                "MMMM DD, YY h:mm a",
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {purposes.map((purpose, index) => (
-                                                <div
-                                                    className="text-sm capitalize"
-                                                    key={index}
-                                                >
-                                                    {purpose}
-                                                </div>
-                                            ))}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                size="icon"
-                                                variant="link"
-                                                asChild
-                                            >
-                                                <Link
-                                                    href={route(
-                                                        "documents.transfer.show",
-                                                        {
-                                                            documentTransferId:
-                                                                dt.id,
-                                                        },
-                                                    )}
-                                                >
-                                                    <Icons.view className="h-5 w-5" />
-                                                </Link>
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-
-                    {/*Pagination*/}
-                    {paginatedDocumentTransfers.last_page > 1 && (
-                        <div className="flex justify-end pt-4">
-                            <PaginationButtons
-                                next_page_url={
-                                    paginatedDocumentTransfers.next_page_url
-                                }
-                                prev_page_url={
-                                    paginatedDocumentTransfers.prev_page_url
-                                }
-                            />
+                    {/*Table Footer*/}
+                    <div className="flex items-center justify-between">
+                        <div className="text-sm text-muted-foreground">
+                            Showing {paginate.from} to {paginate.to} of{" "}
+                            {paginate.total} results
                         </div>
-                    )}
+                        <TablePaginationButtons paginate={paginate} />
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>
+    );
+}
+
+function IncomingTable({ transfers }) {
+    return (
+        <Table>
+            <TableHeader className="bg-secondary">
+                <TableRow>
+                    <TableHead>Tracking Code</TableHead>
+                    <TableHead>Document Title</TableHead>
+                    <TableHead>Sender</TableHead>
+                    <TableHead>Date Released</TableHead>
+                    <TableHead></TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {transfers.map((transfer, index) => {
+                    return (
+                        <TableRow key={index}>
+                            <TableCell>
+                                {transfer.document.tracking_code}
+                            </TableCell>
+                            <TableCell>{transfer.document.title}</TableCell>
+                            <TableCell>{transfer.sender.name}</TableCell>
+                            <TableCell>
+                                {dayjs(transfer.date_released).format(
+                                    "MMM DD, YYYY h:mm a",
+                                )}
+                            </TableCell>
+                            <TableCell>
+                                <Button size="icon" variant="link" asChild>
+                                    <Link
+                                        href={route("documents.transfer.show", {
+                                            documentTransferId: transfer.id,
+                                        })}
+                                    >
+                                        <Icons.view className="h-5 w-5" />
+                                    </Link>
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    );
+                })}
+            </TableBody>
+        </Table>
     );
 }
