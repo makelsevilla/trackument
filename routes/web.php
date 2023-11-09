@@ -76,6 +76,11 @@ Route::middleware(["auth"])->group(function () {
         "history",
     ])->name("history");
 
+    Route::get("/badgeCounts", [
+        \App\Http\Controllers\BadgeController::class,
+        "getBadgeCounts",
+    ])->name("badgeCounts");
+
     require __DIR__ . "/document/terminate.php";
     require __DIR__ . "/document/transfer.php";
     require __DIR__ . "/documentslists.php";

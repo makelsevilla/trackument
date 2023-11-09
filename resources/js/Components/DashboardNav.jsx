@@ -2,11 +2,75 @@ import { Link, usePage } from "@inertiajs/react";
 import Icons from "@/Components/Icons.jsx";
 import { cn } from "@/lib/utils.js";
 import { Badge } from "@/Components/ui/badge.jsx";
+import { useEffect, useState } from "react";
+import { useToast } from "@/Components/ui/use-toast.js";
 
 export default function DashboardNav({ items }) {
+    const [badgeCounts, setBadgeCounts] = useState({});
     const { ziggy, navBadges = [] } = usePage().props;
+    const { toast } = useToast();
+
     const location = ziggy.location;
     const { pathname } = new URL(location);
+
+    useEffect(() => {
+        // getting the initial values
+        fetchBadgeCounts().then((badgeCounts) => {
+            setBadgeCounts(badgeCounts);
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!badgeCounts) {
+            return; // Wait for initial badge counts before starting the polling
+        }
+
+        // Poll every 10 seconds (adjust as needed)
+        const intervalId = setInterval(async () => {
+            const newBadgeCounts = await fetchBadgeCounts();
+
+            if (!isEqual(badgeCounts, newBadgeCounts)) {
+                setBadgeCounts(newBadgeCounts);
+
+                // identify if the new badge count is greater than the old badge count
+                // if so, show a toast
+                Object.keys(newBadgeCounts).forEach((key) => {
+                    if (newBadgeCounts[key] > badgeCounts[key]) {
+                        // get the difference between the old and new badge count
+                        const difference =
+                            newBadgeCounts[key] - badgeCounts[key];
+
+                        const keyMessage = {
+                            incoming: "incoming document/s.",
+                            notifications: "notifications.",
+                        };
+
+                        toast({
+                            title: `You have ${difference} new ${
+                                keyMessage?.[key] || key
+                            }`,
+                        });
+                    }
+                });
+            }
+        }, 3000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [badgeCounts]);
+
+    const fetchBadgeCounts = async () => {
+        try {
+            const response = await axios.get(route("badgeCounts"));
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching badge counts:", error);
+        }
+    };
+
+    const isEqual = (obj1, obj2) =>
+        JSON.stringify(obj1) === JSON.stringify(obj2);
 
     if (!items?.length) {
         return null;
@@ -58,12 +122,14 @@ export default function DashboardNav({ items }) {
                                             >
                                                 <SubIcon className="mr-2 h-5 w-5" />
                                                 <span>{subItem.title}</span>
-                                                {navBadges[subItem?.id] && (
+                                                {subItem?.id && (
                                                     <Badge
                                                         variant="secondary"
                                                         className="absolute right-1"
                                                     >
-                                                        {navBadges[subItem.id]}
+                                                        {badgeCounts[
+                                                            subItem.id
+                                                        ] || 0}
                                                     </Badge>
                                                 )}
                                             </span>
@@ -93,12 +159,12 @@ export default function DashboardNav({ items }) {
                             >
                                 <Icon className="mr-2 h-5 w-5" />
                                 <span>{item.title}</span>
-                                {navBadges[item?.id] && (
+                                {item?.id && (
                                     <Badge
                                         variant="secondary"
                                         className="absolute right-1"
                                     >
-                                        {navBadges[item.id]}
+                                        {badgeCounts[item.id] || 0}
                                     </Badge>
                                 )}
                             </span>
