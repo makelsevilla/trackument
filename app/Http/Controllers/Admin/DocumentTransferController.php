@@ -44,11 +44,15 @@ class DocumentTransferController extends Controller
             $transfers->whereHas(
                 $relationMapping[$filters["category"]],
                 function ($query) use ($filters) {
-                    $query->where(
-                        $filters["category"],
-                        "LIKE",
-                        "%{$filters["search"]}%"
-                    );
+                    $columnMap = [
+                        "sender" => "name",
+                        "receiver" => "name",
+                    ];
+
+                    $column =
+                        $columnMap[$filters["category"]] ??
+                        $filters["category"];
+                    $query->where($column, "LIKE", "%{$filters["search"]}%");
                 }
             );
         }

@@ -365,11 +365,15 @@ class DocumentListController extends Controller
             $transfers->whereHas(
                 $relationMapping[$filters["category"]],
                 function ($query) use ($filters) {
-                    $query->where(
-                        $filters["category"],
-                        "LIKE",
-                        "%{$filters["search"]}%"
-                    );
+                    $columnMap = [
+                        "receiver" => "name",
+                    ];
+
+                    $column =
+                        $columnMap[$filters["category"]] ??
+                        $filters["category"];
+
+                    $query->where($column, "LIKE", "%{$filters["search"]}%");
                 }
             );
         }
@@ -420,11 +424,14 @@ class DocumentListController extends Controller
         $user = auth()->user();
         $transfers = DocumentTransfer::query()
             ->with(["document", "sender", "receiver"])
-            ->whereHas("receiver", function ($query) use ($user) {
-                $query->where("id", "=", $user->id);
-            })
-            ->orWhereHas("sender", function ($query) use ($user) {
-                $query->where("id", "=", $user->id);
+            ->where(function (Builder $query) use ($user) {
+                $query
+                    ->whereHas("receiver", function ($query) use ($user) {
+                        $query->where("id", "=", $user->id);
+                    })
+                    ->orWhereHas("sender", function ($query) use ($user) {
+                        $query->where("id", "=", $user->id);
+                    });
             });
 
         if (isset($filters["search"], $filters["category"])) {
@@ -437,11 +444,15 @@ class DocumentListController extends Controller
             $transfers->whereHas(
                 $relationMapping[$filters["category"]],
                 function ($query) use ($filters) {
-                    $query->where(
-                        $filters["category"],
-                        "LIKE",
-                        "%{$filters["search"]}%"
-                    );
+                    $columnMap = [
+                        "sender" => "name",
+                        "receiver" => "name",
+                    ];
+
+                    $column =
+                        $columnMap[$filters["category"]] ??
+                        $filters["category"];
+                    $query->where($column, "LIKE", "%{$filters["search"]}%");
                 }
             );
         }
