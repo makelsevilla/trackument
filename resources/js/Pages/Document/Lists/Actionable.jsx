@@ -72,7 +72,6 @@ export default function Actionable({
 }
 
 function ActionableTable({ documents }) {
-    console.log(documents);
     return (
         <Table>
             <TableHeader className="bg-secondary">
