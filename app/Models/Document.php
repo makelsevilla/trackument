@@ -22,6 +22,7 @@ class Document extends Model
         "owner_id",
         "current_owner_id",
         "document_type_id",
+        "notify_owner",
     ];
 
     protected $casts = [

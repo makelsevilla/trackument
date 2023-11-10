@@ -15,9 +15,11 @@ class UpdateDocumentRequest extends FormRequest
     {
         $user = $this->user();
         // get the implicitly bind document model from route
-        $document = $request->route('document');
+        $document = $request->route("document");
 
-        return $document->owner_id === $user->id && $document->current_owner_id === $user->id && $document->status !== 'terminal';
+        return $document->owner_id === $user->id &&
+            $document->current_owner_id === $user->id &&
+            $document->status !== "terminal";
     }
 
     /**
@@ -28,12 +30,16 @@ class UpdateDocumentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'document_type_id' => 'nullable|exists:document_types,id',
-            'title' => 'required|regex:/^[a-zA-Z0-9\s]+$/|max:255',
-            'description' => 'nullable|string',
-            'purpose.*' => 'nullable|string',
-            'related_documents' => 'nullable|array',
-            'related_documents.*' => ['nullable', 'exists:documents,tracking_code']
+            "document_type_id" => "nullable|exists:document_types,id",
+            "title" => 'required|regex:/^[a-zA-Z0-9\s]+$/|max:255',
+            "description" => "nullable|string",
+            "purpose.*" => "nullable|string",
+            "related_documents" => "nullable|array",
+            "related_documents.*" => [
+                "nullable",
+                "exists:documents,tracking_code",
+            ],
+            "notify_owner" => "required|boolean",
         ];
     }
 
@@ -45,7 +51,7 @@ class UpdateDocumentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'related_documents.*.exists' => 'Document :input does not exist.'
+            "related_documents.*.exists" => "Document :input does not exist.",
         ];
     }
 }

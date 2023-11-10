@@ -42,6 +42,7 @@ export default function EditDraft({
         description: document.description || "",
         purpose: document.purpose || [],
         related_documents: document?.related_documents || [],
+        notify_owner: document.notify_owner,
     });
     const { toast } = useToast();
     const { flash } = usePage().props;
@@ -233,12 +234,12 @@ export default function EditDraft({
                                         Check all that apply.
                                     </p>
                                 </div>
-                                <ScrollArea className="max-h-[200px] rounded-md border p-4">
+                                <div className=" space-y-4 rounded-md border p-4">
                                     {documentPurposes?.map((purpose, index) => {
                                         return (
                                             <div
                                                 key={index}
-                                                className="mb-4 flex items-center space-x-2"
+                                                className="flex items-center gap-2"
                                             >
                                                 <Checkbox
                                                     onCheckedChange={(
@@ -277,7 +278,7 @@ export default function EditDraft({
                                             </div>
                                         );
                                     })}
-                                </ScrollArea>
+                                </div>
                                 <InputError
                                     message={errors.purpose}
                                     className="mt-2"
@@ -362,6 +363,24 @@ export default function EditDraft({
                                     - You may add the tracking code of the
                                     documents related to this document.
                                 </InputHelper>
+                            </div>
+
+                            {/*Receive Notifications*/}
+                            <div className="mt-4">
+                                <Label>Notifications</Label>
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        checked={data.notify_owner}
+                                        onCheckedChange={(checked) =>
+                                            setData("notify_owner", checked)
+                                        }
+                                        id="notify_owner"
+                                    />
+                                    <label htmlFor="notify_owner">
+                                        Receive notifications whenever someone
+                                        processes this document.
+                                    </label>
+                                </div>
                             </div>
 
                             <Separator className="my-6" />
