@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Events\DocumentActionEvent;
+use App\Events\DocumentTransferEvent;
 use App\Events\NotificationEvent;
 use App\Models\Document;
 use App\Models\DocumentTransfer;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -104,6 +106,8 @@ class DocumentTransferController extends Controller
                 $user
             )
         );
+
+        DocumentTransferEvent::dispatch(User::find($validated["receiver_id"]));
 
         return to_route("documents.lists.actionable")->with([
             "message" => "Document released successfully.",

@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import DashboardHeader from "@/Components/DashboardHeader.jsx";
 import {
     Table,
@@ -19,12 +19,27 @@ import TableFilter from "@/Components/TableFilter.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import OutgoingTableFilter from "@/Pages/Document/Lists/Components/OutgoingTableFilter.jsx";
 import IncomingTableFilter from "@/Pages/Document/Lists/Components/IncomingTableFilter.jsx";
+import { useEffect } from "react";
 
 export default function Incoming({
     auth,
     paginatedDocumentTransfers: { data: transfers, ...paginate },
     filters,
 }) {
+    useEffect(() => {
+        Echo.private(`incoming-transfer.${auth.user.id}`).listen(
+            "DocumentTransferEvent",
+            (e) => {
+                console.log("incoming transfer event", e);
+                router.reload();
+            },
+        );
+
+        return () => {
+            Echo.leaveChannel("incoming-transfer." + auth.user.id);
+        };
+    }, []);
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Incoming" />
