@@ -73,11 +73,13 @@ export default function DashboardNav({ items }) {
         JSON.stringify(obj1) === JSON.stringify(obj2);
 
     const badgeDisplayText = {
-        incoming: badgeCounts["incoming"] ? `${badgeCounts["incoming"]}` : 0,
+        incoming: badgeCounts["incoming"] ? badgeCounts["incoming"] : 0,
         notifications: badgeCounts["notifications"]
             ? `${badgeCounts["notifications"]} new`
             : 0,
     };
+
+    console.log(badgeDisplayText.incoming);
 
     if (!items?.length) {
         return null;
@@ -135,7 +137,7 @@ export default function DashboardNav({ items }) {
                                                         className="absolute right-1"
                                                     >
                                                         {badgeDisplayText[
-                                                            item.id
+                                                            subItem.id
                                                         ] || 0}
                                                     </Badge>
                                                 )}

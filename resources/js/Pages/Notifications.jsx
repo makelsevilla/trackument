@@ -12,7 +12,6 @@ export default function Notifications({
     auth,
     paginatedNotifications: { data: notifications, ...paginate },
 }) {
-    console.log(notifications);
     return (
         <Authenticated user={auth.user}>
             <Head title="Notifications" />
@@ -37,6 +36,7 @@ export default function Notifications({
                             <Link
                                 href={route("notifications.markAllAsRead")}
                                 method="patch"
+                                as="button"
                             >
                                 Mark all as read
                             </Link>
@@ -63,6 +63,7 @@ export default function Notifications({
                                         <Button
                                             variant="ghost"
                                             className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                                            asChild
                                         >
                                             <Link
                                                 href={route(
@@ -73,6 +74,7 @@ export default function Notifications({
                                                         notification.id,
                                                 }}
                                                 method="delete"
+                                                as="button"
                                             >
                                                 <Icons.trash className="h-4 w-4" />
                                             </Link>
@@ -96,6 +98,7 @@ export default function Notifications({
                                                             notification.id,
                                                     }}
                                                     method="patch"
+                                                    as="button"
                                                 >
                                                     Mark as read
                                                 </Link>
