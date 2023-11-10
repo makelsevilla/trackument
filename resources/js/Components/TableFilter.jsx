@@ -64,7 +64,7 @@ export default function TableFilter({
 
     function handleFilterApply(e) {
         e.preventDefault();
-        params.date_to.setHours(23, 59, 59, 999);
+        params?.date_to?.setHours(23, 59, 59, 999);
         router.get(url, { ...params, ...childParams });
     }
 
