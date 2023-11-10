@@ -14,10 +14,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, Notifiable, softDeletes;
 
-    public function documents(): HasMany
-    {
-        return $this->hasMany(Document::class, "owner_id", "id");
-    }
     /**
      * The attributes that are mass assignable.
      *
@@ -41,4 +37,14 @@ class User extends Authenticatable
         "email_verified_at" => "datetime",
         "password" => "hashed",
     ];
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class, "owner_id", "id");
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class, "user_id", "id");
+    }
 }

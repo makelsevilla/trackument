@@ -53,7 +53,7 @@ export default function DashboardNav({ items }) {
                     }
                 });
             }
-        }, 3000);
+        }, 2000);
 
         return () => {
             clearInterval(intervalId);

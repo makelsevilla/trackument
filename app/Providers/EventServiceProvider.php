@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\DocumentActionEvent;
+use App\Events\NotificationEvent;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -17,9 +18,11 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         Registered::class => [SendEmailVerificationNotification::class],
-
         DocumentActionEvent::class => [
             \App\Listeners\DocumentActionListener::class,
+        ],
+        NotificationEvent::class => [
+            \App\Listeners\NotificationEventListener::class,
         ],
     ];
 

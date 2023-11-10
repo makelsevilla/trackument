@@ -11,7 +11,8 @@ class BadgeController extends Controller
     {
         $user = auth()->user();
 
-        $badgeCounts = ["incoming" => ""];
+        $badgeCounts = ["incoming" => "", "notifications" => ""];
+
         $incoming = DocumentTransfer::query()
             ->with(["receiver"])
             ->whereHas("receiver", function ($query) use ($user) {
@@ -19,8 +20,18 @@ class BadgeController extends Controller
             })
             ->whereNot("is_completed", "=", true)
             ->count();
+        if ($incoming > 0) {
+            $badgeCounts["incoming"] = $incoming;
+        }
 
-        $badgeCounts["incoming"] = $incoming;
+        $notifications = $user
+            ->notifications()
+            ->where("is_read", "=", false)
+            ->count();
+
+        if ($notifications > 0) {
+            $badgeCounts["notifications"] = $notifications;
+        }
 
         return response()->json($badgeCounts);
     }

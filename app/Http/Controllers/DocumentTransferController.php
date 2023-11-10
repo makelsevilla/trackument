@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\DocumentActionEvent;
+use App\Events\NotificationEvent;
 use App\Models\Document;
 use App\Models\DocumentTransfer;
 use Illuminate\Http\Request;
@@ -214,6 +215,7 @@ class DocumentTransferController extends Controller
                 $user
             )
         );
+
         return back()->with([
             "message" => "Document transfer successful.",
             "status" => "success",
