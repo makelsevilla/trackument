@@ -26,6 +26,17 @@ import { Separator } from "@/Components/ui/separator.jsx";
 import { ucwords } from "@/lib/utils.js";
 import { Toaster } from "@/Components/ui/toaster.jsx";
 import { useToast } from "@/Components/ui/use-toast.js";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/Components/ui/alert-dialog.jsx";
 
 export default function EditDraft({
     auth,
@@ -119,13 +130,38 @@ export default function EditDraft({
                             >
                                 <span>Save</span>
                             </Button>
-                            <Button
-                                size="sm"
-                                onClick={(e) => handleSubmit("finalize")}
-                                disabled={processing}
-                            >
-                                <span>Finalize</span>
-                            </Button>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button size="sm">
+                                        <span>Finalize</span>
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                            Finalize Document
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            You CANNOT make any changes to this
+                                            document once it has been finalized.
+                                            Are you sure you want to proceed?
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                            Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={(e) =>
+                                                handleSubmit("finalize")
+                                            }
+                                            disabled={processing}
+                                        >
+                                            Proceed
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
                     </div>
                     <div>

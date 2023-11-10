@@ -12,6 +12,17 @@ import {
 } from "@/Components/ui/table.jsx";
 import dayjs from "dayjs";
 import Icons from "@/Components/Icons.jsx";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/Components/ui/alert-dialog.jsx";
 
 export default function Draft({ auth, documents }) {
     return (
@@ -86,26 +97,55 @@ export default function Draft({ auth, documents }) {
                                                             <Icons.edit className="h-4 w-4" />
                                                         </Link>
                                                     </Button>
-                                                    <Button
-                                                        className="hover:bg-destructive hover:text-destructive-foreground"
-                                                        size="icon"
-                                                        variant="ghost"
-                                                        asChild
-                                                    >
-                                                        <Link
-                                                            href={route(
-                                                                "documents.destroy",
-                                                                {
-                                                                    document:
-                                                                        document.id,
-                                                                },
-                                                            )}
-                                                            method="delete"
-                                                            as="button"
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger
+                                                            asChild
                                                         >
-                                                            <Icons.trash className="h-4 w-4" />
-                                                        </Link>
-                                                    </Button>
+                                                            <Button
+                                                                className="hover:bg-destructive hover:text-destructive-foreground"
+                                                                size="icon"
+                                                                variant="ghost"
+                                                            >
+                                                                <Icons.trash className="h-4 w-4" />
+                                                            </Button>
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent>
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle>
+                                                                    Delete
+                                                                    Draft?
+                                                                </AlertDialogTitle>
+                                                                <AlertDialogDescription>
+                                                                    This action
+                                                                    cannot be
+                                                                    undone
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel>
+                                                                    Cancel
+                                                                </AlertDialogCancel>
+                                                                <AlertDialogAction
+                                                                    className="bg-destructive"
+                                                                    asChild
+                                                                >
+                                                                    <Link
+                                                                        href={route(
+                                                                            "documents.destroy",
+                                                                            {
+                                                                                document:
+                                                                                    document.id,
+                                                                            },
+                                                                        )}
+                                                                        method="delete"
+                                                                        as="button"
+                                                                    >
+                                                                        Delete
+                                                                    </Link>
+                                                                </AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
