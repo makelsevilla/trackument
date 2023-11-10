@@ -109,7 +109,7 @@ function TransfersTable({ transfers }) {
                         </TableCell>
                         <TableCell>
                             {transfer?.completed_at
-                                ? dayjs(transfer.transferred_at).format(
+                                ? dayjs(transfer.completed_at).format(
                                       "MMM DD YYYY hh:mm A",
                                   )
                                 : "N/A"}
