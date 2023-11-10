@@ -67,14 +67,15 @@ Route::middleware(["auth"])->group(function () {
         "download",
     ])->name("file.download");
 
-    Route::get("/track", [
+    /*    Route::get("/track", [
         \App\Http\Controllers\TrackingController::class,
         "track",
-    ])->name("track");
+    ])->name("track");*/
+
     Route::get("/history/{tracking_code}", [
         \App\Http\Controllers\TrackingController::class,
         "history",
-    ])->name("history");
+    ])->name("track");
 
     Route::get("/badgeCounts", [
         \App\Http\Controllers\BadgeController::class,

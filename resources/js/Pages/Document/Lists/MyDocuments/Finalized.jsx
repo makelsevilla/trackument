@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
 import DashboardHeader from "@/Components/DashboardHeader.jsx";
 import { Button } from "@/Components/ui/button.jsx";
 import {
@@ -19,6 +19,23 @@ import { finalizedCategories } from "@/Pages/Document/Lists/Components/pageFilte
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import { Alert, AlertDescription, AlertTitle } from "@/Components/ui/alert.jsx";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/Components/ui/dropdown-menu.jsx";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+} from "@/Components/ui/alert-dialog.jsx";
+import { useState } from "react";
 
 export default function Finalized({
     auth,
@@ -120,22 +137,46 @@ function FinalizedTable({ documents }) {
                                     )}
                             </TableCell>
                             <TableCell>
-                                <Button size="sm" variant="ghost" asChild>
-                                    <Link
-                                        href={route("documents.show", {
-                                            document: document.id,
-                                        })}
-                                        className="flex items-center space-x-2"
-                                    >
-                                        <Icons.view className="h-4 w-4" />
-                                        <span>View</span>
-                                    </Link>
-                                </Button>
+                                <DocumentAction document={document} />
                             </TableCell>
                         </TableRow>
                     );
                 })}
             </TableBody>
         </Table>
+    );
+}
+
+function DocumentAction({ document }) {
+    return (
+        <>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Icons.moreHorizontal className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                        <Link
+                            href={route("documents.show", {
+                                document: document.id,
+                            })}
+                        >
+                            View Details
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link
+                            href={route("track", {
+                                tracking_code: document.tracking_code,
+                            })}
+                        >
+                            Track Document
+                        </Link>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </>
     );
 }
