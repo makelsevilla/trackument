@@ -30,7 +30,6 @@ export default function Incoming({
         Echo.private(`incoming-transfer.${auth.user.id}`).listen(
             "DocumentTransferEvent",
             (e) => {
-                console.log("incoming transfer event", e);
                 router.reload();
             },
         );

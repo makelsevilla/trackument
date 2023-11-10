@@ -1,4 +1,4 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import DashboardHeader from "@/Components/DashboardHeader.jsx";
 import { Button } from "@/Components/ui/button.jsx";
@@ -7,11 +7,25 @@ import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButto
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import Icons from "@/Components/Icons.jsx";
 import { cn } from "@/lib/utils.js";
+import { useEffect } from "react";
 
 export default function Notifications({
     auth,
     paginatedNotifications: { data: notifications, ...paginate },
 }) {
+    useEffect(() => {
+        Echo.private(`notifications.${auth.user.id}`).listen(
+            "DocumentTransferEvent",
+            (e) => {
+                router.reload();
+            },
+        );
+
+        return () => {
+            Echo.leaveChannel("notifications." + auth.user.id);
+        };
+    }, []);
+
     return (
         <Authenticated user={auth.user}>
             <Head title="Notifications" />
