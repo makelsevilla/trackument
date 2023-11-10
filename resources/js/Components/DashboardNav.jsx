@@ -72,6 +72,13 @@ export default function DashboardNav({ items }) {
     const isEqual = (obj1, obj2) =>
         JSON.stringify(obj1) === JSON.stringify(obj2);
 
+    const badgeDisplayText = {
+        incoming: badgeCounts["incoming"] ? `${badgeCounts["incoming"]}` : 0,
+        notifications: badgeCounts["notifications"]
+            ? `${badgeCounts["notifications"]} new`
+            : 0,
+    };
+
     if (!items?.length) {
         return null;
     }
@@ -127,8 +134,8 @@ export default function DashboardNav({ items }) {
                                                         variant="secondary"
                                                         className="absolute right-1"
                                                     >
-                                                        {badgeCounts[
-                                                            subItem.id
+                                                        {badgeDisplayText[
+                                                            item.id
                                                         ] || 0}
                                                     </Badge>
                                                 )}
@@ -164,7 +171,7 @@ export default function DashboardNav({ items }) {
                                         variant="secondary"
                                         className="absolute right-1"
                                     >
-                                        {badgeCounts[item.id] || 0}
+                                        {badgeDisplayText[item.id] || 0}
                                     </Badge>
                                 )}
                             </span>

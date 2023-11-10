@@ -70,7 +70,7 @@ export const dashboardConfig = {
         {
             id: "notifications",
             title: "Notifications",
-            href: "/",
+            href: route("notifications.index"),
             icon: "notification",
         },
     ],

@@ -81,6 +81,7 @@ Route::middleware(["auth"])->group(function () {
         "getBadgeCounts",
     ])->name("badgeCounts");
 
+    require __DIR__ . "/notifications.php";
     require __DIR__ . "/document/terminate.php";
     require __DIR__ . "/document/transfer.php";
     require __DIR__ . "/documentslists.php";

@@ -168,7 +168,9 @@ export default function EditDraft({
                                                             key={index}
                                                             value={type.id.toString()}
                                                         >
-                                                            {type.name}
+                                                            <span className="capitalize">
+                                                                {type.name}
+                                                            </span>
                                                         </SelectItem>
                                                     );
                                                 },
