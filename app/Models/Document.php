@@ -90,21 +90,15 @@ class Document extends Model
                     ]);
 
                     if (!$success) {
-                        return back()->with([
-                            "message" =>
-                                "An error occured while saving the related document/s.",
-                            "status" => "error",
-                        ]);
+                        return false;
                     }
                 }
             }
         } catch (\Exception $e) {
-            return back()->with([
-                "message" =>
-                    "An error occured while saving the related document/s.",
-                "status" => "error",
-            ]);
+            return false;
         }
+
+        return true;
     }
 
     public function hasFiles(): bool

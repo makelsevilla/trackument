@@ -16,18 +16,9 @@ import {
     CollapsibleTrigger,
 } from "@/Components/ui/collapsible.jsx";
 import Icons from "@/Components/Icons.jsx";
-import { Card, CardContent } from "@/Components/ui/card.jsx";
 import axios from "axios";
 import { Progress } from "@/Components/ui/progress.jsx";
 import { usePage } from "@inertiajs/react";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table.jsx";
 import { hyphen_uc_words } from "@/lib/utils.js";
 import {
     Select,
@@ -37,7 +28,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select.jsx";
-import dayjs from "dayjs";
 import DocumentFileCard from "@/Components/DocumentFileCard.jsx";
 import { useToast } from "@/Components/ui/use-toast.js";
 
@@ -186,15 +176,13 @@ function DocumentFilesForm({
                     <InputError message={errors.role} />
                     <InputHelper>
                         <p>
-                            - <span className="font-medium italic">Backup</span>{" "}
+                            - <span className="font-bold italic">Backup</span>{" "}
                             file role are files that is the exactly the same
                             with the document hard copy.
                         </p>
                         <p>
                             -{" "}
-                            <span className="font-medium italic">
-                                Attachment
-                            </span>{" "}
+                            <span className="font-bold italic">Attachment</span>{" "}
                             file role are supporting document files .
                         </p>
                     </InputHelper>
@@ -213,9 +201,7 @@ function DocumentFilesForm({
                             className="mt-2"
                         />
                         <InputHelper>
-                            - Please provide a descriptive file name thatPlease
-                            provide a descriptive file name that clearly
-                            reflects the content of the document or file.
+                            - Please provide a descriptive file name that
                             clearly reflects the content of the document or
                             file.
                         </InputHelper>

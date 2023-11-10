@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FinalizeDocumentRequest;
-use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
 use App\Models\Document;
 use Illuminate\Http\Request;
@@ -162,10 +161,18 @@ class DocumentController extends Controller
 
         // handling related documents
         if (isset($validated["related_documents"])) {
-            $document->saveRelatedDocuments(
+            $relatedDocumentsSaved = $document->saveRelatedDocuments(
                 $document->id,
                 $validated["related_documents"]
             );
+
+            if (!$relatedDocumentsSaved) {
+                return back()->with([
+                    "message" =>
+                        "An error occurred while saving the related document/s.",
+                    "status" => "error",
+                ]);
+            }
         }
 
         return back()->with([
