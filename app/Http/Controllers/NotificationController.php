@@ -12,6 +12,7 @@ class NotificationController extends Controller
         $paginatedNotifications = auth()
             ->user()
             ->notifications()
+            ->orderBy("created_at", "desc")
             ->paginate(10);
 
         return Inertia::render("Notifications", [
