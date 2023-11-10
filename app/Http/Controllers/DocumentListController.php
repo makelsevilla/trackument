@@ -438,7 +438,8 @@ class DocumentListController extends Controller
             "perPage" => $request->query("perPage", "10"),
             "date_name" => $request->query("date_name", "transferred_at"),
             "date_from" => $request->query("date_from"),
-            "date_to" => $request->query("date_to", now()),
+            // get the current date if date_to is not present, not including the time
+            "date_to" => $request->query("date_to", now()->toDateString()),
             "status" => $request->query("status"),
         ];
 

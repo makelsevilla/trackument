@@ -23,7 +23,7 @@ class DocumentTransferController extends Controller
             "perPage" => $request->query("perPage", "10"),
             "date_name" => $request->query("date_name", "transferred_at"),
             "date_from" => $request->query("date_from"),
-            "date_to" => $request->query("date_to", now()),
+            "date_to" => $request->query("date_to", now()->toDateString()),
             "status" => $request->query("status"),
         ];
 
