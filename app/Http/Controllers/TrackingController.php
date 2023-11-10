@@ -34,6 +34,7 @@ class TrackingController extends Controller
 
         return Inertia::render("Document/DocumentHistory", [
             "documentHistory" => $documentHistory,
+            "trackingCode" => $tracking_code,
         ]);
     }
 }

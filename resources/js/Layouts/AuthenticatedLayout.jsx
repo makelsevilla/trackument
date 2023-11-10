@@ -61,6 +61,10 @@ export default function Authenticated({
                         )}
 
                         <MainNav items={[]} />
+
+                        <div className="px-4">
+                            <NavTrackingForm />
+                        </div>
                     </div>
                     <div>
                         <UserAccountNav
