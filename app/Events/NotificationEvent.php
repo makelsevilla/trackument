@@ -16,6 +16,7 @@ class NotificationEvent
 
     /**
      * Create a new event instance.
+     * @param array<string, mixed> $data should contain message and user_id
      */
     public function __construct(public $data)
     {

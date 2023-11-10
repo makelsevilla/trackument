@@ -169,7 +169,7 @@ class DocumentController extends Controller
         }
 
         return back()->with([
-            "message" => "Document saved successfully.",
+            "message" => "Changes saved.",
             "status" => "success",
         ]);
     }

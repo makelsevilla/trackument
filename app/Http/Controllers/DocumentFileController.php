@@ -23,6 +23,7 @@ class DocumentFileController extends Controller
             ->select("document_files.*", "users.name as uploader_name")
             ->orderBy("document_files.uploaded_at", "desc")
             ->get();
+
         return response()->json($document_files);
     }
 
@@ -35,7 +36,8 @@ class DocumentFileController extends Controller
         $validated = $request->validate([
             "type" => "required|in:file,link",
             "role" => "required|in:backup,attachment",
-            "fileName" => "required|string|max:255",
+            "fileName" =>
+                "required|string|max:255|unique:document_files,file_name",
             "documentId" => "required|exists:documents,id",
             "file" => [
                 "required_if:type,file",
@@ -63,12 +65,14 @@ class DocumentFileController extends Controller
 
         if (!$file->save()) {
             return response()->json(
-                ["message" => "Error saving to database."],
+                ["message" => "Error saving the file."],
                 500
             );
         }
 
-        return response()->json(["message" => "File added successfully."]);
+        return response()->json([
+            "message" => "{$validated["fileName"]} file added successfully.",
+        ]);
     }
 
     /**
@@ -83,12 +87,14 @@ class DocumentFileController extends Controller
                 // File deleted successfully, continue with record deletion
                 $document_file->delete();
                 return response()->json([
-                    "message" => "File deleted successfully",
+                    "message" => "{$document_file->file_name} file deleted successfully",
                 ]);
             } else {
                 // Error deleting the file
                 return response()->json(
-                    ["message" => "Error deleting file."],
+                    [
+                        "message" => "Error deleting {$document_file->file_name} file.",
+                    ],
                     500
                 );
             }
@@ -96,11 +102,13 @@ class DocumentFileController extends Controller
             // If the file type is not 'file' or file_path is missing, just delete the record
             if ($document_file->delete()) {
                 return response()->json([
-                    "message" => "File deleted successfully",
+                    "message" => "{$document_file->file_name} file link deleted successfully",
                 ]);
             } else {
                 return response()->json(
-                    ["message" => "Error deleting file."],
+                    [
+                        "message" => "Error deleting {$document_file->file_name} file link.",
+                    ],
                     500
                 );
             }

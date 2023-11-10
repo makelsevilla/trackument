@@ -39,6 +39,7 @@ import {
 } from "@/Components/ui/select.jsx";
 import dayjs from "dayjs";
 import DocumentFileCard from "@/Components/DocumentFileCard.jsx";
+import { useToast } from "@/Components/ui/use-toast.js";
 
 function DocumentFilesForm({
     documentId = null,
@@ -54,6 +55,16 @@ function DocumentFilesForm({
     const [processing, setProcessing] = useState(false);
     const [progress, setProgress] = useState(0);
     const user = usePage().props.auth.user;
+
+    const { toast } = useToast();
+
+    const showToast = (message, type = "default") => {
+        toast({
+            title: message,
+            type: type,
+            duration: 5000,
+        });
+    };
 
     const getDocumentFiles = () => {
         axios
@@ -110,13 +121,18 @@ function DocumentFilesForm({
                 // console.log(response);
                 resetData();
                 getDocumentFiles();
+                showToast(response.data.message || "File added successfully.");
             })
             .catch((error) => {
-                console.log(error.response.data);
                 if (error.response.status === 422) {
                     // console.log(error.response.data.errors);
                     setErrors(error.response.data.errors);
                 }
+
+                showToast(
+                    error.response.data.message || "Something went wrong.",
+                    "destructive",
+                );
             })
             .finally(() => setProcessing(false));
     };
@@ -129,10 +145,17 @@ function DocumentFilesForm({
                 }),
             )
             .then((response) => {
-                console.log(response);
+                showToast(
+                    response.data.message || "File deleted successfully.",
+                );
                 getDocumentFiles();
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {
+                showToast(
+                    error.response.data.message || "Something went wrong.",
+                    "destructive",
+                );
+            });
     }
 
     useEffect(() => {
@@ -161,6 +184,20 @@ function DocumentFilesForm({
                         </SelectContent>
                     </Select>
                     <InputError message={errors.role} />
+                    <InputHelper>
+                        <p>
+                            - <span className="font-medium italic">Backup</span>{" "}
+                            file role are files that is the exactly the same
+                            with the document hard copy.
+                        </p>
+                        <p>
+                            -{" "}
+                            <span className="font-medium italic">
+                                Attachment
+                            </span>{" "}
+                            file role are supporting document files .
+                        </p>
+                    </InputHelper>
                 </div>
                 {withNameInput && (
                     <div className="grid gap-1.5">
@@ -175,6 +212,13 @@ function DocumentFilesForm({
                             message={errors.fileName}
                             className="mt-2"
                         />
+                        <InputHelper>
+                            - Please provide a descriptive file name thatPlease
+                            provide a descriptive file name that clearly
+                            reflects the content of the document or file.
+                            clearly reflects the content of the document or
+                            file.
+                        </InputHelper>
                     </div>
                 )}
 
@@ -200,6 +244,9 @@ function DocumentFilesForm({
                             </Button>
                         </div>
                         <InputError message={errors.file} className="mt-2" />
+                        <InputHelper className="mt-2">
+                            <p>- Max 10 MB file size.</p>
+                        </InputHelper>
                     </TabsContent>
                     <TabsContent value="link">
                         <div className="flex items-center gap-2">
@@ -219,6 +266,24 @@ function DocumentFilesForm({
                             </Button>
                         </div>
                         <InputError message={errors.link} className="mt-2" />
+                        <InputHelper className="mt-2">
+                            <p>
+                                - You can upload larger files via{" "}
+                                <a
+                                    className="underline"
+                                    href="https://www.google.com/drive/"
+                                    target="_blank"
+                                >
+                                    Google Drive
+                                </a>{" "}
+                                or any other cloud storage provider and then add
+                                the url in the URL tab.
+                            </p>
+                            <p>
+                                - Include https://www. or http://www. in the
+                                URL.
+                            </p>
+                        </InputHelper>
                     </TabsContent>
                 </Tabs>
                 {processing && (
@@ -288,27 +353,8 @@ function DocumentFilesForm({
                         </CollapsibleContent>
                     </Collapsible>
                 ) : (
-                    <div className="text-sm text-muted-foreground">
-                        No Files Uploaded.
-                    </div>
+                    <div className="font-bold">No Files Uploaded.</div>
                 )}
-
-                <InputHelper>
-                    <p>- Max 10 MB file size.</p>
-                    <p>
-                        - You can upload larger files via{" "}
-                        <a
-                            className="underline"
-                            href="https://www.google.com/drive/"
-                            target="_blank"
-                        >
-                            Google Drive
-                        </a>{" "}
-                        or any other cloud storage provider and then add the url
-                        in the URL tab.
-                    </p>
-                    <p>- Include https://www. or http://www. in the URL.</p>
-                </InputHelper>
             </div>
         </div>
     );
