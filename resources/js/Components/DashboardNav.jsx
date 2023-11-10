@@ -79,8 +79,6 @@ export default function DashboardNav({ items }) {
             : 0,
     };
 
-    console.log(badgeDisplayText.incoming);
-
     if (!items?.length) {
         return null;
     }
