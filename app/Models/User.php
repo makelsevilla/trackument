@@ -44,6 +44,19 @@ class User extends Authenticatable
         return $this->hasMany(Document::class, "owner_id", "id");
     }
 
+    public function unreleasedDocuments(): HasMany
+    {
+        return $this->documents()
+            ->whereNull("previous_owner_id")
+            ->where("current_owner_id", $this->id)
+            ->where("status", "available");
+    }
+
+    public function releasedDocuments(): HasMany
+    {
+        return $this->documents()->whereNotNull("previous_owner_id");
+    }
+
     public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class, "user_id", "id");

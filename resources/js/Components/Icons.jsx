@@ -51,9 +51,11 @@ import {
     ChevronFirst,
     FolderCog,
     FileType,
+    Info,
 } from "lucide-react";
 
 const Icons = {
+    info: Info,
     fileType: FileType,
     chevronFirst: ChevronFirst,
     chevronLast: ChevronLast,

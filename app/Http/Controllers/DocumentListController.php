@@ -33,6 +33,7 @@ class DocumentListController extends Controller
             "category" => $request->query("category", "tracking_code"),
             "sortBy" => $request->query("sortBy", "created_at"),
             "order" => $request->query("order", "desc"),
+            "release_status" => $request->query("release_status"),
             "perPage" => $request->query("perPage", "10"),
             "date_name" => $request->query("date_name", "created_at"),
             "date_from" => $request->query("date_from"),
@@ -74,6 +75,13 @@ class DocumentListController extends Controller
             }
         }
 
+        if (isset($filters["release_status"])) {
+            match ($filters["release_status"]) {
+                "released" => $documents->whereNotNull("previous_owner_id"),
+                "unreleased" => $documents->whereNull("previous_owner_id"),
+            };
+        }
+
         $paginatedDocuments = $documents
             ->paginate($filters["perPage"])
             ->withQueryString();
@@ -81,6 +89,10 @@ class DocumentListController extends Controller
         return Inertia::render("Document/Lists/MyDocuments/Finalized", [
             "paginatedDocuments" => $paginatedDocuments,
             "filters" => $filters,
+            "unreleasedCount" => $user
+                ->unreleasedDocuments()
+                ->get()
+                ->count(),
         ]);
     }
 

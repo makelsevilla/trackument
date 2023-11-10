@@ -1,6 +1,14 @@
 import TableFilter from "@/Components/TableFilter.jsx";
 import { useState } from "react";
 import { usePage } from "@inertiajs/react";
+import { Label } from "@/Components/ui/label.jsx";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select.jsx";
 
 const categories = [
     {
@@ -31,7 +39,9 @@ export default function FinalizedTableFilter({ ...props }) {
     const {
         props: { filters },
     } = usePage();
-    const [params, setParams] = useState({});
+    const [params, setParams] = useState({
+        release_status: filters?.release_status || "",
+    });
 
     return (
         <TableFilter
@@ -40,6 +50,24 @@ export default function FinalizedTableFilter({ ...props }) {
             categories={categories}
             dateNames={dateNames}
             url={route("documents.lists.finalized")}
-        ></TableFilter>
+        >
+            <div>
+                <Label>Release status:</Label>
+                <Select
+                    value={params.release_status}
+                    onValueChange={(val) =>
+                        setParams({ ...params, release_status: val })
+                    }
+                >
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select release status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="released">Released</SelectItem>
+                        <SelectItem value="unreleased">Unreleased</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+        </TableFilter>
     );
 }

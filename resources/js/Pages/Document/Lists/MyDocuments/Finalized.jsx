@@ -18,11 +18,13 @@ import TableFilter from "@/Pages/Document/Lists/Components/TableFilter.jsx";
 import { finalizedCategories } from "@/Pages/Document/Lists/Components/pageFilterCategories.js";
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
+import { Alert, AlertDescription, AlertTitle } from "@/Components/ui/alert.jsx";
 
 export default function Finalized({
     auth,
     paginatedDocuments: { data: documents, ...paginate },
     filters,
+    unreleasedCount,
 }) {
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -39,6 +41,17 @@ export default function Finalized({
                         },
                     ]}
                 />
+
+                {unreleasedCount > 0 && (
+                    <Alert>
+                        <Icons.info className="h-4 w-4" />
+                        <AlertTitle>Heads up!</AlertTitle>
+                        <AlertDescription>
+                            You have {unreleasedCount} unreleased documents.
+                        </AlertDescription>
+                    </Alert>
+                )}
+
                 <DashboardHeader
                     heading="My Documents"
                     text="Finalized documents."
