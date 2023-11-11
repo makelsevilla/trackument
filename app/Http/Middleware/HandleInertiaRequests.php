@@ -47,14 +47,14 @@ class HandleInertiaRequests extends Middleware
                 "message" => fn() => $request->session()->get("message"),
             ],
             "badgeCounts" => fn() => [
-                "incoming" => fn() => DocumentTransfer::query()
+                "incoming" => fn() => isset($user) && DocumentTransfer::query()
                     ->with(["receiver"])
                     ->whereHas("receiver", function ($query) use ($user) {
                         $query->where("id", "=", $user->id);
                     })
                     ->whereNot("is_completed", "=", true)
                     ->count(),
-                "notifications" => fn() => $user
+                "notifications" => fn() => isset($user) && $user
                     ->notifications()
                     ->where("is_read", "=", false)
                     ->count(),
