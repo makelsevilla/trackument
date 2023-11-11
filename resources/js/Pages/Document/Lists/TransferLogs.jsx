@@ -57,7 +57,7 @@ export default function TransferLogs({
                     <Button asChild>
                         <a
                             target="_blank"
-                            href={route("admin.document-transfers.index", {
+                            href={route("documents.lists.transfers", {
                                 ...filters,
                                 report: true,
                             })}
@@ -127,8 +127,8 @@ function TransfersTable({ transfers }) {
                         <TableCell>
                             {transfer?.completed_at
                                 ? dayjs(transfer.completed_at).format(
-                                      "MMM DD YYYY hh:mm A",
-                                  )
+                                    "MMM DD YYYY hh:mm A",
+                                )
                                 : "N/A"}
                         </TableCell>
                         <TableCell>{transfer?.sender?.name}</TableCell>
