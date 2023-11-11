@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UpdateBadgeCounts;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -38,9 +39,11 @@ class NotificationController extends Controller
 
         if ($notification) {
             $notification->markAsRead();
+
+            UpdateBadgeCounts::dispatch(auth()->user());
         }
 
-        return redirect()->back();
+        return back();
     }
 
     public function markAllAsRead()
@@ -50,7 +53,9 @@ class NotificationController extends Controller
             ->unreadNotifications()
             ->update(["is_read" => true]);
 
-        return redirect()->back();
+        UpdateBadgeCounts::dispatch(auth()->user());
+
+        return back();
     }
 
     public function markAsUnread(Request $request)
@@ -73,7 +78,7 @@ class NotificationController extends Controller
             $notification->markAsUnread();
         }
 
-        return redirect()->back();
+        return back();
     }
 
     public function destroy(Request $request)
@@ -95,6 +100,8 @@ class NotificationController extends Controller
         if ($notification) {
             $notification->delete();
         }
+
+        UpdateBadgeCounts::dispatch(auth()->user());
 
         return redirect()
             ->back()

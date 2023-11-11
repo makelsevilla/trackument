@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import DashboardHeader from "@/Components/DashboardHeader.jsx";
 import {
     Table,
@@ -15,12 +15,26 @@ import Icons from "@/Components/Icons.jsx";
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import TransfersListTableFilter from "@/Pages/Document/Lists/Components/TransfersListsTableFilter.jsx";
+import { useEffect } from "react";
 
 export default function TransferLogs({
     auth,
     paginatedTransfers: { data: transfers, ...paginate },
     filters,
 }) {
+    useEffect(() => {
+        Echo.private(`transfer.${auth.user.id}`).listen(
+            "DocumentTransferEvent",
+            (e) => {
+                router.reload();
+            },
+        );
+
+        return () => {
+            Echo.leaveChannel(`transfer.${auth.user.id}`);
+        };
+    }, []);
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Transfer Logs" />

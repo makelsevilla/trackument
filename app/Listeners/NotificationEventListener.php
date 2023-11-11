@@ -2,7 +2,9 @@
 
 namespace App\Listeners;
 
+use App\Events\UpdateBadgeCounts;
 use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -21,6 +23,10 @@ class NotificationEventListener
      */
     public function handle(object $event): void
     {
-        Notification::create([...$event->data]);
+        $notification = Notification::create([...$event->data]);
+
+        if ($notification) {
+            UpdateBadgeCounts::dispatch(User::find($event->data["user_id"]));
+        }
     }
 }

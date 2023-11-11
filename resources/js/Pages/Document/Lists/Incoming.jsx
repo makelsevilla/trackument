@@ -27,15 +27,15 @@ export default function Incoming({
     filters,
 }) {
     useEffect(() => {
-        Echo.private(`incoming-transfer.${auth.user.id}`).listen(
-            "DocumentTransferEvent",
+        Echo.private(`transfer.${auth.user.id}`).listen(
+            "UserTransferEvent",
             (e) => {
                 router.reload();
             },
         );
 
         return () => {
-            Echo.leaveChannel("incoming-transfer." + auth.user.id);
+            Echo.leaveChannel(`transfer.${auth.user.id}`);
         };
     }, []);
 

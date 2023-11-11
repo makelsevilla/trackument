@@ -1,71 +1,62 @@
-import { Link, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import Icons from "@/Components/Icons.jsx";
 import { cn } from "@/lib/utils.js";
 import { Badge } from "@/Components/ui/badge.jsx";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/Components/ui/use-toast.js";
 
 export default function DashboardNav({ items }) {
-    const [badgeCounts, setBadgeCounts] = useState({});
-    const { ziggy, navBadges = [] } = usePage().props;
+    const { ziggy, auth, ...props } = usePage().props;
+    const [badgeCounts, setBadgeCounts] = useState({
+        incoming: props.badgeCounts?.incoming || 0,
+        notifications: props.badgeCounts?.notifications || 0,
+    });
+    const previousBadgeCountsValue = useRef({});
     const { toast } = useToast();
 
     const location = ziggy.location;
     const { pathname } = new URL(location);
 
     useEffect(() => {
-        // getting the initial values
-        fetchBadgeCounts().then((badgeCounts) => {
-            setBadgeCounts(badgeCounts);
-        });
-    }, []);
+        compareBadgeCounts(badgeCounts, previousBadgeCountsValue.current);
 
-    useEffect(() => {
-        if (!badgeCounts) {
-            return; // Wait for initial badge counts before starting the polling
-        }
-
-        // Poll every 10 seconds (adjust as needed)
-        const intervalId = setInterval(async () => {
-            const newBadgeCounts = await fetchBadgeCounts();
-
-            if (!isEqual(badgeCounts, newBadgeCounts)) {
-                setBadgeCounts(newBadgeCounts);
-
-                // identify if the new badge count is greater than the old badge count
-                // if so, show a toast
-                Object.keys(newBadgeCounts).forEach((key) => {
-                    if (newBadgeCounts[key] > badgeCounts[key]) {
-                        // get the difference between the old and new badge count
-                        const difference =
-                            newBadgeCounts[key] - badgeCounts[key];
-
-                        const keyMessage = {
-                            incoming: "incoming document/s.",
-                            notifications: "notifications.",
-                        };
-
-                        toast({
-                            title: `You have ${difference} new ${
-                                keyMessage?.[key] || key
-                            }`,
-                        });
-                    }
-                });
-            }
-        }, 2000);
-
-        return () => {
-            clearInterval(intervalId);
-        };
+        previousBadgeCountsValue.current = badgeCounts;
     }, [badgeCounts]);
 
-    const fetchBadgeCounts = async () => {
-        try {
-            const response = await axios.get(route("badgeCounts"));
-            return response.data;
-        } catch (error) {
-            console.error("Error fetching badge counts:", error);
+    useEffect(() => {
+        Echo.private(`badge-counts.${auth.user.id}`).listen(
+            "UpdateBadgeCounts",
+            (newBadgeCounts) => {
+                setBadgeCounts(newBadgeCounts);
+            },
+        );
+
+        return () => {
+            Echo.leaveChannel(`transfer.${auth.user.id}`);
+        };
+    }, []);
+
+    const compareBadgeCounts = (newBadgeCounts, badgeCounts) => {
+        if (!isEqual(badgeCounts, newBadgeCounts)) {
+            // identify if the new badge count is greater than the old badge count
+            // if so, show a toast
+            Object.keys(newBadgeCounts).forEach((key) => {
+                if (newBadgeCounts[key] > badgeCounts[key]) {
+                    // get the difference between the old and new badge count
+                    const difference = newBadgeCounts[key] - badgeCounts[key];
+
+                    const keyMessage = {
+                        incoming: "incoming document/s.",
+                        notifications: "notifications.",
+                    };
+
+                    toast({
+                        title: `You have ${difference} new ${
+                            keyMessage?.[key] || key
+                        }`,
+                    });
+                }
+            });
         }
     };
 

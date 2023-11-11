@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\DocumentActionEvent;
+use App\Events\DocumentTransferEvent;
 use App\Events\NotificationEvent;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -23,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         NotificationEvent::class => [
             \App\Listeners\NotificationEventListener::class,
+        ],
+        DocumentTransferEvent::class => [
+            \App\Listeners\DocumentTransferListener::class,
         ],
     ];
 

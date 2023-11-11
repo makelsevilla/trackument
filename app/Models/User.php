@@ -66,4 +66,30 @@ class User extends Authenticatable
     {
         return $this->notifications()->where("is_read", false);
     }
+
+    public function incomingBadgeCount(): int
+    {
+        return DocumentTransfer::query()
+            ->with(["receiver"])
+            ->whereHas("receiver", function ($query) {
+                $query->where("id", "=", $this->id);
+            })
+            ->whereNot("is_completed", "=", true)
+            ->count();
+    }
+
+    public function notificationsBadgeCount(): int
+    {
+        return $this->notifications()
+            ->where("is_read", "=", false)
+            ->count();
+    }
+
+    public function getBadgeCounts()
+    {
+        return [
+            "incoming" => $this->incomingBadgeCount(),
+            "notifications" => $this->notificationsBadgeCount(),
+        ];
+    }
 }

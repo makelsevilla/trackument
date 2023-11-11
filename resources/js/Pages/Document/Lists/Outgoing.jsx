@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import DashboardHeader from "@/Components/DashboardHeader.jsx";
 import {
     Table,
@@ -12,18 +12,29 @@ import {
 import dayjs from "dayjs";
 import { Button } from "@/Components/ui/button.jsx";
 import Icons from "@/Components/Icons.jsx";
-import { outgoingCategories } from "@/Pages/Document/Lists/Components/pageFilterCategories.js";
-import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButtons.jsx";
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
-import TableFilter from "@/Components/TableFilter.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import OutgoingTableFilter from "@/Pages/Document/Lists/Components/OutgoingTableFilter.jsx";
+import { useEffect } from "react";
 
 export default function Outgoing({
     auth,
     paginatedDocumentTransfers: { data: transfers, ...paginate },
     filters,
 }) {
+    useEffect(() => {
+        Echo.private(`transfer.${auth.user.id}`).listen(
+            "UserTransferEvent",
+            (e) => {
+                router.reload();
+            },
+        );
+
+        return () => {
+            Echo.leaveChannel(`transfer.${auth.user.id}`);
+        };
+    }, []);
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Outgoing" />

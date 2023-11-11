@@ -107,7 +107,7 @@ class DocumentTransferController extends Controller
             )
         );
 
-        DocumentTransferEvent::dispatch(User::find($validated["receiver_id"]));
+        DocumentTransferEvent::dispatch($document_transfer, "release");
 
         return to_route("documents.lists.actionable")->with([
             "message" => "Document released successfully.",
@@ -220,6 +220,8 @@ class DocumentTransferController extends Controller
             )
         );
 
+        DocumentTransferEvent::dispatch($documentTransfer, "accept");
+
         return back()->with([
             "message" => "Document transfer successful.",
             "status" => "success",
@@ -292,6 +294,23 @@ class DocumentTransferController extends Controller
                 $user
             )
         );
+
+        DocumentTransferEvent::dispatch($documentTransfer, $action);
+
+        /*switch ($action) {
+            case "reject":
+                // create new notification event
+                NotificationEvent::dispatch([
+                    "user_id" => $documentTransfer->sender_id,
+                    "message" =>
+                        "Document {$document->tracking_code} release transfer has been rejected by " .
+                        $user->name,
+                ]);
+                break;
+            case "cancel":
+                break;
+            default:
+        }*/
 
         return back()->with([
             "message" => "Document transfer $action successful.",
