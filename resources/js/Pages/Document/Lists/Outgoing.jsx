@@ -103,7 +103,9 @@ function OutgoingTable({ transfers }) {
                                 {transfer.document.tracking_code}
                             </TableCell>
                             <TableCell>{transfer.document.title}</TableCell>
-                            <TableCell>{transfer.receiver.name}</TableCell>
+                            <TableCell>
+                                {transfer?.receiver?.name || "Uknown"}
+                            </TableCell>
                             <TableCell>
                                 {dayjs(transfer.date_released).format(
                                     "MMM DD, YYYY h:mm a",

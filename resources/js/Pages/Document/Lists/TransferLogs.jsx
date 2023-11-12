@@ -15,7 +15,7 @@ import Icons from "@/Components/Icons.jsx";
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import TransfersListTableFilter from "@/Pages/Document/Lists/Components/TransfersListsTableFilter.jsx";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 export default function TransferLogs({
     auth,
@@ -127,12 +127,15 @@ function TransfersTable({ transfers }) {
                         <TableCell>
                             {transfer?.completed_at
                                 ? dayjs(transfer.completed_at).format(
-                                    "MMM DD YYYY hh:mm A",
-                                )
+                                      "MMM DD YYYY hh:mm A",
+                                  )
                                 : "N/A"}
                         </TableCell>
                         <TableCell>{transfer?.sender?.name}</TableCell>
-                        <TableCell>{transfer?.receiver?.name}</TableCell>
+                        <TableCell>
+                            {transfer?.receiver?.name ||
+                                transfer?.receiver_name}
+                        </TableCell>
                         <TableCell>
                             <Button variant="ghost" size="icon" asChild>
                                 <Link

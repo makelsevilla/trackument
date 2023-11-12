@@ -22,6 +22,8 @@ import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import { Textarea } from "@/Components/ui/textarea.jsx";
 import { Button } from "@/Components/ui/button.jsx";
 import DocumentFilesForm from "@/Pages/Document/DocumentFilesForm.jsx";
+import { Input } from "@/Components/ui/input.jsx";
+import InputHelper from "@/Components/InputHelper.jsx";
 
 export default function ReleaseDocument({
     auth,
@@ -33,6 +35,7 @@ export default function ReleaseDocument({
         release_action: "",
         receiver_id: null,
         comment: "",
+        receiver_name: "",
     });
 
     function handleSubmit() {
@@ -94,40 +97,74 @@ export default function ReleaseDocument({
                         </Table>
 
                         <div className="items-start gap-4 pt-8">
-                            <div className="mt-4 grid w-full gap-1.5">
-                                <Label htmlFor="receiver">
-                                    Receiving Office
-                                </Label>
-                                <Select
-                                    value={data.receiver_id}
-                                    onValueChange={(value) =>
-                                        setData("receiver_id", value)
-                                    }
-                                    id="receiver"
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select offce" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            {offices.map((office, index) => {
-                                                return (
-                                                    <SelectItem
-                                                        value={office.id}
-                                                        key={index}
-                                                    >
-                                                        {ucwords(office.name)}
-                                                    </SelectItem>
-                                                );
-                                            })}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                                <InputError
-                                    message={errors.receiver_id}
-                                    className="mt-2"
-                                />
+                            <div>
+                                <div className="mt-4 grid w-full gap-1.5">
+                                    <Label htmlFor="receiver">
+                                        Receiving Office / Individual
+                                    </Label>
+                                    <Select
+                                        value={data.receiver_id}
+                                        onValueChange={(value) =>
+                                            setData("receiver_id", value)
+                                        }
+                                        id="receiver"
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select offce" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectItem value={null}>
+                                                    To Individual
+                                                </SelectItem>
+                                                {offices.map(
+                                                    (office, index) => {
+                                                        return (
+                                                            <SelectItem
+                                                                value={
+                                                                    office.id
+                                                                }
+                                                                key={index}
+                                                            >
+                                                                {ucwords(
+                                                                    office.name,
+                                                                )}
+                                                            </SelectItem>
+                                                        );
+                                                    },
+                                                )}
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                    <InputError
+                                        message={errors.receiver_id}
+                                        className="mt-2"
+                                    />
+                                </div>
+                                {data.receiver_id === null && (
+                                    <div className="mt-2 w-full">
+                                        <Input
+                                            value={data.receiver_name}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "receiver_name",
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="Individual Name"
+                                        />
+                                        <InputError
+                                            className="mt-2"
+                                            message={errors.receiver_name}
+                                        />
+                                    </div>
+                                )}
+                                <InputHelper className="mt-2">
+                                    Note: Releasing to an individual will
+                                    automatically tag the document as terminal.
+                                </InputHelper>
                             </div>
+
                             <div className="mt-4 grid w-full gap-1.5">
                                 <Label htmlFor="release_action">Action</Label>
                                 <Select

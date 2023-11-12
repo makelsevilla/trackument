@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\DocumentActionEvent;
 use App\Events\DocumentTransferEvent;
 use App\Events\NotificationEvent;
+use App\Http\Requests\DocumentTransferRequest;
 use App\Models\Document;
 use App\Models\DocumentTransfer;
 use App\Models\User;
@@ -53,8 +54,10 @@ class DocumentTransferController extends Controller
         ]);
     }
 
-    public function transfer(Request $request, Document $document)
-    {
+    public function transfer(
+        DocumentTransferRequest $request,
+        Document $document
+    ) {
         $user = auth()->user();
         if (
             $document->current_owner_id !== $user->id ||
@@ -64,19 +67,55 @@ class DocumentTransferController extends Controller
             abort(403, "Unauthorized/Invalid action.");
         }
 
-        $validated = $request->validate([
-            "receiver_id" => "required|exists:users,id",
-            "release_action" =>
-                "required|exists:document_release_actions,action_name",
-            "comment" => "nullable|string|max:255",
-        ]);
+        $document_transfer = DocumentTransfer::make(
+            array_merge(
+                [
+                    "sender_id" => $user->id,
+                    "document_id" => $document->id,
+                    "transferred_at" => now("Asia/Manila"),
+                ],
+                $request->safe()->except(["receiver_name"])
+            )
+        );
 
-        $document_transfer = DocumentTransfer::create([
-            "sender_id" => $user->id,
-            "document_id" => $document->id,
-            "transferred_at" => now("Asia/Manila"),
-            ...$validated,
-        ]);
+        $validated = $request->validated();
+
+        // if the receiver_id is null, mark the document transfer as completed
+        if ($validated["receiver_id"] === null) {
+            // convert the receiver_name to lowercase, then only allow single space between words and make the first letter of each word uppercase
+            $validated["receiver_name"] = ucwords(
+                preg_replace(
+                    "/\s+/",
+                    " ",
+                    strtolower($validated["receiver_name"])
+                )
+            );
+
+            $document_transfer->receiver_name = $validated["receiver_name"];
+            $document_transfer->status = "completed";
+            $document_transfer->is_completed = true;
+            $document_transfer->completed_at = now("Asia/Manila");
+
+            if ($document_transfer->save()) {
+                $document->status = "terminal";
+                $document->terminated_at = now("Asia/Manila");
+                $additionalMessage = $document->save()
+                    ? "The document is automatically tagged as terminal"
+                    : " Failed to tag the document as terminal. You may manually tag the document as terminal in the document details page.";
+
+                return to_route("documents.lists.actionable")->with([
+                    "message" => "Document is released to {$validated["receiver_name"]} successfully. {$additionalMessage}",
+                    "status" => "success",
+                ]);
+            } else {
+                return back()->with([
+                    "message" => "Document releasing failed. Please try again.",
+                    "status" => "error",
+                ]);
+            }
+        }
+
+        $document_transfer->save();
 
         // if document transfer creation is successful, set document status to pending.
         $document->status = "pending";
@@ -97,7 +136,7 @@ class DocumentTransferController extends Controller
             ->select("name")
             ->first();
 
-        $action_details = "Released to " . $receiver->name;
+        $action_details = "Released to " . $receiver->name || "Unknown";
         event(
             new DocumentActionEvent(
                 "released",
@@ -110,7 +149,7 @@ class DocumentTransferController extends Controller
         DocumentTransferEvent::dispatch($document_transfer, "release");
 
         return to_route("documents.lists.actionable")->with([
-            "message" => "Document released successfully.",
+            "message" => "Document is released to {$receiver->name} and is now pending for acceptance.",
             "status" => "success",
         ]);
     }
@@ -121,7 +160,7 @@ class DocumentTransferController extends Controller
         // document details needed: id, title, purpose, tracking_code, owner
         $transferDetails = DB::table("document_transfers as dt")
             ->join("users as u_sender", "dt.sender_id", "=", "u_sender.id")
-            ->join(
+            ->leftJoin(
                 "users as u_receiver",
                 "dt.receiver_id",
                 "=",

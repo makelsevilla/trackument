@@ -26,7 +26,7 @@ class DocumentTransfer extends Model
 
     protected $fillable = [
         "receiver_id",
-        "received_by",
+        "receiver_name",
         "document_id",
         "sender_id",
         "comment",

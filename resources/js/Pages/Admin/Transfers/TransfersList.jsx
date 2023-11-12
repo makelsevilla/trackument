@@ -115,7 +115,7 @@ function TransfersTable({ transfers }) {
                                 : "N/A"}
                         </TableCell>
                         <TableCell>{transfer?.sender?.name}</TableCell>
-                        <TableCell>{transfer?.receiver?.name}</TableCell>
+                        {transfer?.receiver?.name || transfer?.receiver_name}
                     </TableRow>
                 ))}
             </TableBody>

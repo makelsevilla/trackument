@@ -150,7 +150,8 @@ export default function TransferLogs({ auth, transfers, filters }) {
                                         {transfer?.sender?.name}
                                     </TableCell>
                                     <TableCell>
-                                        {transfer?.receiver?.name}
+                                        {transfer?.receiver?.name ||
+                                            transfer?.receiver_name}
                                     </TableCell>
                                 </TableRow>
                             ))}

@@ -14,8 +14,6 @@ import {
 import Icons from "@/Components/Icons.jsx";
 
 export default function UserAccountNav({ user }) {
-    console.log(user);
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>

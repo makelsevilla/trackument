@@ -16,7 +16,7 @@ return new class extends Migration {
                 ->string("status")
                 ->default("pending")
                 ->comment("pending, completed, rejected");
-            $table->string("received_by")->nullable();
+            $table->string("receiver_name")->nullable();
             $table->string("comment")->nullable();
             $table->boolean("is_completed")->default(false);
             $table->dateTime("transferred_at")->useCurrent();
@@ -27,7 +27,10 @@ return new class extends Migration {
                 ->constrained("documents")
                 ->onDelete("cascade");
             $table->foreignId("sender_id")->constrained("users");
-            $table->foreignId("receiver_id")->constrained("users");
+            $table
+                ->foreignId("receiver_id")
+                ->nullable()
+                ->constrained("users");
         });
     }
 
