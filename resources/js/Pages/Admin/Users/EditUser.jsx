@@ -13,7 +13,7 @@ import { Label } from "@/Components/ui/label.jsx";
 export default function EditUser({ auth, user }) {
     const { data, setData, put, processing, errors, reset } = useForm({
         name: user.name || "",
-        email: user.email || "",
+        username: user.username || "",
         new_password: "",
         new_password_confirmation: "",
         role: user.role || "",
@@ -73,22 +73,21 @@ export default function EditUser({ auth, user }) {
                             <InputError message={errors.name} />
                         </div>
                         <div className="mt-4 grid gap-1.5">
-                            <Label htmlFor="email">
-                                Email <span className="text-red-600">*</span>
+                            <Label htmlFor="username">
+                                Username <span className="text-red-600">*</span>
                             </Label>
                             <Input
-                                value={data.email}
+                                value={data.username}
                                 onChange={(e) =>
-                                    setData("email", e.target.value)
+                                    setData("username", e.target.value)
                                 }
-                                type="email"
-                                name="email"
-                                id="email"
+                                name="username"
+                                id="username"
                                 className="block w-full"
-                                autoComplete="email"
+                                autoComplete="username"
                                 required
                             />
-                            <InputError message={errors.email} />
+                            <InputError message={errors.username} />
                         </div>
                         <div className="mt-4 grid gap-1.5">
                             <Label htmlFor="new_password">New Password</Label>

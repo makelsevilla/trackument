@@ -21,7 +21,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+        return Inertia::render("Auth/Register");
     }
 
     /**
@@ -32,17 +32,17 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:'.User::class,
-            'role' => 'required|string|in:user,admin',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            "name" => "required|string|max:255",
+            "username" => "required|string|max:255|unique:" . User::class,
+            "role" => "required|string|in:user,admin",
+            "password" => ["required", "confirmed", Rules\Password::defaults()],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => $request->role,
-            'password' => Hash::make($request->password),
+            "name" => $request->name,
+            "username" => $request->username,
+            "role" => $request->role,
+            "password" => Hash::make($request->password),
         ]);
 
         event(new Registered($user));

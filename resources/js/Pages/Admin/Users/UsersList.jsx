@@ -80,7 +80,7 @@ function UsersTable({ users }) {
             <TableHeader>
                 <TableRow className="bg-secondary">
                     <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
+                    <TableHead>Username</TableHead>
                     <TableHead>Date Created</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Action</TableHead>
@@ -90,7 +90,7 @@ function UsersTable({ users }) {
                 {users.map((user, idx) => (
                     <TableRow key={idx}>
                         <TableCell>{user.name}</TableCell>
-                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{user.username}</TableCell>
                         <TableCell>
                             {user?.created_at &&
                                 dayjs(user.created_at).format("MMM D YYYY")}

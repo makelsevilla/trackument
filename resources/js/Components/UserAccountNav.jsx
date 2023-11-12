@@ -14,6 +14,8 @@ import {
 import Icons from "@/Components/Icons.jsx";
 
 export default function UserAccountNav({ user }) {
+    console.log(user);
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
@@ -35,9 +37,9 @@ export default function UserAccountNav({ user }) {
                         {user.name && (
                             <p className="font-medium">{user.name}</p>
                         )}
-                        {user.email && (
+                        {user.username && (
                             <p className="w-[200px] truncate text-sm text-muted-foreground">
-                                {user.email}
+                                {user.username}
                             </p>
                         )}
                     </div>

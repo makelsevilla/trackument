@@ -3,7 +3,6 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,7 +19,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = ["name", "email", "password", "role"];
+    protected $fillable = ["name", "username", "password", "role"];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -35,7 +34,6 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        "email_verified_at" => "datetime",
         "password" => "hashed",
     ];
 

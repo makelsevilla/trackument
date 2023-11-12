@@ -71,7 +71,7 @@ export default function Authenticated({
                             user={{
                                 name: user?.name,
                                 image: user?.image,
-                                email: user?.email,
+                                username: user?.username,
                             }}
                         />
                     </div>
