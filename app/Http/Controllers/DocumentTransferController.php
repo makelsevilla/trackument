@@ -103,6 +103,16 @@ class DocumentTransferController extends Controller
                     ? "The document is automatically tagged as terminal"
                     : " Failed to tag the document as terminal. You may manually tag the document as terminal in the document details page.";
 
+                // create a history for the document
+                event(
+                    new DocumentActionEvent(
+                        "released",
+                        "Released to an individual named {$validated["receiver_name"]}",
+                        $document,
+                        $user
+                    )
+                );
+
                 return to_route("documents.lists.actionable")->with([
                     "message" => "Document is released to {$validated["receiver_name"]} successfully. {$additionalMessage}",
                     "status" => "success",
@@ -136,7 +146,9 @@ class DocumentTransferController extends Controller
             ->select("name")
             ->first();
 
-        $action_details = "Released to " . $receiver->name || "Unknown";
+        $action_details = isset($receiver->name)
+            ? "Released to {$receiver->name}"
+            : "";
         event(
             new DocumentActionEvent(
                 "released",

@@ -29,10 +29,6 @@ class DocumentActionListener
 
         // check if the document notify_owner property is true
         // if true, dispatch NotificationEvent to create a notification
-        /*        dd(
-            $event->document->notify_owner &&
-                $event->document->owner_id !== $event->actor->id
-        );*/
         if (
             $event->document->notify_owner &&
             $event->document->owner_id !== $event->actor->id
