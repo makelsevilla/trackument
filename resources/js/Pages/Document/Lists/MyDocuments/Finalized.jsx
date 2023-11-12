@@ -137,7 +137,31 @@ function FinalizedTable({ documents }) {
                                     )}
                             </TableCell>
                             <TableCell>
-                                <DocumentAction document={document} />
+                                <div className="space-x-1">
+                                    <DocumentAction document={document} />
+
+                                    {/*Release document button*/}
+                                    {document?.previous_owner_id === null &&
+                                        document.status === "available" && (
+                                            <Button
+                                                variant="ghost"
+                                                className="h-8 w-8 p-0"
+                                                asChild
+                                            >
+                                                <Link
+                                                    href={route(
+                                                        "documents.release",
+                                                        {
+                                                            document:
+                                                                document.id,
+                                                        },
+                                                    )}
+                                                >
+                                                    <Icons.forward className="h-4 w-4" />
+                                                </Link>
+                                            </Button>
+                                        )}
+                                </div>
                             </TableCell>
                         </TableRow>
                     );

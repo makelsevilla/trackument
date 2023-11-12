@@ -16,6 +16,12 @@ import ActionableTableFilter from "@/Pages/Document/Lists/Components/ActionableT
 import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButtons.jsx";
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/Components/ui/dropdown-menu.jsx";
 
 export default function Actionable({
     auth,
@@ -101,20 +107,61 @@ function ActionableTable({ documents }) {
                                 ).format("MMMM DD, YYYY h:mm a")}
                         </TableCell>
                         <TableCell>
-                            <Button asChild variant="ghost" size="icon">
-                                <Link
-                                    href={route("documents.transfer.show", {
-                                        documentTransferId:
-                                            document.document_transfers_id,
-                                    })}
+                            <div className="space-x-1">
+                                <DocumentAction document={document} />
+                                <Button
+                                    variant="ghost"
+                                    className="h-8 w-8 p-0"
+                                    asChild
                                 >
-                                    <Icons.view className="h-4 w-4" />
-                                </Link>
-                            </Button>
+                                    <Link
+                                        href={route("documents.release", {
+                                            document: document.id,
+                                        })}
+                                    >
+                                        <Icons.forward className="h-4 w-4" />
+                                    </Link>
+                                </Button>
+                            </div>
                         </TableCell>
                     </TableRow>
                 ))}
             </TableBody>
         </Table>
+    );
+}
+
+function DocumentAction({ document }) {
+    return (
+        <>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Icons.moreHorizontal className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                        <Link
+                            href={route("documents.show", {
+                                document: document.id,
+                            })}
+                        >
+                            Document Details
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link
+                            href={route("documents.transfer.show", {
+                                documentTransferId:
+                                    document.document_transfers_id,
+                            })}
+                        >
+                            Transfer Details
+                        </Link>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </>
     );
 }
