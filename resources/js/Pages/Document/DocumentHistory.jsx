@@ -25,7 +25,11 @@ export default function DocumentHistory({
                         },
                     ]}
                 />
-                <DashboardHeader heading={`Document ${documentHistory ? trackingCode : ""} Audit Trail`} />
+                <DashboardHeader
+                    heading={`Document ${
+                        documentHistory ? trackingCode : ""
+                    } Audit Trail`}
+                />
                 <div className="px-2">
                     {!documentHistory && (
                         <div className="text-muted-foreground">
@@ -33,6 +37,11 @@ export default function DocumentHistory({
                         </div>
                     )}
                     <ol className="relative border-l border-gray-200 dark:border-gray-700">
+                        {documentHistory.length === 0 && (
+                            <div className="text-muted-foreground">
+                                No history found.
+                            </div>
+                        )}
                         {documentHistory?.map((history, index) => {
                             const isFirst = index === 0;
 
