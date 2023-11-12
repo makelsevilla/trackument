@@ -170,7 +170,7 @@ class DocumentTransferController extends Controller
             ->select(
                 "dt.*",
                 "u_sender.name as sender_name",
-                "u_receiver.name as receiver_name"
+                "u_receiver.name as office_name"
             )
             ->first();
 

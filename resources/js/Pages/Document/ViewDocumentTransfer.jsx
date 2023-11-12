@@ -234,8 +234,9 @@ export default function ViewDocumentTransfer({
                                         Receiver
                                     </TableCell>
                                     <TableCell>
-                                        {transferDetails.receiver_name}
-                                        {transferDetails.receiver_id ===
+                                        {transferDetails?.receiver_name ||
+                                            transferDetails?.office_name}
+                                        {transferDetails?.receiver_id ===
                                             auth.user.id && " (You)"}
                                     </TableCell>
                                 </TableRow>
