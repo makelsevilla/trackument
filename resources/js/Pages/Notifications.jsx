@@ -3,8 +3,6 @@ import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import DashboardHeader from "@/Components/DashboardHeader.jsx";
 import { Button } from "@/Components/ui/button.jsx";
 import Authenticated from "@/Layouts/AuthenticatedLayout.jsx";
-import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButtons.jsx";
-import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import Icons from "@/Components/Icons.jsx";
 import { cn } from "@/lib/utils.js";
 import { useEffect } from "react";
@@ -17,7 +15,7 @@ export default function Notifications({
         Echo.private(`notifications.${auth.user.id}`).listen(
             "DocumentTransferEvent",
             (e) => {
-                router.reload();
+                router.reload({ only: ["paginatedNotifications"] });
             },
         );
 

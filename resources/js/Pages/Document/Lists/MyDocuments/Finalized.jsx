@@ -13,9 +13,6 @@ import {
 import dayjs from "dayjs";
 import Icons from "@/Components/Icons.jsx";
 import FinalizedTableFilter from "@/Pages/Document/Lists/Components/FinalizedTableFilter.jsx";
-import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButtons.jsx";
-import TableFilter from "@/Pages/Document/Lists/Components/TableFilter.jsx";
-import { finalizedCategories } from "@/Pages/Document/Lists/Components/pageFilterCategories.js";
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import { Alert, AlertDescription, AlertTitle } from "@/Components/ui/alert.jsx";
@@ -23,24 +20,12 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu.jsx";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-} from "@/Components/ui/alert-dialog.jsx";
-import { useState } from "react";
 
 export default function Finalized({
     auth,
     paginatedDocuments: { data: documents, ...paginate },
-    filters,
     unreleasedCount,
 }) {
     return (

@@ -26,7 +26,7 @@ export default function TransferLogs({
         Echo.private(`transfer.${auth.user.id}`).listen(
             "DocumentTransferEvent",
             (e) => {
-                router.reload();
+                router.reload({ only: ["paginatedTransfers"] });
             },
         );
 

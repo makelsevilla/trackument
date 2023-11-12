@@ -12,12 +12,8 @@ import {
 import dayjs from "dayjs";
 import { Button } from "@/Components/ui/button.jsx";
 import Icons from "@/Components/Icons.jsx";
-import { outgoingCategories } from "@/Pages/Document/Lists/Components/pageFilterCategories.js";
-import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButtons.jsx";
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
-import TableFilter from "@/Components/TableFilter.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
-import OutgoingTableFilter from "@/Pages/Document/Lists/Components/OutgoingTableFilter.jsx";
 import IncomingTableFilter from "@/Pages/Document/Lists/Components/IncomingTableFilter.jsx";
 import { useEffect } from "react";
 
@@ -30,7 +26,7 @@ export default function Incoming({
         Echo.private(`transfer.${auth.user.id}`).listen(
             "UserTransferEvent",
             (e) => {
-                router.reload();
+                router.reload({ only: ["paginatedDocumentTransfers"] });
             },
         );
 

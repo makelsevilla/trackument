@@ -12,9 +12,7 @@ import {
 import Icons from "@/Components/Icons.jsx";
 import { Button } from "@/Components/ui/button.jsx";
 import dayjs from "dayjs";
-import FinalizedTableFilter from "@/Pages/Document/Lists/Components/FinalizedTableFilter.jsx";
 import TerminalTableFilter from "@/Pages/Document/Lists/Components/TerminalTableFilter.jsx";
-import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButtons.jsx";
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 

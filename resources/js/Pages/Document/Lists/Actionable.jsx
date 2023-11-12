@@ -13,7 +13,6 @@ import dayjs from "dayjs";
 import Icons from "@/Components/Icons.jsx";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import ActionableTableFilter from "@/Pages/Document/Lists/Components/ActionableTableFilter.jsx";
-import PaginationButtons from "@/Pages/Document/Lists/Components/PaginationButtons.jsx";
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import {
