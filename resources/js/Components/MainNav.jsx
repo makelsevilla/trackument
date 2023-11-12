@@ -14,15 +14,15 @@ export default function MainNav({ items, children, url = "/" }) {
     const { pathname } = new URL(location);
 
     return (
-        <div className="flex gap-6 md:gap-10">
-            <Link href={url} className="hidden items-center space-x-2 md:flex">
+        <div className="flex gap-6 lg:gap-10">
+            <Link href={url} className="hidden items-center space-x-2 lg:flex">
                 <Icons.logo />
                 <span className="hidden text-lg font-bold sm:inline-block">
                     {siteConfig.name}
                 </span>
             </Link>
             {items?.length ? (
-                <nav className="hidden gap-6 md:flex">
+                <nav className="hidden gap-6 lg:flex">
                     {items?.map((item, index) => (
                         <Link
                             key={index}
@@ -42,7 +42,7 @@ export default function MainNav({ items, children, url = "/" }) {
                 </nav>
             ) : null}
             <button
-                className="flex items-center space-x-2 md:hidden"
+                className="flex items-center space-x-2 lg:hidden"
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
             >
                 {showMobileMenu ? <Icons.close /> : <Icons.logo />}
