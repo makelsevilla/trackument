@@ -21,11 +21,11 @@ export default function DocumentHistory({
                             href: route("dashboard"),
                         },
                         {
-                            label: "Tracking",
+                            label: "Tracking ",
                         },
                     ]}
                 />
-                <DashboardHeader heading={`${trackingCode} Audit Trail`} />
+                <DashboardHeader heading={`Document ${documentHistory ? trackingCode : ""} Audit Trail`} />
                 <div className="px-2">
                     {!documentHistory && (
                         <div className="text-muted-foreground">

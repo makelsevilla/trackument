@@ -8,7 +8,10 @@ export default function NavTrackingForm({ className }) {
     const [trackingCode, setTrackingCode] = useState("");
     function handleSubmit(e) {
         e.preventDefault();
-        router.get(route("history", { tracking_code: trackingCode }));
+
+        if (trackingCode === "") return;
+
+        router.get(route("track", { tracking_code: trackingCode }));
     }
 
     return (
@@ -17,6 +20,7 @@ export default function NavTrackingForm({ className }) {
             className={cn("flex items-center gap-2", className)}
         >
             <Input
+                required
                 className=" rounded-full border-2"
                 onChange={(e) => setTrackingCode(e.target.value)}
                 placeholder="Tracking Code"
