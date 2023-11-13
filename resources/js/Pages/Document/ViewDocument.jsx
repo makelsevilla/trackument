@@ -51,26 +51,14 @@ export default function ViewDocument({
         <AuthenticatedLayout user={auth.user}>
             <Head title="Pending Documents" />
             <div className="flex flex-col items-start gap-8">
-                <Breadcrumb
-                    items={[
-                        { label: "Home", href: route("dashboard") },
-                        {
-                            label: "Documents",
-                            href: route("documents.lists.actionable"),
-                        },
-                        {
-                            label: document.tracking_code,
-                        },
-                    ]}
-                />
                 {/*Document actions*/}
                 <Button
-                    variant="outline"
+                    variant="link"
                     size="sm"
                     onClick={(e) => history.back()}
                 >
                     <Icons.chevronLeft className="h-4 w-4" />
-                    <span className="ml-2">Back</span>
+                    <span className="ml-2">Back to previous page</span>
                 </Button>
                 <div className="flex w-full">
                     {withActionButtons && (
