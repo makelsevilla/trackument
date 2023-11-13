@@ -38,7 +38,7 @@ export default function DocumentHistory({
                         </div>
                     )}
                     <ol className="relative mx-2 border-l border-gray-200 dark:border-gray-700">
-                        {documentHistory.length === 0 && (
+                        {documentHistory?.length === 0 && (
                             <div className="text-muted-foreground">
                                 No history found.
                             </div>
