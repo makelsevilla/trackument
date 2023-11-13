@@ -62,6 +62,9 @@ class DocumentFileController extends Controller
         $file["file_type"] = $validated["type"];
         $file["uploader_id"] = $user->id;
         $file["file_path"] = $file_path;
+        $file["extension"] = $request
+            ->file("file")
+            ->getClientOriginalExtension();
 
         if (!$file->save()) {
             return response()->json(

@@ -10,15 +10,16 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('document_files', function (Blueprint $table) {
+        Schema::create("document_files", function (Blueprint $table) {
             $table->id();
-            $table->string('file_name');
-            $table->string('role')->comment('backup or attachment');
-            $table->string('file_path');
-            $table->string('file_type')->comment('file or link');
-            $table->dateTime('uploaded_at')->useCurrent();
-            $table->foreignId('uploader_id')->constrained('users');
-            $table->foreignId('document_id')->constrained('documents');
+            $table->string("file_name");
+            $table->string("role")->comment("backup or attachment");
+            $table->string("file_path");
+            $table->string("file_type")->comment("file or link");
+            $table->string("extension");
+            $table->dateTime("uploaded_at")->useCurrent();
+            $table->foreignId("uploader_id")->constrained("users");
+            $table->foreignId("document_id")->constrained("documents");
         });
     }
 
@@ -27,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('document_files');
+        Schema::dropIfExists("document_files");
     }
 };

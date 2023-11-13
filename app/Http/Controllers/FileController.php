@@ -13,7 +13,10 @@ class FileController extends Controller
     {
         $user = auth()->user();
         $document = Document::find($document_file->document_id);
-        if ($user->id != $document['owner_id'] && $user->id != $document['current_owner_id']) {
+        if (
+            $user->id != $document["owner_id"] &&
+            $user->id != $document["current_owner_id"]
+        ) {
             abort(403, "You are not authorized to download this file.");
         }
 
@@ -21,6 +24,9 @@ class FileController extends Controller
             abort(404, "File not found.");
         }
 
-        return Storage::download($document_file->file_path, $document_file->file_name);
+        return Storage::download(
+            $document_file->file_path,
+            $document_file->file_name . "." . $document_file->extension
+        );
     }
 }
