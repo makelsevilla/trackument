@@ -26,14 +26,6 @@ export default function ViewDocumentTransfer({
     return (
         <AuthenticatedLayout user={auth.user}>
             <div className="flex flex-col items-start gap-8">
-                <Button
-                    variant="link"
-                    size="sm"
-                    onClick={(e) => history.back()}
-                >
-                    <Icons.chevronLeft className="h-4 w-4" />
-                    <span className="ml-2">Back to previous page</span>
-                </Button>
                 <div className="flex w-full">
                     {withActionButtons &&
                         (transferDetails.receiver_id === auth.user.id ? (
