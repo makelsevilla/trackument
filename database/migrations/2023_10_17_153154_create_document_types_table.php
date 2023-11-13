@@ -15,11 +15,6 @@ return new class extends Migration {
             $table->string("name");
             $table->string("abbreviation");
             $table->string("description")->nullable();
-            /*            $table
-                ->integer("life_time")
-                ->default(365)
-                ->comment("In days. default is 1 year");*/
-            // compliance requirements
             $table->timestamps();
         });
     }

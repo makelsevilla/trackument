@@ -16,18 +16,13 @@ return new class extends Migration {
             $table->json("purpose")->nullable();
             $table->text("description")->nullable();
             $table
-                ->string("status")
-                ->default("unavailable")
-                ->comment("available, unavailable, terminal, pending"); // available means it is available for transfer, unavailable means it is not available for transfer, terminal means it is not available for transfer and it is the final owner
-            $table
                 ->string("tracking_code")
                 ->unique()
                 ->nullable();
-            $table->boolean("is_draft")->default(true);
-            $table->dateTime("terminated_at")->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-
+            $table
+                ->string("status")
+                ->default("unavailable")
+                ->comment("available, unavailable, terminal, pending"); // available means it is available for transfer, unavailable means it is not available for transfer, terminal means it is not available for transfer and it is the final owner
             $table->foreignId("owner_id")->constrained("users");
             $table->foreignId("current_owner_id")->constrained("users");
             $table
@@ -38,6 +33,16 @@ return new class extends Migration {
                 ->foreignId("document_type_id")
                 ->nullable()
                 ->constrained("document_types");
+            $table->boolean("is_draft")->default(true);
+            $table
+                ->boolean("notify_owner")
+                ->after("document_type_id")
+                ->default(false);
+            $table->dateTime("terminated_at")->nullable();
+            $table->timestamps();
+//            $table->softDeletes();
+
+
         });
     }
 

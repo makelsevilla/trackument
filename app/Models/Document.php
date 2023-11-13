@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class Document extends Model
 {
-    use HasFactory, softDeletes;
+    use HasFactory;
 
     protected $fillable = [
         "document_type_id",
