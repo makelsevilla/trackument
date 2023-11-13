@@ -113,7 +113,9 @@ class DocumentTransferController extends Controller
                     )
                 );
 
-                return to_route("documents.lists.actionable")->with([
+                return to_route("documents.transfer.show", [
+                    "documentTransferId" => $document_transfer->id,
+                ])->with([
                     "message" => "Document is released to {$validated["receiver_name"]} successfully. {$additionalMessage}",
                     "status" => "success",
                 ]);
@@ -160,8 +162,10 @@ class DocumentTransferController extends Controller
 
         DocumentTransferEvent::dispatch($document_transfer, "release");
 
-        return to_route("documents.lists.actionable")->with([
-            "message" => "Document is released to {$receiver->name} and is now pending for acceptance.",
+        return to_route("documents.transfer.show", [
+            "documentTransferId" => $document_transfer->id,
+        ])->with([
+            "message" => "Document is released to {$receiver->name} and is now pending for accepting.",
             "status" => "success",
         ]);
     }
@@ -273,8 +277,8 @@ class DocumentTransferController extends Controller
 
         DocumentTransferEvent::dispatch($documentTransfer, "accept");
 
-        return back()->with([
-            "message" => "Document transfer successful.",
+        return to_route("documents.lists.incoming")->with([
+            "message" => "You have accepted document {$document->tracking_code} from {$documentTransfer->sender->name}.",
             "status" => "success",
         ]);
     }
@@ -363,8 +367,16 @@ class DocumentTransferController extends Controller
             default:
         }*/
 
-        return back()->with([
-            "message" => "Document transfer $action successful.",
+        if ($action === "reject") {
+            return to_route("documents.lists.incoming")->with([
+                "message" => "You have rejected document {$document->tracking_code} from {$documentTransfer->sender->name}.",
+                "status" => "success",
+            ]);
+        }
+
+        // if cancel
+        return to_route("documents.lists.outgoing")->with([
+            "message" => "You have cancelled document {$document->tracking_code} to {$documentTransfer->receiver->name}.",
         ]);
     }
 
