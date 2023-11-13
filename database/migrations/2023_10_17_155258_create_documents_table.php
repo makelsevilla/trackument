@@ -34,15 +34,10 @@ return new class extends Migration {
                 ->nullable()
                 ->constrained("document_types");
             $table->boolean("is_draft")->default(true);
-            $table
-                ->boolean("notify_owner")
-                ->after("document_type_id")
-                ->default(false);
+            $table->boolean("notify_owner")->default(false);
             $table->dateTime("terminated_at")->nullable();
             $table->timestamps();
-//            $table->softDeletes();
-
-
+            //            $table->softDeletes();
         });
     }
 
