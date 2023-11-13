@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string("role")->comment("backup or attachment");
             $table->string("file_path");
             $table->string("file_type")->comment("file or link");
-            $table->string("extension");
+            $table->string("extension")->nullable();
             $table->dateTime("uploaded_at")->useCurrent();
             $table->foreignId("uploader_id")->constrained("users");
             $table->foreignId("document_id")->constrained("documents");
