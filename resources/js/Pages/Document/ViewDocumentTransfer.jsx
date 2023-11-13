@@ -15,6 +15,17 @@ import dayjs from "dayjs";
 import { Badge } from "@/Components/ui/badge.jsx";
 import { Link } from "@inertiajs/react";
 import Icons from "@/Components/Icons.jsx";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/Components/ui/alert-dialog.jsx";
 
 export default function ViewDocumentTransfer({
     auth,
@@ -30,53 +41,132 @@ export default function ViewDocumentTransfer({
                     {withActionButtons &&
                         (transferDetails.receiver_id === auth.user.id ? (
                             <div className="space-x-2">
-                                <Button size="sm" variant="secondary" asChild>
-                                    <Link
-                                        href={route(
-                                            "documents.transfer.accept",
-                                            {
-                                                documentTransfer:
-                                                    transferDetails.id,
-                                            },
-                                        )}
-                                        method="post"
-                                        as="button"
-                                    >
-                                        <Icons.fileInput className="mr-2 h-5 w-5" />
-                                        Accept
-                                    </Link>
-                                </Button>
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button size="sm" variant="secondary">
+                                            <Icons.fileInput className="mr-2 h-5 w-5" />
+                                            Accept
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                                Accept Document Transfer
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Are you sure you want to accept
+                                                the document transfer?
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>
+                                                Cancel
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction asChild>
+                                                <Link
+                                                    href={route(
+                                                        "documents.transfer.accept",
+                                                        {
+                                                            documentTransfer:
+                                                                transferDetails.id,
+                                                        },
+                                                    )}
+                                                    method="post"
+                                                    as="button"
+                                                >
+                                                    Accept Document
+                                                </Link>
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
 
-                                <Button size="sm" variant="destructive" asChild>
-                                    <Link
-                                        as="button"
-                                        method="post"
-                                        href={route(
-                                            "documents.transfer.reject",
-                                            {
-                                                documentTransfer:
-                                                    transferDetails.id,
-                                            },
-                                        )}
-                                    >
-                                        <Icons.fileX2 className="mr-2 h-5 w-5" />
-                                        Reject
-                                    </Link>
-                                </Button>
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button size="sm" variant="destructive">
+                                            <Icons.fileX2 className="mr-2 h-5 w-5" />
+                                            Reject
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                                Reject Document Transfer
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Are you sure you want to reject
+                                                the document transfer?
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>
+                                                Cancel
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction
+                                                asChild
+                                                className="bg-destructive text-destructive-foreground"
+                                            >
+                                                <Link
+                                                    as="button"
+                                                    method="post"
+                                                    href={route(
+                                                        "documents.transfer.reject",
+                                                        {
+                                                            documentTransfer:
+                                                                transferDetails.id,
+                                                        },
+                                                    )}
+                                                >
+                                                    Reject Document
+                                                </Link>
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             </div>
                         ) : (
-                            <Button size="sm" variant="destructive" asChild>
-                                <Link
-                                    href={route("documents.transfer.cancel", {
-                                        documentTransfer: transferDetails.id,
-                                    })}
-                                    method="post"
-                                    as="button"
-                                >
-                                    <Icons.abort className="mr-2 h-5 w-5" />
-                                    Cancel Transfer
-                                </Link>
-                            </Button>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button size="sm" variant="destructive">
+                                        <Icons.abort className="mr-2 h-5 w-5" />
+                                        Cancel Transfer
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                            Cancel Document Transfer
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            Are you sure you want to cancel the
+                                            document transfer?
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                            Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                            asChild
+                                            className="bg-destructive text-destructive-foreground"
+                                        >
+                                            <Link
+                                                href={route(
+                                                    "documents.transfer.cancel",
+                                                    {
+                                                        documentTransfer:
+                                                            transferDetails.id,
+                                                    },
+                                                )}
+                                                method="post"
+                                                as="button"
+                                            >
+                                                Cancel Transfer
+                                            </Link>
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         ))}
 
                     {withDocumentLink && (
