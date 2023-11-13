@@ -24,6 +24,17 @@ import { Button } from "@/Components/ui/button.jsx";
 import DocumentFilesForm from "@/Pages/Document/DocumentFilesForm.jsx";
 import { Input } from "@/Components/ui/input.jsx";
 import InputHelper from "@/Components/InputHelper.jsx";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/Components/ui/alert-dialog.jsx";
 
 export default function ReleaseDocument({
     auth,
@@ -234,9 +245,32 @@ export default function ReleaseDocument({
                             </div>
 
                             <div className="flex justify-end pt-6">
-                                <Button onClick={() => handleSubmit()}>
-                                    Release Document
-                                </Button>
+                                <AlertDialog>
+                                    <AlertDialogTrigger>
+                                        <Button>Release Document</Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                                Confirm Release
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Make sure that you have selected
+                                                the correct Receiver and Action
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>
+                                                Cancel
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction
+                                                onClick={() => handleSubmit()}
+                                            >
+                                                Release
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             </div>
                         </div>
                     </div>
