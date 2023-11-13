@@ -21,6 +21,8 @@ export default function MainNav({ items, children, url = "/" }) {
                     {siteConfig.name}
                 </span>
             </Link>
+            <div className="hidden lg:flex">{children}</div>
+
             {items?.length ? (
                 <nav className="hidden gap-6 lg:flex">
                     {items?.map((item, index) => (
