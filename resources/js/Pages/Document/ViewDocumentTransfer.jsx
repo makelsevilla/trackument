@@ -26,6 +26,18 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog.jsx";
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/Components/ui/card.jsx";
+import { Label } from "@/Components/ui/label.jsx";
+import { ucwords } from "@/lib/utils.js";
+import TruckSvg from "@/Components/TruckSvg.jsx";
+import FinishFlagSvg from "@/Components/FinishFlagSvg.jsx";
+import RouteSvg from "@/Components/RouteSvg.jsx";
 
 export default function ViewDocumentTransfer({
     auth,
@@ -168,128 +180,156 @@ export default function ViewDocumentTransfer({
                                 </AlertDialogContent>
                             </AlertDialog>
                         ))}
-
-                    {withDocumentLink && (
-                        <div className="ml-auto">
-                            <Button size="sm" variant="outline" asChild>
-                                <Link
-                                    href={route("documents.show", {
-                                        document: documentDetails.id,
-                                    })}
-                                >
-                                    <Icons.view className="mr-2 h-5 w-5" />
-                                    View Document
-                                </Link>
-                            </Button>
-                        </div>
-                    )}
                 </div>
-                <DashboardHeader heading="Document Transfer" />
                 <div className="w-full">
                     <div className="px-2">
-                        {/* Overview of the Document Then Transfer Status*/}
-                        <Table className="border">
-                            <TableHeader className="bg-secondary">
-                                <TableRow>
-                                    <TableHead
-                                        colspan="2"
-                                        className="text-center"
-                                    >
-                                        Document Overview
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell className="font-bold">
-                                        Tracking Code
-                                    </TableCell>
-                                    <TableCell>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Document Overview</CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex flex-wrap gap-6">
+                                <div className="grid gap-1.5 border-l-2 px-2">
+                                    <Label>Tracking Code:</Label>
+                                    <p className="capitalize">
                                         {documentDetails.tracking_code}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell className="font-bold">
-                                        Document Title
-                                    </TableCell>
-                                    <TableCell>
-                                        {documentDetails.title}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell className="font-bold">
-                                        Owner
-                                    </TableCell>
-                                    <TableCell>
+                                    </p>
+                                </div>
+                                <div className="grid gap-1.5 border-l-2 px-2">
+                                    <Label>Owner:</Label>
+                                    <p className="capitalize">
                                         {documentDetails.owner_name}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell className="font-bold">
-                                        Document Purpose
-                                    </TableCell>
-                                    <TableCell>
+                                    </p>
+                                </div>
+                                <div className="grid gap-1.5 border-l-2 px-2">
+                                    <Label>Title:</Label>
+                                    <p className="capitalize">
+                                        {documentDetails.title}
+                                    </p>
+                                </div>
+                                <div className="grid w-full gap-1.5 border-l-2 px-2">
+                                    <Label>Purposes:</Label>
+                                    <p>
                                         {JSON.parse(
                                             documentDetails.purpose,
                                         ).map((purpose, index) => (
-                                            <div
-                                                className="text-sm capitalize"
-                                                key={index}
-                                            >
-                                                <span>{purpose}</span>
-                                            </div>
+                                            <span key={index}>
+                                                {ucwords(purpose) + ", "}
+                                            </span>
                                         ))}
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
+                                    </p>
+                                </div>
+                                <div className="flex w-full justify-end">
+                                    {withDocumentLink && (
+                                        <div className="ml-auto">
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                asChild
+                                            >
+                                                <Link
+                                                    href={route(
+                                                        "documents.show",
+                                                        {
+                                                            document:
+                                                                documentDetails.id,
+                                                        },
+                                                    )}
+                                                >
+                                                    <Icons.view className="mr-2 h-5 w-5" />
+                                                    View Document
+                                                </Link>
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
 
-                        <Separator className="my-6" />
-
-                        <Table className="border">
-                            <TableHeader className="bg-secondary">
-                                <TableRow>
-                                    <TableHead
-                                        colspan="2"
-                                        className="text-center"
+                        <Card className="mt-6">
+                            <CardHeader>
+                                <CardTitle>Transfer Details</CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex flex-wrap gap-6">
+                                <div className="grid gap-1.5 border-l-2 px-2">
+                                    <Label>Status:</Label>
+                                    <Badge className="capitalize">
+                                        {transferDetails.status}
+                                    </Badge>
+                                </div>
+                                <ol className="flex w-full items-start">
+                                    <li className="w-full">
+                                        <div className="flex items-center after:inline-block after:h-1 after:w-full after:border-4 after:border-b after:border-blue-100 after:content-[''] dark:text-blue-500 dark:after:border-blue-800">
+                                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full lg:h-12 lg:w-12">
+                                                <TruckSvg className="h-8 w-8 lg:h-10 lg:w-10" />
+                                            </span>
+                                        </div>
+                                    </li>
+                                    <li
+                                        className={`${
+                                            transferDetails.status ===
+                                            "completed"
+                                                ? "after:border-blue-100"
+                                                : "after:border-gray-100"
+                                        } flex w-full items-center after:inline-block after:h-1 after:w-full after:border-4 after:border-b  after:content-[''] dark:after:border-gray-700`}
                                     >
-                                        Transfer Details
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell className="font-bold">
-                                        Status
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge variant="outline">
-                                            {transferDetails.status}
-                                        </Badge>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell className="font-bold">
-                                        Date Released
-                                    </TableCell>
-                                    <TableCell>
+                                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 lg:h-12 lg:w-12">
+                                            <RouteSvg className="h-8 w-8 lg:h-10 lg:w-10" />
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <div className="flex items-center">
+                                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 lg:h-12 lg:w-12">
+                                                <FinishFlagSvg className="h-8 w-8 lg:h-10 lg:w-10" />
+                                            </span>
+                                        </div>
+                                    </li>
+                                </ol>
+                                <div className="flex w-full justify-between">
+                                    <div className="grid gap-1.5 border-l-2 px-2">
+                                        <Label>Sender:</Label>
+                                        <p className="capitalize">
+                                            {transferDetails.sender_name}
+                                            {transferDetails.sender_id ===
+                                                auth.user.id && " (You)"}
+                                        </p>
+                                    </div>
+                                    <div className="grid gap-1.5 border-l-2 px-2">
+                                        <Label>Receiver:</Label>
+                                        <p className="capitalize">
+                                            {transferDetails?.receiver_name ||
+                                                transferDetails?.office_name}
+                                            {transferDetails?.receiver_id ===
+                                                auth.user.id && " (You)"}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="grid gap-1.5 border-l-2 px-2">
+                                    <Label>Date Released:</Label>
+                                    <p className>
                                         {dayjs(
                                             transferDetails.transferred_at,
-                                        ).format("MMMM DD, YYYY h:mm a")}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell className="font-bold">
-                                        Date Completed
-                                    </TableCell>
-                                    <TableCell>
+                                        ).format("MMMM DD, YYYY")}
+                                        <div>
+                                            {dayjs(
+                                                transferDetails.transferred_at,
+                                            ).format("h:mm a")}
+                                        </div>
+                                    </p>
+                                </div>
+                                <div className="grid gap-1.5 border-l-2 px-2">
+                                    <Label>Date Completed:</Label>
+                                    <p className="capitalize">
                                         {transferDetails.is_completed ? (
                                             <>
                                                 {dayjs(
                                                     transferDetails.completed_at,
-                                                ).format(
-                                                    "MMMM DD, YYYY h:mm a",
-                                                )}
+                                                ).format("MMMM DD, YYYY")}
+                                                <div>
+                                                    {dayjs(
+                                                        transferDetails.completed_at,
+                                                    ).format("h:mm a")}
+                                                </div>
                                             </>
                                         ) : (
                                             <p
@@ -299,40 +339,14 @@ export default function ViewDocumentTransfer({
                                                 Not yet completed.
                                             </p>
                                         )}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell className="font-bold">
-                                        Sender
-                                    </TableCell>
-                                    <TableCell>
-                                        {transferDetails.sender_name}
-                                        {transferDetails.sender_id ===
-                                            auth.user.id && " (You)"}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell className="font-bold">
-                                        Receiver
-                                    </TableCell>
-                                    <TableCell>
-                                        {transferDetails?.receiver_name ||
-                                            transferDetails?.office_name}
-                                        {transferDetails?.receiver_id ===
-                                            auth.user.id && " (You)"}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell className="font-bold">
-                                        Sender's Comment
-                                    </TableCell>
-                                    <TableCell>
-                                        {transferDetails.comment ||
-                                            "No Comment"}
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
+                                    </p>
+                                </div>
+                                <div className="grid w-full gap-1.5 border-l-2 px-2">
+                                    <Label>Sender Comment:</Label>
+                                    <p>{transferDetails.comment || "None"}</p>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
             </div>
