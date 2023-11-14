@@ -13,11 +13,6 @@ export const dashboardConfig = {
             icon: "dashboard",
         },
         {
-            title: "Quick Actions",
-            href: "/",
-            icon: "activity",
-        },
-        {
             title: "Documents",
             icon: "folderOpen",
             subMenu: [
