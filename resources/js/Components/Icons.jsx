@@ -52,9 +52,11 @@ import {
     FolderCog,
     FileType,
     Info,
+    FileText,
 } from "lucide-react";
 
 const Icons = {
+    fileText: FileText,
     info: Info,
     fileType: FileType,
     chevronFirst: ChevronFirst,

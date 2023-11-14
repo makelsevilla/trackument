@@ -34,6 +34,12 @@ import {
 } from "@/Components/ui/collapsible.jsx";
 import { Label } from "@/Components/ui/label.jsx";
 import DocumentFileCard from "@/Components/DocumentFileCard.jsx";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/Components/ui/card.jsx";
 
 export default function ViewDocument({
     auth,
@@ -50,7 +56,7 @@ export default function ViewDocument({
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Pending Documents" />
-            <div className="flex flex-col items-start gap-8">
+            <div className="flex flex-col justify-start gap-8">
                 {/*Document actions*/}
                 <div className="flex w-full">
                     {withActionButtons && (
@@ -131,97 +137,75 @@ export default function ViewDocument({
                         </DialogContent>
                     </Dialog>
                 </div>
-                <DashboardHeader heading="Document Details" />
-                <div className="w-full px-2">
-                    <Table>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="font-bold">
-                                    Tracking Code
-                                </TableCell>
-                                <TableCell>{document.tracking_code}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-bold">
-                                    Title
-                                </TableCell>
-                                <TableCell>{document.title}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-bold">
-                                    Document Type
-                                </TableCell>
-                                <TableCell className="flex items-center gap-4">
+                <div className="px-2">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Document Details</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex flex-wrap gap-6">
+                            <div className="grid gap-1.5 border-l-2 px-2">
+                                <Label>Tracking Code:</Label>
+                                <p className="capitalize">
+                                    {document.tracking_code}
+                                </p>
+                            </div>
+                            <div className="grid gap-1.5 border-l-2 px-2">
+                                <Label>Owner:</Label>
+                                <p className="capitalize">
+                                    {document.owner.name}
+                                </p>
+                            </div>
+                            <div className="grid gap-1.5 border-l-2 px-2">
+                                <Label>Current Owner:</Label>
+                                <p className="capitalize">
+                                    {document.current_owner.name}
+                                </p>
+                            </div>
+                            <div className="grid gap-1.5 border-l-2 px-2">
+                                <Label>Document Type:</Label>
+                                <p className="capitalize">
                                     {document.document_type.name}
-
-                                    <Popover>
-                                        <PopoverTrigger>
-                                            <Icons.helpCircle className="h-4 w-4" />
-                                        </PopoverTrigger>
-                                        <PopoverContent>
-                                            {document.document_type.description}
-                                        </PopoverContent>
-                                    </Popover>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-bold">
-                                    Purposes
-                                </TableCell>
-                                <TableCell className="space-x-2">
+                                </p>
+                            </div>
+                            <div className="grid gap-1.5 border-l-2 px-2">
+                                <Label>Date Created:</Label>
+                                <p className="capitalize">
+                                    {dayjs(document.created_at).format(
+                                        "MMMM DD, YYYY",
+                                    )}
+                                </p>
+                            </div>
+                            <div className="grid gap-1.5 border-l-2 px-2">
+                                <Label>Status:</Label>
+                                <Badge className="capitalize">
+                                    {document.status}
+                                </Badge>
+                            </div>
+                            <div className="grid w-full gap-1.5 border-l-2 px-2">
+                                <Label>Title:</Label>
+                                <p className="capitalize">{document.title}</p>
+                            </div>
+                            <div className="grid w-full gap-1.5 border-l-2 px-2">
+                                <Label>Purposes:</Label>
+                                <p>
                                     {document.purpose.map((purpose, index) => (
                                         <span key={index}>
                                             {ucwords(purpose) + ", "}
                                         </span>
                                     ))}
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-bold">
-                                    Description
-                                </TableCell>
-                                <TableCell>
+                                </p>
+                            </div>
+                            <div className="grid w-full gap-1.5 border-l-2 px-2">
+                                <Label>Description:</Label>
+                                <p className="capitalize">
                                     {document.description
                                         ? document.description
-                                        : "No Description"}
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-bold">
-                                    Date Created
-                                </TableCell>
-                                <TableCell>
-                                    <div>
-                                        {dayjs(document.created_at).format(
-                                            "MMMM DD, YYYY",
-                                        )}
-                                    </div>
-                                    <div>
-                                        {dayjs(document.created_at).format(
-                                            "hh:mm A",
-                                        )}
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-bold">
-                                    Owner
-                                </TableCell>
-                                <TableCell>{document.owner.name}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-bold">
-                                    Current Owner
-                                </TableCell>
-                                <TableCell>
-                                    {document.current_owner.name}
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-bold">
-                                    Related Documents
-                                </TableCell>
-                                <TableCell>
+                                        : "No Description Provided"}
+                                </p>
+                            </div>
+                            <div className="grid w-full gap-1.5 border-l-2 px-2">
+                                <Label>Related Documents:</Label>
+                                <p className="gap-4 capitalize">
                                     {document?.related_documents.length > 0 ? (
                                         <>
                                             {document.related_documents.map(
@@ -240,82 +224,82 @@ export default function ViewDocument({
                                     ) : (
                                         <>No related documents</>
                                     )}
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-bold">
-                                    Status
-                                </TableCell>
-                                <TableCell>
-                                    <Badge variant="outline">
-                                        {document.status}
-                                    </Badge>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
+                                </p>
+                            </div>
+                        </CardContent>
+                    </Card>
 
                     {/*Document Files*/}
                     <div className="mt-8">
-                        <div className="text-xl font-medium">
-                            Document Files
-                        </div>
-                        <div className="mt-4 space-y-4">
-                            <div>
-                                <Collapsible>
-                                    <div className="flex items-center gap-4">
-                                        <p>Backup Files</p>
-                                        <CollapsibleTrigger asChild>
-                                            <Button size="icon" variant="ghost">
-                                                <Icons.chevronsUpDown className="h-4 w-4" />
-                                            </Button>
-                                        </CollapsibleTrigger>
-                                    </div>
-                                    <CollapsibleContent className="space-y-2">
-                                        {backupFiles.length > 0 ? (
-                                            backupFiles.map((file, index) => (
-                                                <DocumentFileCard
-                                                    file={file}
-                                                    key={index}
-                                                />
-                                            ))
-                                        ) : (
-                                            <p className="text-muted-foreground">
-                                                No files.
-                                            </p>
-                                        )}
-                                    </CollapsibleContent>
-                                </Collapsible>
-                            </div>
-                            <div>
-                                <Collapsible>
-                                    <div className="flex items-center gap-4">
-                                        <p>Attachment Files</p>
-                                        <CollapsibleTrigger asChild>
-                                            <Button size="icon" variant="ghost">
-                                                <Icons.chevronsUpDown className="h-4 w-4" />
-                                            </Button>
-                                        </CollapsibleTrigger>
-                                    </div>
-                                    <CollapsibleContent className="space-y-2">
-                                        {attachmentFiles.length > 0 ? (
-                                            attachmentFiles.map(
-                                                (file, index) => (
-                                                    <DocumentFileCard
-                                                        file={file}
-                                                        key={index}
-                                                    />
-                                                ),
-                                            )
-                                        ) : (
-                                            <p className="text-muted-foreground">
-                                                No files.
-                                            </p>
-                                        )}
-                                    </CollapsibleContent>
-                                </Collapsible>
-                            </div>
-                        </div>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Document Files</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div>
+                                    <Collapsible>
+                                        <div className="flex items-center gap-4">
+                                            <p>Backup Files</p>
+                                            <CollapsibleTrigger asChild>
+                                                <Button
+                                                    size="icon"
+                                                    variant="ghost"
+                                                >
+                                                    <Icons.chevronsUpDown className="h-4 w-4" />
+                                                </Button>
+                                            </CollapsibleTrigger>
+                                        </div>
+                                        <CollapsibleContent className="space-y-2">
+                                            {backupFiles.length > 0 ? (
+                                                backupFiles.map(
+                                                    (file, index) => (
+                                                        <DocumentFileCard
+                                                            file={file}
+                                                            key={index}
+                                                        />
+                                                    ),
+                                                )
+                                            ) : (
+                                                <p className="text-muted-foreground">
+                                                    No files.
+                                                </p>
+                                            )}
+                                        </CollapsibleContent>
+                                    </Collapsible>
+                                </div>
+                                <div>
+                                    <Collapsible>
+                                        <div className="flex items-center gap-4">
+                                            <p>Attachment Files</p>
+                                            <CollapsibleTrigger asChild>
+                                                <Button
+                                                    size="icon"
+                                                    variant="ghost"
+                                                >
+                                                    <Icons.chevronsUpDown className="h-4 w-4" />
+                                                </Button>
+                                            </CollapsibleTrigger>
+                                        </div>
+                                        <CollapsibleContent className="space-y-2">
+                                            {attachmentFiles.length > 0 ? (
+                                                attachmentFiles.map(
+                                                    (file, index) => (
+                                                        <DocumentFileCard
+                                                            file={file}
+                                                            key={index}
+                                                        />
+                                                    ),
+                                                )
+                                            ) : (
+                                                <p className="text-muted-foreground">
+                                                    No files.
+                                                </p>
+                                            )}
+                                        </CollapsibleContent>
+                                    </Collapsible>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
             </div>
