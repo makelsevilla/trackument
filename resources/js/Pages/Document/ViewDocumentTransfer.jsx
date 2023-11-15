@@ -290,22 +290,11 @@ export default function ViewDocumentTransfer({
                                         </p>
                                     </div>
                                 </div>
-                                <div className="flex w-full justify-between">
-                                    <div className="grid gap-1.5 border-l-2 px-2">
-                                        <Label>Sender Release Action:</Label>
-                                        <p className="capitalize">
-                                            {transferDetails.release_action}
-                                        </p>
-                                    </div>
-                                    <div className="grid gap-1.5 border-l-2 px-2">
-                                        <Label>Receiver:</Label>
-                                        <p className="capitalize">
-                                            {transferDetails?.receiver_name ||
-                                                transferDetails?.office_name}
-                                            {transferDetails?.receiver_id ===
-                                                auth.user.id && " (You)"}
-                                        </p>
-                                    </div>
+                                <div className="grid gap-1.5 border-l-2 px-2">
+                                    <Label>Sender Release Action:</Label>
+                                    <p className="capitalize">
+                                        {transferDetails.release_action}
+                                    </p>
                                 </div>
 
                                 <div className="grid gap-1.5 border-l-2 px-2">
