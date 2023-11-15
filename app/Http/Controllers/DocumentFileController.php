@@ -36,8 +36,7 @@ class DocumentFileController extends Controller
         $validated = $request->validate([
             "type" => "required|in:file,link",
             "role" => "required|in:backup,attachment",
-            "fileName" =>
-                "required|string|max:255|unique:document_files,file_name",
+            "fileName" => "required|string|max:255",
             "documentId" => "required|exists:documents,id",
             "file" => [
                 "required_if:type,file",
