@@ -8,11 +8,12 @@ Route::prefix("/admin")
     ->middleware(["auth", "role:admin"])
     ->group(function () {
         Route::get("/", function () {
-            return redirect()->route("admin.dashboard");
+            return redirect()->route("admin.document-transfers.index");
         });
 
         Route::get("/dashboard", function () {
-            return Inertia::render("Admin/Dashboard");
+            //            return Inertia::render("Admin/Dashboard");
+            return redirect()->route("admin.document-transfers.index");
         })->name("dashboard");
 
         Route::resource(
