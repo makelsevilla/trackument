@@ -22,6 +22,8 @@ class DocumentPurposeSeeder extends Seeder
             "compliance/implementation",
             "appropriate action",
             "coding/deposit/preparation of receipt",
+            "for approval",
+            
         ];
 
         foreach ($purposes as $purpose) {
