@@ -278,7 +278,7 @@ class DocumentTransferController extends Controller
         DocumentTransferEvent::dispatch($documentTransfer, "accept");
 
         return to_route("documents.lists.incoming")->with([
-            "message" => "You have accepted document {$document->tracking_code} from {$documentTransfer->sender->name}.",
+            "message" => "You have accepted document {$document->tracking_code} from {$documentTransfer->sender->name}. Don't forget to tag this document as TERMINAL in case your office is the end of its paper trail.",
             "status" => "success",
         ]);
     }
