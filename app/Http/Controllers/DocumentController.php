@@ -100,7 +100,7 @@ class DocumentController extends Controller
             ->first();
 
         $documentTransfer =
-            $documentTransfer && $documentTransfer->is_completed
+            $documentTransfer
                 ? $documentTransfer
                 : null;
 
