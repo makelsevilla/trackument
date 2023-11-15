@@ -212,28 +212,33 @@ export default function ViewDocument({
                                     )}
                                 </div>
                             </div>
-                            <div className="grid w-full gap-1.5 border-l-2 px-2">
-                                <Label>Notifications</Label>
-                                <div className="flex items-center space-x-2">
-                                    <Checkbox
-                                        checked={document.notify_owner}
-                                        onCheckedChange={(checked) => {
-                                            router.put(
-                                                route(
-                                                    "documents.updateNotifyOwner",
-                                                    { document: document.id },
-                                                ),
-                                                { notify_owner: checked },
-                                            );
-                                        }}
-                                        id="notify_owner"
-                                    />
-                                    <label htmlFor="notify_owner">
-                                        Receive notifications whenever someone
-                                        processes this document.
-                                    </label>
+                            {document.owner_id === auth.user.id && (
+                                <div className="grid w-full gap-1.5 border-l-2 px-2">
+                                    <Label>Notifications</Label>
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                            checked={document.notify_owner}
+                                            onCheckedChange={(checked) => {
+                                                router.put(
+                                                    route(
+                                                        "documents.updateNotifyOwner",
+                                                        {
+                                                            document:
+                                                                document.id,
+                                                        },
+                                                    ),
+                                                    { notify_owner: checked },
+                                                );
+                                            }}
+                                            id="notify_owner"
+                                        />
+                                        <label htmlFor="notify_owner">
+                                            Receive notifications whenever
+                                            someone processes this document.
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </CardContent>
                     </Card>
 
