@@ -26,6 +26,7 @@ import {
     CardTitle,
 } from "@/Components/ui/card.jsx";
 import { Checkbox } from "@/Components/ui/checkbox.jsx";
+import { useEffect } from "react";
 
 export default function ViewDocument({
     auth,
@@ -38,6 +39,19 @@ export default function ViewDocument({
     const attachmentFiles = documentFiles.filter(
         (file) => file.role === "attachment",
     );
+
+    useEffect(() => {
+        Echo.private(`transfer.${auth.user.id}`).listen(
+            "DocumentTransferEvent",
+            (e) => {
+                router.reload();
+            },
+        );
+
+        return () => {
+            Echo.leaveChannel(`transfer.${auth.user.id}`);
+        };
+    }, []);
 
     return (
         <AuthenticatedLayout user={auth.user}>

@@ -13,7 +13,7 @@ import { Button } from "@/Components/ui/button.jsx";
 import { Separator } from "@/Components/ui/separator.jsx";
 import dayjs from "dayjs";
 import { Badge } from "@/Components/ui/badge.jsx";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import Icons from "@/Components/Icons.jsx";
 import {
     AlertDialog,
@@ -38,6 +38,7 @@ import { ucwords } from "@/lib/utils.js";
 import TruckSvg from "@/Components/TruckSvg.jsx";
 import FinishFlagSvg from "@/Components/FinishFlagSvg.jsx";
 import RouteSvg from "@/Components/RouteSvg.jsx";
+import { useEffect } from "react";
 
 export default function ViewDocumentTransfer({
     auth,
@@ -46,6 +47,19 @@ export default function ViewDocumentTransfer({
     withActionButtons,
     withDocumentLink,
 }) {
+    useEffect(() => {
+        Echo.private(`transfer.${auth.user.id}`).listen(
+            "DocumentTransferEvent",
+            (e) => {
+                router.reload();
+            },
+        );
+
+        return () => {
+            Echo.leaveChannel(`transfer.${auth.user.id}`);
+        };
+    }, []);
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <div className="flex flex-col items-start gap-8">
