@@ -29,7 +29,7 @@ export default function Authenticated({
             toast({
                 description: flash.message,
                 variant: flash?.status === "error" ? "destructive" : "",
-                duration: 10000,
+                duration: 6000,
             });
         }
     }, [flash]);

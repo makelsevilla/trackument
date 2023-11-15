@@ -1,16 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
-import DashboardHeader from "@/Components/DashboardHeader.jsx";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table.jsx";
+
 import { Button } from "@/Components/ui/button.jsx";
-import { Separator } from "@/Components/ui/separator.jsx";
 import dayjs from "dayjs";
 import { Badge } from "@/Components/ui/badge.jsx";
 import { Link, router } from "@inertiajs/react";
@@ -29,7 +19,6 @@ import {
 import {
     Card,
     CardContent,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card.jsx";
