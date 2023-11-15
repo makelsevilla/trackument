@@ -268,7 +268,7 @@ class DocumentController extends Controller
         return to_route("documents.lists.finalized", [
             "document" => $document->id,
         ])->with([
-            "message" => "Document finalized successfully.",
+            "message" => "Document {$document->title} ({$document->tracking_code}) has been finalized successfully. It is now available for releasing to other offices.",
             "status" => "success",
         ]);
     }
