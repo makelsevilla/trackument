@@ -159,6 +159,17 @@ function DocumentAction({ document }) {
                             Transfer Details
                         </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link
+                            method="post"
+                            as="button"
+                            href={route("documents.terminate", {
+                                document: document.id,
+                            })}
+                        >
+                            Tag as Terminal
+                        </Link>
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         </>

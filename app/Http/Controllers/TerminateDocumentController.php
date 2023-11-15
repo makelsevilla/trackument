@@ -24,12 +24,13 @@ class TerminateDocumentController extends Controller
 
         if (!$document->save()) {
             return back()->with([
-                "message" => "An error occured while terminating the document.",
+                "message" =>
+                    "An error occurred while terminating the document.",
             ]);
         }
 
         return back()->with([
-            "message" => "Document terminated.",
+            "message" => "Document {$document->title} ({$document->tracking_code}) has been tagged as terminal and is now listed in the Tagged as Terminal page.",
         ]);
     }
 
@@ -45,12 +46,12 @@ class TerminateDocumentController extends Controller
 
         if (!$document->save()) {
             return back()->with([
-                "message" => "An error occured while unlocking the document.",
+                "message" => "An error occurred while unlocking the document.",
             ]);
         }
 
         return back()->with([
-            "message" => "Document unlocked.",
+            "message" => "Document {$document->title} ({$document->tracking_code}) is now unlocked and can be released to other offices.",
         ]);
     }
 }
