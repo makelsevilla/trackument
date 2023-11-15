@@ -180,15 +180,17 @@ export default function ViewDocumentTransfer({
                                 </AlertDialogContent>
                             </AlertDialog>
                         ))}
-                    <Button size="sm" asChild variant="link">
-                        <Link
-                            href={route("documents.show", {
-                                document: documentDetails.id,
-                            })}
-                        >
-                            See Document Details
-                        </Link>
-                    </Button>
+                        {withDocumentLink && (
+                            <Button size="sm" asChild variant="link">
+                                <Link
+                                    href={route("documents.show", {
+                                        document: documentDetails.id,
+                                    })}
+                                >
+                                    See Document Details
+                                </Link>
+                            </Button>
+                        )}
                 </div>
                 <div className="w-full">
                     <div className="px-2">
