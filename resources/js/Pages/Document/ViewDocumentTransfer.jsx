@@ -41,7 +41,7 @@ export default function ViewDocumentTransfer({
         Echo.private(`transfer.${auth.user.id}`).listen(
             "DocumentTransferEvent",
             (e) => {
-                router.reload();
+                router.reload({ preserveState: false });
             },
         );
 
