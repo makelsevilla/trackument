@@ -87,7 +87,7 @@ class UserController extends Controller
     {
         $request->validate([
             "name" => "required|string|max:255",
-            "username" => "required|string|max:255|unique:" . User::class,
+            "username" => "required|alpha_dash|max:255|unique:" . User::class,
             "role" => "required|string|in:user,admin",
             "password" => ["required", "confirmed", Rules\Password::defaults()],
         ]);
@@ -141,8 +141,7 @@ class UserController extends Controller
             "name" => "required|string|max:255",
             "username" => [
                 "required",
-                "string",
-                "email",
+                "alpha_dash",
                 "max:255",
                 Rule::unique("users")->ignore($user->id),
             ],
