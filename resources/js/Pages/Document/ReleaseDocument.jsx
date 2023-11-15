@@ -111,7 +111,10 @@ export default function ReleaseDocument({
                             <div>
                                 <div className="mt-4 grid w-full gap-1.5">
                                     <Label htmlFor="receiver">
-                                        Receiving Office / Individual
+                                        Receiving Office / Individual{" "}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </Label>
                                     <Select
                                         value={data.receiver_id}
@@ -177,7 +180,10 @@ export default function ReleaseDocument({
                             </div>
 
                             <div className="mt-4 grid w-full gap-1.5">
-                                <Label htmlFor="release_action">Action</Label>
+                                <Label htmlFor="release_action">
+                                    Action{" "}
+                                    <span className="text-destructive">*</span>
+                                </Label>
                                 <Select
                                     value={data.release_action}
                                     onValueChange={(value) =>
@@ -236,7 +242,10 @@ export default function ReleaseDocument({
                             {/* Document Files */}
                             <div className="mt-8 grid w-full gap-4">
                                 <Label className="text-xl">
-                                    Document Files
+                                    Document Files{" "}
+                                    <span className="text-sm italic">
+                                        (Optional)
+                                    </span>
                                 </Label>
                                 <DocumentFilesForm
                                     documentId={document.id}

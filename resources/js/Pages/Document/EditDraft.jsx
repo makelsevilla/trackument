@@ -170,7 +170,10 @@ export default function EditDraft({
                             <div className="grid w-full gap-1.5">
                                 <div className="flex items-center justify-between">
                                     <Label htmlFor="document_type">
-                                        Document Type
+                                        Document Type{" "}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
                                     </Label>
                                     <Popover>
                                         <PopoverTrigger>
@@ -223,7 +226,10 @@ export default function EditDraft({
 
                             {/* Title */}
                             <div className="mt-4 grid w-full gap-1.5">
-                                <Label htmlFor="title">Title</Label>
+                                <Label htmlFor="title">
+                                    Title{" "}
+                                    <span className="text-destructive">*</span>
+                                </Label>
                                 <Input
                                     onChange={(e) =>
                                         setData(
@@ -241,7 +247,10 @@ export default function EditDraft({
                                 />
                                 <InputHelper>
                                     <p>
-                                        - You may omit sensitive informations (monitory amounts, names, etc.) from the title if they are not necessary in tracking the document.
+                                        - You may omit sensitive informations
+                                        (monitory amounts, names, etc.) from the
+                                        title if they are not necessary in
+                                        tracking the document.
                                     </p>
                                     <p>- Max Length: 250 characters</p>
                                 </InputHelper>
@@ -266,7 +275,12 @@ export default function EditDraft({
                             {/* Purposes */}
                             <div className="mt-4 grid w-full gap-1.5">
                                 <div>
-                                    <Label htmlFor="purpose">Purpose</Label>
+                                    <Label htmlFor="purpose">
+                                        Purpose{" "}
+                                        <span className="text-destructive">
+                                            *
+                                        </span>
+                                    </Label>
                                     <p className="text-xs text-muted-foreground">
                                         Check all that apply.
                                     </p>
@@ -422,7 +436,10 @@ export default function EditDraft({
 
                             <Separator className="my-6" />
                             <h2 className="text-xl font-semibold">
-                                Document Files
+                                Document Files{" "}
+                                <span className="text-sm italic">
+                                    (Optional)
+                                </span>
                             </h2>
                             {/* File Backup */}
                             <DocumentFilesForm
