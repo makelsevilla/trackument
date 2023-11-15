@@ -1,26 +1,11 @@
-import { Head, Link, usePage } from "@inertiajs/react";
-import DashboardHeader from "@/Components/DashboardHeader.jsx";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table.jsx";
+import { Head, Link, router } from "@inertiajs/react";
+
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
-import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import { Button } from "@/Components/ui/button.jsx";
 import Icons from "@/Components/Icons.jsx";
 import { ucwords } from "@/lib/utils.js";
 import dayjs from "dayjs";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/Components/ui/popover.jsx";
 import { Badge } from "@/Components/ui/badge.jsx";
-import { Separator } from "@/Components/ui/separator.jsx";
 import {
     Dialog,
     DialogContent,
@@ -40,6 +25,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card.jsx";
+import { Checkbox } from "@/Components/ui/checkbox.jsx";
 
 export default function ViewDocument({
     auth,
@@ -205,7 +191,7 @@ export default function ViewDocument({
                             </div>
                             <div className="grid w-full gap-1.5 border-l-2 px-2">
                                 <Label>Related Documents:</Label>
-                                <p className="gap-4 capitalize">
+                                <div className="gap-4 capitalize">
                                     {document?.related_documents.length > 0 ? (
                                         <>
                                             {document.related_documents.map(
@@ -224,7 +210,29 @@ export default function ViewDocument({
                                     ) : (
                                         <>No related documents</>
                                     )}
-                                </p>
+                                </div>
+                            </div>
+                            <div className="grid w-full gap-1.5 border-l-2 px-2">
+                                <Label>Notifications</Label>
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        checked={document.notify_owner}
+                                        onCheckedChange={(checked) => {
+                                            router.put(
+                                                route(
+                                                    "documents.updateNotifyOwner",
+                                                    { document: document.id },
+                                                ),
+                                                { notify_owner: checked },
+                                            );
+                                        }}
+                                        id="notify_owner"
+                                    />
+                                    <label htmlFor="notify_owner">
+                                        Receive notifications whenever someone
+                                        processes this document.
+                                    </label>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>

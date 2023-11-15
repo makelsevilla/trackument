@@ -271,4 +271,29 @@ class DocumentController extends Controller
             "status" => "success",
         ]);
     }
+
+    public function updateNotifyOwner(Request $request, Document $document)
+    {
+        $request->validate([
+            "notify_owner" => "required|boolean",
+        ]);
+
+        $user = auth()->user();
+        if ($user->id !== $document->owner_id) {
+            abort(403, "Unauthorized action.");
+        }
+
+        $document->notify_owner = $request->notify_owner;
+        if (!$document->save()) {
+            return back()->with([
+                "message" => "An error occured while saving the changes.",
+                "status" => "error",
+            ]);
+        }
+
+        return back()->with([
+            "message" => "Changes saved. ",
+            "status" => "success",
+        ]);
+    }
 }

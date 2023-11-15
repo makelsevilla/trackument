@@ -56,6 +56,10 @@ Route::middleware(["auth"])->group(function () {
         \App\Http\Controllers\DocumentController::class,
         "finalize",
     ])->name("documents.finalize");
+    Route::put("/documents/{document}/updateNotifyOwner", [
+        \App\Http\Controllers\DocumentController::class,
+        "updateNotifyOwner",
+    ])->name("documents.updateNotifyOwner");
 
     Route::resource(
         "document_files",
