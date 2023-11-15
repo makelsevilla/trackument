@@ -27,6 +27,7 @@ import {
 } from "@/Components/ui/card.jsx";
 import { Checkbox } from "@/Components/ui/checkbox.jsx";
 import { useEffect } from "react";
+import { documentStatuses } from "@/config/badgesColorMap.js";
 
 export default function ViewDocument({
     auth,
@@ -177,7 +178,10 @@ export default function ViewDocument({
                             </div>
                             <div className="grid gap-1.5 border-l-2 px-2">
                                 <Label>Status:</Label>
-                                <Badge className="capitalize">
+                                <Badge
+                                    className="capitalize"
+                                    variant={documentStatuses[document.status]}
+                                >
                                     {document.status}
                                 </Badge>
                             </div>

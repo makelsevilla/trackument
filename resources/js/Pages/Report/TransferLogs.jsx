@@ -6,7 +6,7 @@ import {
     CardTitle,
 } from "@/Components/ui/card.jsx";
 import { useReactToPrint } from "react-to-print";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { Button } from "@/Components/ui/button.jsx";
 import {
     Table,
@@ -18,9 +18,10 @@ import {
 } from "@/Components/ui/table.jsx";
 import dayjs from "dayjs";
 import { Head } from "@inertiajs/react";
-import ApplicationLogo from "@/Components/ApplicationLogo.jsx";
 import Icons from "@/Components/Icons.jsx";
 import BaniLogo from "@/Components/BaniLogo.jsx";
+import { transferStatuses } from "@/config/badgesColorMap.js";
+import { Badge } from "@/Components/ui/badge.jsx";
 
 const filtersKeyMapping = {
     category: "Search by",
@@ -131,7 +132,16 @@ export default function TransferLogs({ auth, transfers, filters }) {
                                         {transfer?.document?.tracking_code}
                                     </TableCell>
                                     <TableCell className="capitalize">
-                                        {transfer.status}
+                                        <Badge
+                                            className="capitalize"
+                                            variant={
+                                                transferStatuses[
+                                                    transfer.status
+                                                ]
+                                            }
+                                        >
+                                            {transfer.status}
+                                        </Badge>
                                     </TableCell>
                                     <TableCell>
                                         {transfer?.transferred_at &&

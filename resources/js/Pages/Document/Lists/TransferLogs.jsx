@@ -16,6 +16,8 @@ import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import TransfersListTableFilter from "@/Pages/Document/Lists/Components/TransfersListsTableFilter.jsx";
 import React, { useEffect } from "react";
+import { Badge } from "@/Components/ui/badge.jsx";
+import { transferStatuses } from "@/config/badgesColorMap.js";
 
 export default function TransferLogs({
     auth,
@@ -117,7 +119,14 @@ function TransfersTable({ transfers }) {
                         <TableCell>
                             {transfer?.document?.tracking_code}
                         </TableCell>
-                        <TableCell>{transfer.status}</TableCell>
+                        <TableCell>
+                            <Badge
+                                className="capitalize"
+                                variant={transferStatuses[transfer.status]}
+                            >
+                                {transfer.status}
+                            </Badge>
+                        </TableCell>
                         <TableCell>
                             {transfer?.transferred_at &&
                                 dayjs(transfer.transferred_at).format(

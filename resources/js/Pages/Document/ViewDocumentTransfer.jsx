@@ -39,6 +39,7 @@ import TruckSvg from "@/Components/TruckSvg.jsx";
 import FinishFlagSvg from "@/Components/FinishFlagSvg.jsx";
 import RouteSvg from "@/Components/RouteSvg.jsx";
 import { useEffect } from "react";
+import { transferStatuses } from "@/config/badgesColorMap.js";
 
 export default function ViewDocumentTransfer({
     auth,
@@ -253,7 +254,14 @@ export default function ViewDocumentTransfer({
                             <CardContent className="flex flex-wrap gap-6">
                                 <div className="grid gap-1.5 border-l-2 px-2">
                                     <Label>Status:</Label>
-                                    <Badge className="capitalize">
+                                    <Badge
+                                        className="capitalize"
+                                        variant={
+                                            transferStatuses[
+                                                transferDetails.status
+                                            ]
+                                        }
+                                    >
                                         {transferDetails.status}
                                     </Badge>
                                 </div>
