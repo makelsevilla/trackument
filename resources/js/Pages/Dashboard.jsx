@@ -167,7 +167,7 @@ export default function Dashboard({ auth, counts, transfers }) {
                     </div>
 
                     <div className="rounded border">
-                        <div className="flex items-center justify-between border-b bg-blue-200">
+                        <div className="flex items-center justify-between border-b bg-green-200">
                             <h4 className="p-4 text-xl font-semibold text-gray-700">
                                 Recent Outgoing Documents
                             </h4>
