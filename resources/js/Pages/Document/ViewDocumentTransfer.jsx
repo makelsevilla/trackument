@@ -243,7 +243,7 @@ export default function ViewDocumentTransfer({
                                 </div>
                                 <ol className="flex w-full items-start">
                                     <li className="w-full">
-                                        <div className="flex items-center after:inline-block after:h-1 after:w-full after:border-4 after:border-b after:border-blue-100 after:content-[''] dark:text-blue-500 dark:after:border-blue-800">
+                                        <div className="flex items-center after:inline-block after:h-1 after:w-full after:border-4 after:border-b after:border-blue-300 after:content-[''] dark:text-blue-500 dark:after:border-blue-800">
                                             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full lg:h-12 lg:w-12">
                                                 <TruckSvg className="h-8 w-8 lg:h-10 lg:w-10" />
                                             </span>
@@ -253,8 +253,8 @@ export default function ViewDocumentTransfer({
                                         className={`${
                                             transferDetails.status ===
                                             "completed"
-                                                ? "after:border-blue-100"
-                                                : "after:border-gray-100"
+                                                ? "after:border-blue-300"
+                                                : "after:border-gray-300"
                                         } flex w-full items-center after:inline-block after:h-1 after:w-full after:border-4 after:border-b  after:content-[''] dark:after:border-gray-700`}
                                     >
                                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 lg:h-12 lg:w-12">
