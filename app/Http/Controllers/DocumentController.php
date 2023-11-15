@@ -94,6 +94,8 @@ class DocumentController extends Controller
 
         $documentTransfer = DB::table("document_transfers")
             ->where("document_id", "=", $document->id)
+            ->where("receiver_id", "=", $user->id)
+            ->orWhere("sender_id", "=", $user->id)
             ->orderBy("transferred_at", "desc")
             ->first();
 

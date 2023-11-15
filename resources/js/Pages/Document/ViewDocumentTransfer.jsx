@@ -180,6 +180,15 @@ export default function ViewDocumentTransfer({
                                 </AlertDialogContent>
                             </AlertDialog>
                         ))}
+                    <Button size="sm" asChild variant="link">
+                        <Link
+                            href={route("documents.show", {
+                                document: documentDetails.id,
+                            })}
+                        >
+                            See Document Details
+                        </Link>
+                    </Button>
                 </div>
                 <div className="w-full">
                     <div className="px-2">
@@ -217,30 +226,6 @@ export default function ViewDocumentTransfer({
                                             </span>
                                         ))}
                                     </p>
-                                </div>
-                                <div className="flex w-full justify-end">
-                                    {withDocumentLink && (
-                                        <div className="ml-auto">
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                asChild
-                                            >
-                                                <Link
-                                                    href={route(
-                                                        "documents.show",
-                                                        {
-                                                            document:
-                                                                documentDetails.id,
-                                                        },
-                                                    )}
-                                                >
-                                                    <Icons.view className="mr-2 h-5 w-5" />
-                                                    View Document
-                                                </Link>
-                                            </Button>
-                                        </div>
-                                    )}
                                 </div>
                             </CardContent>
                         </Card>
