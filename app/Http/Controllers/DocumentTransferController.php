@@ -39,6 +39,7 @@ class DocumentTransferController extends Controller
 
         $document_release_actions = DB::table("document_release_actions")
             ->select("action_name")
+            ->orderBy("action_name")
             ->get()
             ->toArray();
 
