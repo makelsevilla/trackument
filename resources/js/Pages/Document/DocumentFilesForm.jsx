@@ -231,6 +231,7 @@ function DocumentFilesForm({
                         </div>
                         <InputError message={errors.file} className="mt-2" />
                         <InputHelper className="mt-2">
+                            <p>- Allowed formats: PDF, JPG, PNG, DOCX, DOC</p>
                             <p>- Max 10 MB file size.</p>
                         </InputHelper>
                     </TabsContent>
