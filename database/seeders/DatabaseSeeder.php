@@ -15,24 +15,24 @@ class DatabaseSeeder extends Seeder
         $users = [
             [
                 "name" => "SB Office",
-                "username" => "sb-office"
+                "username" => "sb-office",
             ],
             [
                 "name" => "Admin Office",
-                "username" => "admin-office"
+                "username" => "admin-office",
             ],
             [
                 "name" => "Accounting Office",
-                "username" => "accounting-office"
+                "username" => "accounting-office",
             ],
             [
                 "name" => "Mayor Office",
-                "username" => "mayor-office"
+                "username" => "mayor-office",
             ],
             [
                 "name" => "Treasurer Office",
-                "username" => "treasurer-office"
-            ]
+                "username" => "treasurer-office",
+            ],
         ];
 
         \App\Models\User::create([
@@ -43,16 +43,15 @@ class DatabaseSeeder extends Seeder
             "role" => "admin",
         ]);
 
-        foreach($users as $user) {
+        foreach ($users as $user) {
             \App\Models\User::create([
-                "name" => $user->name,
-                "username" => $user->username,
+                "name" => $user["name"],
+                "username" => $user["username"],
                 "password" =>
                     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
                 "role" => "user",
             ]);
         }
-
 
         $this->call([
             DocumentTypeSeeder::class,
