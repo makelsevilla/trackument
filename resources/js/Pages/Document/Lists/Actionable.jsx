@@ -81,8 +81,8 @@ function ActionableTable({ documents }) {
         <Table>
             <TableHeader className="bg-secondary">
                 <TableRow>
-                    <TableHead>Title</TableHead>
                     <TableHead>Tracking Code</TableHead>
+                    <TableHead>Document Title</TableHead>
                     <TableHead>Sender</TableHead>
                     <TableHead>Date Received</TableHead>
                     <TableHead></TableHead>
@@ -92,12 +92,8 @@ function ActionableTable({ documents }) {
             <TableBody>
                 {documents.map((document, index) => (
                     <TableRow key={index}>
-                        <TableCell>
-                            <Link href={`/documents/${document.id}`}>
-                                {document.title}
-                            </Link>
-                        </TableCell>
                         <TableCell>{document.tracking_code}</TableCell>
+                        <TableCell>{document.title}</TableCell>
                         <TableCell>{document.previous_owner_name}</TableCell>
                         <TableCell>
                             {document?.document_transfers_completed_at &&

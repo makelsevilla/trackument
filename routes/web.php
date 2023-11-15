@@ -35,13 +35,10 @@ Route::middleware(["auth", "role:user"])->group(function () {
         return redirect()->route("dashboard");
     });
 
-    Route::get("/dashboard", function () {
-        return Inertia::render("Dashboard", [
-            "navBadges" => ["incoming" => 3, "notifications" => 6],
-        ]);
-    })
-        ->middleware(["auth", "verified"])
-        ->name("dashboard");
+    Route::get(
+        "/dashboard",
+        "App\Http\Controllers\DashboardController@user"
+    )->name("dashboard");
 
     Route::resource("documents", DocumentController::class)->except(["create"]);
     Route::put("/documents/{document}/finalize", [

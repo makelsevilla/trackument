@@ -113,7 +113,11 @@ class DocumentListController extends Controller
         $user = auth()->user();
 
         $documents = Document::with(["owner"])
-            ->where("current_owner_id", "=", $user->id)
+            ->where(function ($query) use ($user) {
+                $query
+                    ->where("owner_id", "=", $user->id)
+                    ->orWhere("current_owner_id", "=", $user->id);
+            })
             ->where("status", "=", "terminal");
 
         if (isset($filters["search"], $filters["category"])) {

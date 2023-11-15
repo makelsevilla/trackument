@@ -321,7 +321,7 @@ export default function ViewDocumentTransfer({
 
                                 <div className="grid gap-1.5 border-l-2 px-2">
                                     <Label>Date Released:</Label>
-                                    <p className>
+                                    <div>
                                         {dayjs(
                                             transferDetails.transferred_at,
                                         ).format("MMMM DD, YYYY")}
@@ -330,11 +330,11 @@ export default function ViewDocumentTransfer({
                                                 transferDetails.transferred_at,
                                             ).format("h:mm a")}
                                         </div>
-                                    </p>
+                                    </div>
                                 </div>
                                 <div className="grid gap-1.5 border-l-2 px-2">
                                     <Label>Date Completed:</Label>
-                                    <p className="capitalize">
+                                    <div className="capitalize">
                                         {transferDetails.is_completed ? (
                                             <>
                                                 {dayjs(
@@ -354,7 +354,7 @@ export default function ViewDocumentTransfer({
                                                 Not yet completed.
                                             </p>
                                         )}
-                                    </p>
+                                    </div>
                                 </div>
                                 <div className="grid w-full gap-1.5 border-l-2 px-2">
                                     <Label>Sender Comment:</Label>

@@ -255,7 +255,7 @@ export default function ReleaseDocument({
 
                             <div className="flex justify-end pt-6">
                                 <AlertDialog>
-                                    <AlertDialogTrigger>
+                                    <AlertDialogTrigger asChild>
                                         <Button>Release Document</Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
