@@ -7,11 +7,11 @@ export const dashboardConfig = {
     ],
     // Give a nav-item an id if it expects a badge
     sidebarNav: [
-        /*{
+        {
             title: "Dashboard",
             href: route("dashboard"),
             icon: "dashboard",
-        },*/
+        },
         {
             title: "Documents",
             icon: "folderOpen",
@@ -80,11 +80,11 @@ export const adminDashboardConfig = {
     ],
     // Give a nav-item an id if it expects a badge
     sidebarNav: [
-        /*{
+        {
             title: "Dashboard",
             href: route("admin.dashboard"),
             icon: "dashboard",
-        },*/
+        },
         {
             title: "Transfers",
             href: route("admin.document-transfers.index"),
