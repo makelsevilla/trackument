@@ -31,6 +31,7 @@ return new class extends Migration {
                 ->foreignId("receiver_id")
                 ->nullable()
                 ->constrained("users");
+            $table->string("release_action");
         });
     }
 

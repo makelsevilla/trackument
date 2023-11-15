@@ -31,6 +31,7 @@ class DocumentTransfer extends Model
         "sender_id",
         "comment",
         "transferred_at",
+        "release_action",
     ];
     public $timestamps = false;
 }
