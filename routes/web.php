@@ -21,13 +21,17 @@ Route::get("/test", function () {
 });
 
 Route::get("/", function () {
-    return redirect()->route("dashboard");
-    /*    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);*/
+    // check the user type then redirect
+    $user = auth()->user();
+    if ($user) {
+        if ($user->role === "admin") {
+            return redirect()->route("admin.document-transfers.index");
+        } else {
+            return redirect()->route("documents.lists.actionable");
+        }
+    }
+
+    return to_route("login");
 });
 
 Route::get("/dashboard", function () {
@@ -50,7 +54,7 @@ Route::middleware("auth")->group(function () {
     );
 });
 
-Route::middleware(["auth"])->group(function () {
+Route::middleware(["auth", "role:user"])->group(function () {
     Route::resource("documents", DocumentController::class)->except(["create"]);
     Route::put("/documents/{document}/finalize", [
         \App\Http\Controllers\DocumentController::class,
