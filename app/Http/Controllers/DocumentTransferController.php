@@ -45,6 +45,7 @@ class DocumentTransferController extends Controller
 
         $offices = DB::table("users")
             ->whereNot("id", "=", $user->id)
+            ->whereNot("role", "=", "admin")
             ->select("id", "name")
             ->get();
 
