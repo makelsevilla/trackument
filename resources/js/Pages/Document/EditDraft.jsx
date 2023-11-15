@@ -241,7 +241,7 @@ export default function EditDraft({
                                 />
                                 <InputHelper>
                                     <p>
-                                        - You may omit sensitive informations.
+                                        - You may omit sensitive informations (monitory amounts, names, etc.) from the title if they are not necessary in tracking the document.
                                     </p>
                                     <p>- Max Length: 250 characters</p>
                                 </InputHelper>

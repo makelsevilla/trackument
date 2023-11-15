@@ -130,8 +130,9 @@ class DocumentController extends Controller
 
         $document_types = DB::table("document_types")
             ->select("id", "name", "description")
+            ->orderBy("name", "asc")
             ->get();
-        $document_purposes = DB::table("document_purposes")->get();
+        $document_purposes = DB::table("document_purposes")->orderBy("purpose")->get();
 
         $related_documents = DB::table("related_documents")
             ->where("document_id", $document->id)
