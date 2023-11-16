@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\FinalizeDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
 use App\Models\Document;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -94,15 +95,15 @@ class DocumentController extends Controller
 
         $documentTransfer = DB::table("document_transfers")
             ->where("document_id", "=", $document->id)
-            ->where("receiver_id", "=", $user->id)
-            ->orWhere("sender_id", "=", $user->id)
+            ->where(function (Builder $query) use ($user) {
+                $query
+                    ->where("receiver_id", "=", $user->id)
+                    ->orWhere("sender_id", "=", $user->id);
+            })
             ->orderBy("transferred_at", "desc")
             ->first();
 
-        $documentTransfer =
-            $documentTransfer
-                ? $documentTransfer
-                : null;
+        $documentTransfer = $documentTransfer ? $documentTransfer : null;
 
         $documentFiles = DB::table("document_files")
             ->join("users", "document_files.uploader_id", "=", "users.id")
@@ -132,7 +133,9 @@ class DocumentController extends Controller
             ->select("id", "name", "description")
             ->orderBy("name", "asc")
             ->get();
-        $document_purposes = DB::table("document_purposes")->orderBy("purpose")->get();
+        $document_purposes = DB::table("document_purposes")
+            ->orderBy("purpose")
+            ->get();
 
         $related_documents = DB::table("related_documents")
             ->where("document_id", $document->id)
