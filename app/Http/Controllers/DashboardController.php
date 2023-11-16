@@ -106,6 +106,24 @@ class DashboardController extends Controller
 
     public function admin()
     {
-        return Inertia::render("Admin/Dashboard");
+        $totalDocuments = Document::where("is_draft", false)->count();
+        $totalUsers = DB::table("users")
+            ->where("role", "user")
+            ->count();
+
+        // get the last 5 created documents
+        $latestDocuments = Document::query()
+            ->with(["owner", "type"])
+            ->orderBy("created_at", "desc")
+            ->limit(5)
+            ->get();
+
+        return Inertia::render("Admin/Dashboard", [
+            "counts" => [
+                "documents" => $totalDocuments,
+                "users" => $totalUsers,
+            ],
+            "latestDocuments" => $latestDocuments,
+        ]);
     }
 }

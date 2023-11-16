@@ -1,8 +1,6 @@
 import Breadcrumb from "@/Components/Breadcrumb.jsx";
 import DashboardHeader from "@/Components/DashboardHeader.jsx";
-import { Button } from "@/Components/ui/button.jsx";
-import { Link } from "@inertiajs/react";
-import Icons from "@/Components/Icons.jsx";
+
 import AdminLayout from "@/Layouts/AdminLayout.jsx";
 import {
     Table,
@@ -13,10 +11,9 @@ import {
     TableRow,
 } from "@/Components/ui/table.jsx";
 import dayjs from "dayjs";
-import UserOperations from "@/Pages/Admin/Users/Components/UserOperations.jsx";
+
 import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import DocumentOperations from "@/Pages/Admin/Documents/Components/DocumentOperations.jsx";
-import { Badge } from "@/Components/ui/badge.jsx";
 import DocumentsListTableFilter from "@/Pages/Admin/Documents/Components/DocumentsListTableFilter.jsx";
 
 export default function DocumentsList({
@@ -89,7 +86,9 @@ function DocumentsTable({ documents }) {
                             <div>{document.title}</div>
                         </TableCell>
                         <TableCell>{document.owner.name}</TableCell>
-                        <TableCell>{document.type.name}</TableCell>
+                        <TableCell className="capitalize">
+                            {document.type.name}
+                        </TableCell>
                         <TableCell>
                             {document?.created_at &&
                                 dayjs(document.created_at).format(

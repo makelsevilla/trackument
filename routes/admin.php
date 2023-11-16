@@ -11,9 +11,10 @@ Route::prefix("/admin")
             return redirect()->route("admin.dashboard");
         });
 
-        Route::get("/dashboard", function () {
-            return Inertia::render("Admin/Dashboard");
-        })->name("dashboard");
+        Route::get(
+            "/dashboard",
+            "App\Http\Controllers\DashboardController@admin"
+        )->name("dashboard");
 
         Route::resource(
             "/document-transfers",

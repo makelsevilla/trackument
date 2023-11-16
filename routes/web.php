@@ -60,11 +60,6 @@ Route::middleware(["auth", "role:user"])->group(function () {
         "download",
     ])->name("file.download");
 
-    /*    Route::get("/track", [
-        \App\Http\Controllers\TrackingController::class,
-        "track",
-    ])->name("track");*/
-
     Route::get("/history/{tracking_code}", [
         \App\Http\Controllers\TrackingController::class,
         "history",

@@ -14,6 +14,9 @@ import TablePaginationButtons from "@/Components/TablePaginationButtons.jsx";
 import TransfersListTableFilter from "@/Pages/Admin/Transfers/Component/TransfersListTableFilter.jsx";
 import { Button } from "@/Components/ui/button.jsx";
 import { Link } from "@inertiajs/react";
+import { Badge } from "@/Components/ui/badge.jsx";
+import { transferStatuses } from "@/config/badgesColorMap.js";
+import React from "react";
 
 export default function TransfersList({
     auth,
@@ -100,7 +103,14 @@ function TransfersTable({ transfers }) {
                         <TableCell>
                             {transfer?.document?.tracking_code}
                         </TableCell>
-                        <TableCell>{transfer.status}</TableCell>
+                        <TableCell className="capitalize">
+                            <Badge
+                                className="capitalize"
+                                variant={transferStatuses[transfer.status]}
+                            >
+                                {transfer.status}
+                            </Badge>
+                        </TableCell>
                         <TableCell>
                             {transfer?.transferred_at &&
                                 dayjs(transfer.transferred_at).format(
@@ -115,7 +125,10 @@ function TransfersTable({ transfers }) {
                                 : "N/A"}
                         </TableCell>
                         <TableCell>{transfer?.sender?.name}</TableCell>
-                        {transfer?.receiver?.name || transfer?.receiver_name}
+                        <TableCell>
+                            {transfer?.receiver?.name ||
+                                transfer?.receiver_name}
+                        </TableCell>
                     </TableRow>
                 ))}
             </TableBody>
