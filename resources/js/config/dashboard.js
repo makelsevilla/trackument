@@ -45,6 +45,7 @@ export const dashboardConfig = {
                 },
                 {
                     id: "incoming",
+                    badgeVariant: "yellow",
                     title: "Incoming",
                     href: route("documents.lists.incoming"),
                     icon: "incoming",
@@ -64,6 +65,7 @@ export const dashboardConfig = {
         },
         {
             id: "notifications",
+            badgeVariant: "green",
             title: "Notifications",
             href: route("notifications.index"),
             icon: "notification",

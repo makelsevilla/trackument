@@ -54,13 +54,7 @@ export default function AdminLayout({ user, children }) {
                         <MainNav url={route("admin.dashboard")} items={[]} />
                     </div>
                     <div>
-                        <UserAccountNav
-                            user={{
-                                name: user?.name,
-                                image: user?.image,
-                                email: user?.email,
-                            }}
-                        />
+                        <UserAccountNav user={user} />
                     </div>
                 </div>
             </header>

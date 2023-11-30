@@ -122,7 +122,10 @@ export default function DashboardNav({ items }) {
                                                 <span>{subItem.title}</span>
                                                 {subItem?.id && (
                                                     <Badge
-                                                        variant="secondary"
+                                                        variant={
+                                                            subItem?.badgeVariant ||
+                                                            "secondary"
+                                                        }
                                                         className="absolute right-1"
                                                     >
                                                         {badgeDisplayText[
@@ -159,7 +162,9 @@ export default function DashboardNav({ items }) {
                                 <span>{item.title}</span>
                                 {item?.id && (
                                     <Badge
-                                        variant="secondary"
+                                        variant={
+                                            item?.badgeVariant || "secondary"
+                                        }
                                         className="absolute right-1"
                                     >
                                         {badgeDisplayText[item.id] || 0}

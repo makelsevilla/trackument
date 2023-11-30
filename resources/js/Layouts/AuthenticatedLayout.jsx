@@ -67,13 +67,7 @@ export default function Authenticated({
                         </MainNav>
                     </div>
                     <div>
-                        <UserAccountNav
-                            user={{
-                                name: user?.name,
-                                image: user?.image,
-                                username: user?.username,
-                            }}
-                        />
+                        <UserAccountNav user={user} />
                     </div>
                 </div>
             </header>
