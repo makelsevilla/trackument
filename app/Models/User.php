@@ -12,7 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -94,5 +94,37 @@ class User extends Authenticatable
             "incoming" => $this->incomingBadgeCount(),
             "notifications" => $this->notificationsBadgeCount(),
         ];
+    }
+
+    public static function filterUsers($users, $filters)
+    {
+        if (isset($filters["search"], $filters["category"])) {
+            $users->where(
+                $filters["category"],
+                "LIKE",
+                "%{$filters["search"]}%"
+            );
+        }
+
+        if (isset($filters["sortBy"], $filters["order"])) {
+            $users->orderBy($filters["sortBy"], $filters["order"]);
+        }
+
+        if (isset($filters["date_to"], $filters["date_name"])) {
+            $users->whereDate($filters["date_name"], "<=", $filters["date_to"]);
+            if (isset($filters["date_from"])) {
+                $users->whereDate(
+                    $filters["date_name"],
+                    ">=",
+                    $filters["date_from"]
+                );
+            }
+        }
+
+        if (isset($filters["role"])) {
+            $users->where("role", $filters["role"]);
+        }
+
+        return $users->paginate($filters["perPage"])->withQueryString();
     }
 }

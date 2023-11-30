@@ -48,17 +48,25 @@ class Document extends Model
     }
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class, "owner_id", "id");
+        return $this->belongsTo(User::class, "owner_id", "id")->withTrashed();
     }
 
     public function currentOwner(): BelongsTo
     {
-        return $this->belongsTo(User::class, "current_owner_id", "id");
+        return $this->belongsTo(
+            User::class,
+            "current_owner_id",
+            "id"
+        )->withTrashed();
     }
 
     public function previousOwner(): BelongsTo
     {
-        return $this->belongsTo(User::class, "previous_owner_id", "id");
+        return $this->belongsTo(
+            User::class,
+            "previous_owner_id",
+            "id"
+        )->withTrashed();
     }
 
     public function histories(): HasMany

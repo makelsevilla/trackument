@@ -2,16 +2,6 @@ import TableFilter from "@/Components/TableFilter.jsx";
 import { Label } from "@/Components/ui/label.jsx";
 import { useState } from "react";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/Components/ui/popover.jsx";
-import { Button } from "@/Components/ui/button.jsx";
-import { cn } from "@/lib/utils.js";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { Calendar } from "@/Components/ui/calendar.jsx";
-import {
     Select,
     SelectContent,
     SelectItem,
@@ -19,6 +9,16 @@ import {
     SelectValue,
 } from "@/Components/ui/select.jsx";
 import { usePage } from "@inertiajs/react";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/Components/ui/table.jsx";
+import dayjs from "dayjs";
+import UserOperations from "@/Pages/Admin/Users/Components/UserOperations.jsx";
 
 const categories = [
     {
@@ -57,10 +57,7 @@ const dateNames = [
     },
 ];
 
-export default function UsersListTableFilter({
-    routeName = "admin.users.index",
-    ...props
-}) {
+export default function DeletedUsersTableFilter({ ...props }) {
     const {
         props: { filters },
     } = usePage();
@@ -74,7 +71,7 @@ export default function UsersListTableFilter({
             sortColumns={sortColumns}
             categories={categories}
             dateNames={dateNames}
-            url={route(routeName)}
+            url={route("admin.users.deleted")}
         >
             <div>
                 <Label className="text-xs">Role</Label>

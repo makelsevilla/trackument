@@ -21,10 +21,22 @@ Route::prefix("/admin")
             App\Http\Controllers\Admin\DocumentTransferController::class
         )->parameter("document-transfers", "documentTransfer");
 
+        Route::post("/users/{user}/restore", [
+            \App\Http\Controllers\Admin\UserController::class,
+            "restore",
+        ])
+            ->name("users.restore")
+            ->withTrashed();
+
+        Route::get("/users/deleted", [
+            \App\Http\Controllers\Admin\UserController::class,
+            "deleted",
+        ])->name("users.deleted");
+
         Route::resource(
             "/users",
             App\Http\Controllers\Admin\UserController::class
-        );
+        )->withTrashed(["destroy"]);
 
         Route::resource(
             "/documents",

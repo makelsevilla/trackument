@@ -23,7 +23,10 @@ return new class extends Migration {
                 ->string("status")
                 ->default("unavailable")
                 ->comment("available, unavailable, terminal, pending"); // available means it is available for transfer, unavailable means it is not available for transfer, terminal means it is not available for transfer and it is the final owner
-            $table->foreignId("owner_id")->constrained("users");
+            $table
+                ->foreignId("owner_id")
+                ->constrained("users")
+                ->cascadeOnDelete();
             $table->foreignId("current_owner_id")->constrained("users");
             $table
                 ->foreignId("previous_owner_id")
@@ -32,7 +35,8 @@ return new class extends Migration {
             $table
                 ->foreignId("document_type_id")
                 ->nullable()
-                ->constrained("document_types");
+                ->constrained("document_types")
+                ->nullOnDelete();
             $table->boolean("is_draft")->default(true);
             $table->boolean("notify_owner")->default(false);
             $table->dateTime("terminated_at")->nullable();

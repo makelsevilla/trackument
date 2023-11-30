@@ -103,7 +103,7 @@ export const adminDashboardConfig = {
                 {
                     title: "Deleted",
                     icon: "userX",
-                    href: route("admin.users.index"),
+                    href: route("admin.users.deleted"),
                 },
             ],
         },

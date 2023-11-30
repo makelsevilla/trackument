@@ -17,6 +17,34 @@ use Illuminate\Validation\Rules;
 class UserController extends Controller
 {
     /**
+     * Display a listing of the deleted resource.
+     */
+
+    public function deleted(Request $request)
+    {
+        $filters = [
+            "search" => $request->query("search"),
+            "category" => $request->query("category", "name"),
+            "sortBy" => $request->query("sortBy", "created_at"),
+            "order" => $request->query("order", "desc"),
+            "perPage" => $request->query("perPage", "10"),
+            "date_name" => $request->query("date_name", "created_at"),
+            "date_from" => $request->query("date_from"),
+            "date_to" => $request->query("date_to", now()),
+            "role" => $request->query("role"),
+        ];
+
+        $users = User::onlyTrashed();
+
+        $paginatedUsers = User::filterUsers($users, $filters);
+
+        return Inertia::render("Admin/Users/DeletedUsers", [
+            "paginatedUsers" => $paginatedUsers,
+            "filters" => $filters,
+        ]);
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
@@ -35,36 +63,7 @@ class UserController extends Controller
 
         $users = User::whereNot("id", "=", Auth::id());
 
-        if (isset($filters["search"], $filters["category"])) {
-            $users->where(
-                $filters["category"],
-                "LIKE",
-                "%{$filters["search"]}%"
-            );
-        }
-
-        if (isset($filters["sortBy"], $filters["order"])) {
-            $users->orderBy($filters["sortBy"], $filters["order"]);
-        }
-
-        if (isset($filters["date_to"], $filters["date_name"])) {
-            $users->whereDate($filters["date_name"], "<=", $filters["date_to"]);
-            if (isset($filters["date_from"])) {
-                $users->whereDate(
-                    $filters["date_name"],
-                    ">=",
-                    $filters["date_from"]
-                );
-            }
-        }
-
-        if (isset($filters["role"])) {
-            $users->where("role", $filters["role"]);
-        }
-
-        $paginatedUsers = $users
-            ->paginate($filters["perPage"])
-            ->withQueryString();
+        $paginatedUsers = User::filterUsers($users, $filters);
 
         return Inertia::render("Admin/Users/UsersList", [
             "paginatedUsers" => $paginatedUsers,
@@ -185,11 +184,18 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if ($user->delete()) {
+        $userIsDeleted = false;
+        if ($user->trashed()) {
+            $userIsDeleted = $user->forceDelete();
+        } else {
+            $userIsDeleted = $user->delete();
+        }
+
+        if ($userIsDeleted) {
             return redirect()
-                ->route("admin.users.index")
+                ->back()
                 ->with([
-                    "message" => "User deleted successfully.",
+                    "message" => "User deleted.",
                     "type" => "success",
                 ]);
         } else {
@@ -200,5 +206,17 @@ class UserController extends Controller
                     "type" => "error",
                 ]);
         }
+    }
+
+    public function restore(User $user)
+    {
+        $user->restore();
+
+        return redirect()
+            ->back()
+            ->with([
+                "message" => "{$user->name} has been restored.",
+                "type" => "success",
+            ]);
     }
 }
