@@ -93,9 +93,19 @@ export const adminDashboardConfig = {
         },
         {
             title: "Users",
-            href: route("admin.users.index"),
-            icon: "userCog",
-            segment: "/admin/users",
+            icon: "users",
+            subMenu: [
+                {
+                    title: "Active",
+                    icon: "userCheck",
+                    href: route("admin.users.index"),
+                },
+                {
+                    title: "Deleted",
+                    icon: "userX",
+                    href: route("admin.users.index"),
+                },
+            ],
         },
         {
             title: "Documents",

@@ -53,9 +53,15 @@ import {
     FileType,
     Info,
     FileText,
+    Users2,
+    UserCheck2,
+    UserX2,
 } from "lucide-react";
 
 const Icons = {
+    userX: UserX2,
+    userCheck: UserCheck2,
+    users: Users2,
     fileText: FileText,
     info: Info,
     fileType: FileType,
