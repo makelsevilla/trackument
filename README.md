@@ -1,5 +1,6 @@
-# How to Run 
+# Our Capstone Project Proposal
 
+## How to Run
 --- 
 
 1. Run npm install & composer install command 
