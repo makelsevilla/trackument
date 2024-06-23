@@ -1,5 +1,11 @@
 # Our Capstone Project Proposal
 
+## Requirements  
+- PHP 8 and Composer
+- Node and NPM
+- MySQL Database
+- Pusher (pusher.com)
+
 ## How to Run
 --- 
 
